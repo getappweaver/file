@@ -1,0 +1,6 @@
+#!/usr/bin/env bun
+// Thin executable: add this directory (or a symlink to this file) to PATH.
+
+import { main } from './tree-cli';
+
+main(process.argv.slice(2));
