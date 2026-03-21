@@ -32,6 +32,9 @@ const fileIdentity: PluginIdentity = {
 
 function fileHelpText(a: string): string[] {
   return [
+    `Files: browse the workspace tree, upload files encrypted for another bot (NIP-17), and download/decrypt by naddr. Commands run immediately (no draft flow).`,
+    '',
+    `!${a} help — this message`,
     `!${a} upload <path> <npub> — encrypt and share a file with another bot`,
     `!${a} download <naddr> — download and decrypt a shared file`,
     `!${a} tree [maxDepth] [targetDir] [--ext ext1,ext2] — workspace tree`,
