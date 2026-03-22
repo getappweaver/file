@@ -162,9 +162,7 @@ export function buildWorkspaceTree({
   extFilter,
 }: BuildWorkspaceTreeProps): string {
   const targetDir = resolveTreeTargetDir({ workspaceRoot, targetDirRelative });
-  const rootR = resolve(workspaceRoot);
-  const header = `${relative(rootR, targetDir) || '.'}/`;
-  const lines: string[] = [header];
+  const lines: string[] = [targetDir];
 
   collectTreeLines({
     dir: targetDir,
