@@ -149,7 +149,7 @@ export async function fileUpload({
   const privkeyBytes = hexToBytes(nostr.botKeyHex);
   const botPubkey = getPublicKey(privkeyBytes);
   const pool = new SimplePool();
-  const relays = nostr.relayUrls;
+  const relays = nostr.botRelayUrls;
 
   let prevHash: string | undefined;
 
@@ -285,7 +285,7 @@ export async function fileDownload(
 
   const privkeyBytes = hexToBytes(nostr.botKeyHex);
   const pool = new SimplePool();
-  const allRelays = [...(hintRelays ?? []), ...nostr.relayUrls];
+  const allRelays = [...(hintRelays ?? []), ...nostr.botRelayUrls];
   const uniqueRelays = [...new Set(allRelays)];
 
   const event = await pool.get(uniqueRelays, {
