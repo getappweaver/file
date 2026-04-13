@@ -40,6 +40,7 @@ export async function adaptBottomupCommand(params: {
         include_file_summaries: true,
         model: stringOrNull(params.parsed.options.model),
         max_file_bytes: null,
+        two_pass: params.parsed.options.twoPass === true ? true : null,
       },
     });
 

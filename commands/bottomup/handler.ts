@@ -4,6 +4,8 @@ import type { Database } from 'bun:sqlite';
 
 import type { BottomupCall, BottomupContextCall } from '../../ai/schema';
 
+import { executeSummarizeTool } from '../summarize/handler';
+
 import { renderBottomupRunSummary } from './handlers/doc';
 import {
   IgnoreFilter,
@@ -17,7 +19,7 @@ import {
   normalizeBottomupOptions,
   normalizeContextOptions,
 } from './handlers/options';
-import { buildDirectoryNode } from './handlers/tree';
+import { buildDirectoryNode, refineDirectoryNodePass2 } from './handlers/tree';
 
 export async function executeBottomupTool(params: {
   workspaceRoot: string;
@@ -60,7 +62,47 @@ export async function executeBottomupTool(params: {
     filter,
   });
 
-  return renderBottomupRunSummary(root, scopeRoot.absolutePath);
+  const pass1Summary = renderBottomupRunSummary(root, scopeRoot.absolutePath);
+
+  if (!options.twoPass) {
+    return pass1Summary;
+  }
+
+  // Pass 2: collect big picture from existing docs, then refine top-down
+  const bigPicture = await executeSummarizeTool({
+    workspaceRoot: params.workspaceRoot,
+    call: {
+      type: 'summarize',
+      working_dir: options.workingDir,
+      scope_root: options.scopeRoot,
+      depth: options.depth,
+      respect_gitignore: options.respectGitignore,
+      exclude_hidden: options.excludeHidden,
+      extra_ignore: options.extraIgnore,
+      include_file_summaries: true,
+      model: options.model,
+      max_file_bytes: null,
+    },
+    db: params.db,
+  });
+
+  const pass2Result = await refineDirectoryNodePass2({
+    agentCwd: params.workspaceRoot,
+    directoryPath: target.absolutePath,
+    directoryRelativePosix:
+      toPosix(relative(scopeRoot.absolutePath, target.absolutePath)) || '.',
+    bigPicture,
+    model: options.model,
+    filter,
+    workspaceRoot: scopeRoot.absolutePath,
+    remainingDepth: options.depth,
+  });
+
+  return [
+    pass1Summary,
+    '',
+    `Pass 2: ${pass2Result.updated} updated, ${pass2Result.skipped} unchanged, ${pass2Result.stale} skipped (stale/missing).`,
+  ].join('\n');
 }
 
 export async function executeBottomupContextTool(params: {

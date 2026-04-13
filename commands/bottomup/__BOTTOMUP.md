@@ -1,28 +1,28 @@
 ---
-direct_hash: a26015bb1201ab1348c4b602718527917683980f9837483bb6ecba0ec863f1e4
-subtree_hash: 94e1918ef9ece90f18e9f828d5e546d5aa1735ea95814ff7a61ea26638010f70
+direct_hash: 185d79da717d1f4e9fb422b5182b36197c2ec1488a776094db30b539dd434716
+subtree_hash: 9a76ff456efae4764acf6717fb3b6333fd8dc945ad1ec65883b27a2c83a1fadb
 files:
-  adapter.ts: 272b56bd8d8f4eef1bf21f2dba753be4603328dacbaecc1eedcc8c6d4423cae7
-  definition.ts: 47b080d086ab5adb54ec5eb48278db0a7651878381ed1977ddb2adea4b4b6c66
-  handler.ts: b637194589cd5cd0fd3b5ca5e28f03cef5cf50fa8e65547c89d14f6341d3dc8a
+  adapter.ts: 97a0f44b06f198fd50b26344c45a2a6becc7b3cbcd5087c95de867deb36a5a7c
+  definition.ts: f755dcd888a3bb261e27676c4b0aa37a88faa6fedb1097e4f5f0ee90ab1d46e8
+  handler.ts: 9281f294197762f51b88db44597f21ebc957a1c66b0ba304b516c0dcfd51711f
 children:
-  handlers: 1900e0ea88f85eb2cb835d0628fd050cdf645b876cc8bcb4feb997e499fda3d7
+  handlers: 21974d5aa9a1b4cf5795649c42ab1fc55903aeb3608efe427587286c16eeb86b
 ---
 
 # commands/bottomup
 
 ## Purpose
-CLI command implementation for generating depth-first `__BOTTOMUP.md` documentation files in folder subtrees. Exposes two entrypoints via adapter.ts and handler.ts.
+Implements the `bottomup` subcommand that generates `__BOTTOMUP.md` files depth-first for folder subtrees. Uses AI to summarize each directory and supports an optional two-pass mode for enriched context.
 
 ## Files
-- `adapter.ts` - CLI adapter - parses args/options and delegates to executeBottomupTool, returns formatted message
-- `definition.ts` - Command definition - declares arguments (workingDir), options (depth, scopeRoot, model, ignore, includeHidden, noGitignore), and examples
-- `handler.ts` - Main handler - implements executeBottomupTool and executeBottomupContextTool for running the bottomup generation and status queries
+- `adapter.ts` - CLI adapter - parses CLI invocation, calls executeBottomupTool, returns formatted message representation
+- `definition.ts` - Command definition - declares arguments, options, and examples for the bottomup subcommand
+- `handler.ts` - Core handler - walks directory tree, builds directory nodes, renders __BOTTOMUP.md, optional two-pass refinement with summarize tool
 
 ## Notes
-- Executed as: `dm-bot bottomup [workingDir]`
-- Scoped to workspace with optional depth/ignore options
-- Context subcommand shows parent/child status for a target directory
+- Entrypoint is adaptBottomupCommand in adapter.ts
+- Supports --two-pass to refine summaries using big-picture context from summarize tool
+- Writes one __BOTTOMUP.md per directory in the target subtree
 
 ## Subdirectories
-- `handlers/` - AI summarization, file system filtering, tree building, and doc rendering for bottomup generation
+- `handlers/` - Implements bottom-up AI-powered documentation generation for directory trees. Handles AI summarization, doc parsing/rendering, filesystem operations, option normalization, and recursive tree building with hash-based change detection.

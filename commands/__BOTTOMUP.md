@@ -1,9 +1,9 @@
 ---
 direct_hash: aae5a71db7cd42382ef749f87ca847684d9d4a517cc8235f53ea31bd492c3577
-subtree_hash: ee4cfda8c15f392da9b12d9a92cf76ad4f4759893ead787658f2b865641dcacc
+subtree_hash: 933d69e93bdc78bd8c1b8cf6044d83990c455a5b6913f722512a98543d0296da
 files:
 children:
-  bottomup: 94e1918ef9ece90f18e9f828d5e546d5aa1735ea95814ff7a61ea26638010f70
+  bottomup: 9a76ff456efae4764acf6717fb3b6333fd8dc945ad1ec65883b27a2c83a1fadb
   bottomup_context: d03fc7198caa796e0dec214bc64ab3f88d348e8b82bfa53b6fa02685dbeef38a
   diff: 891a3e58da04e117898779619f8b1e2947a6ea2b5039e3879a6408fb7f211929
   download: c2129fd68a2207394531a92326bde4ecbf2e34969b4e8f06890f89a5dfdf9bc7
@@ -18,21 +18,20 @@ children:
 # commands
 
 ## Purpose
-CLI command implementations for dm-bot. Each subdirectory implements a specific subcommand (tree, upload, download, diff, summarize, etc.) with adapter, handler, and core logic.
+CLI command implementations for dm-bot. Each subdirectory exports a plugin with a command definition and handler for a specific subcommand (tree, upload, download, diff, view, etc.).
 
 ## Notes
-- All commands follow the same pattern: adapter.ts + handler.ts + definition.ts
-- Mutating commands return drafts for user review before execution
-- Entrypoints exposed via src/cli.ts plugin system
+- Entry point for plugins is the plugin object exporting command definition and handler
+- All commands follow the same pattern: CLI adapter + command definition + core handler
 
 ## Subdirectories
-- `bottomup/` - CLI command implementation for generating depth-first `__BOTTOMUP.md` documentation files in folder subtrees. Exposes two entrypoints via adapter.ts and handler.ts.
-- `bottomup_context/` - Command adapter for the bottomup_context subcommand. Adapts CLI arguments and options to execute the bottomup_context tool and return a message result.
-- `diff/` - Implements the diff subcommand plugin for git diff previews. Provides CLI adapter, command definition, and core handler for generating color-formatted diff output. Handles both tracked and untracked files.
-- `download/` - Implements the `/download` subcommand for downloading and decrypting shared files by naddr into the workspace. Handles Nostr event lookup, Blossom blob download, AES-GCM decryption via NIP-44, and writes files with conflict detection.
-- `help/` - Help command adapter and formatting utilities for CLI subcommands.
-- `shared/` - Shared utilities for dm-bot CLI commands. Provides CLI option parsing coercions and Nostr Blossom file storage functions.
-- `summarize/` - Implements the 'summarize' CLI command that reads .md bottomup documentation files and returns them as a flat text summary. Warns about missing or stale .md files.
-- `tree/` - Tree command implementation for workspace file tree display. Provides both CLI and bot subcommand interfaces with text/tree and git status decoration support.
-- `upload/` - Implements the upload command for encrypting and sharing workspace files with other bots via Blossom storage and Nostr NIP-17. Includes CLI adapter, command definition, handler, and core sync logic.
-- `view/` - File viewer subcommand. Reads files from workspace, detects binary content, handles truncation, returns either CLI text or WebNodeRoot output.
+- `bottomup/` - Generates __BOTTOMUP.md files depth-first for folder subtrees with optional two-pass AI enrichment mode
+- `bottomup_context/` - CLI adapter for bottomup_context tool execution
+- `diff/` - Git diff previews with color formatting for tracked and untracked files
+- `download/` - Downloads and decrypts shared files by naddr via Blossom/NIP-44 AES-GCM
+- `help/` - Help command formatting utilities for CLI subcommands
+- `shared/` - Shared CLI option parsing coercions and Blossom file storage functions
+- `summarize/` - Reads .md bottomup files and returns flat text summary with stale file warnings
+- `tree/` - Workspace file tree display with text/tree formats and git status decoration
+- `upload/` - Encrypts and shares workspace files via Blossom storage and NIP-17
+- `view/` - File viewer with binary detection, truncation, and WebNodeRoot output

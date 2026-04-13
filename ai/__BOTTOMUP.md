@@ -1,8 +1,8 @@
 ---
-direct_hash: 023ff41104defcbfe22475b6618d310e939fa9cc05c6bdce022d0714c0bfb4c4
-subtree_hash: 47b6e1cf66b6792460b7f64a123f1466409c889283565b2034e2a363f70ca0b1
+direct_hash: f96008dc22a7f1b6e1285ac130378ad65a4ffb6797ed91fce217324c168c312f
+subtree_hash: 9ea44eb1c7a8779d24a68d8b40da9d797cb2418d4616593b3a185eac9de6387b
 files:
-  schema.ts: 24a88da4b3a20d84ebe32e2e767c523a6946b025b3f9b9611e3b557bade55039
+  schema.ts: e10312606a512a54fa5e4deb378f18eb5f2ddaa481712fc5fc5a7abbbfc2746e
   tooling.ts: f0d3e09bc1289995df8561beb15269ac3324a50334cdf3f915c1275b4e0977a8
 children:
 ---
@@ -10,13 +10,13 @@ children:
 # ai
 
 ## Purpose
-Zod schemas and execution tooling for AI file tools (bottomup, bottomup_context, summarize) that generate and read local __BOTTOMUP.md documentation.
+AI agent file documentation plugin providing bottom-up documentation tools. Defines schemas for file tool calls and implements execution handlers.
 
 ## Files
-- `schema.ts` - Zod schemas for bottomup, bottomup_context, and summarize tool calls with options for depth, ignore, scope_root, and model selection
-- `tooling.ts` - Executes file tool calls and provides agent instructions for using bottom-up doc generation
+- `schema.ts` - Zod schemas for bottomup, bottomup_context, summarize calls with nullable parameters; exports skill description and rules
+- `tooling.ts` - Tool execution handlers mapping call types to implementations; exports agentInstructions with usage rules
 
 ## Notes
-- Implements the file plugin tools defined in schema.ts
-- Uses resolveFileWorkspaceRoot to find the documentation scope root
-- Tools run immediately without drafts
+- Tools: bottomup_context reads existing docs, bottomup generates __BOTTOMUP.md files, summarize returns flat summaries
+- Skill rules: scope_root controls parent traversal, prefer stable responsibilities over implementation details
+- Executed via cli.ts alias; does not use drafts
