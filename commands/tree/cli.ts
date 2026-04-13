@@ -4,7 +4,8 @@
 
 import { basename } from 'path';
 
-import { resolveFileWorkspaceRoot } from './workspace-root';
+import { resolveFileWorkspaceRoot } from '../shared/workspace-root';
+
 import { buildWorkspaceTree, parseTreeCliArgs } from './workspace-tree';
 
 const DM_BOT_WORKSPACE_FLAG = '--dm-bot-workspace';

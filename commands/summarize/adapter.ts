@@ -1,0 +1,59 @@
+import type { CommandDefinition } from '@src/system/command-definition';
+import type { ParsedCliInvocation } from '@src/system/parser-cli';
+
+import { createMessageRepresentation } from '../../output/message/builder';
+
+import { executeSummarizeTool } from './handler';
+import {
+  boolToOverride,
+  csvToArrayOrNull,
+  intOrNull,
+  stringOrNull,
+} from '../shared/cli-option-parsing';
+import { resolveFileWorkspaceRoot } from '../shared/workspace-root';
+
+export async function adaptSummarizeCommand(params: {
+  alias: string;
+  command: CommandDefinition;
+  parsed: ParsedCliInvocation;
+}) {
+  void params.command;
+  try {
+    const result = await executeSummarizeTool({
+      workspaceRoot: resolveFileWorkspaceRoot(),
+      db: null as never,
+      call: {
+        type: 'summarize',
+        working_dir: stringOrNull(params.parsed.arguments.workingDir),
+        scope_root: stringOrNull(params.parsed.options.scopeRoot),
+        depth: intOrNull(params.parsed.options.depth),
+        respect_gitignore: boolToOverride(
+          params.parsed.options.noGitignore,
+          false,
+        ),
+        exclude_hidden: boolToOverride(
+          params.parsed.options.includeHidden,
+          false,
+        ),
+        extra_ignore: csvToArrayOrNull(params.parsed.options.ignore),
+        include_file_summaries: true,
+        model: stringOrNull(params.parsed.options.model),
+        max_file_bytes: null,
+      },
+    });
+
+    return createMessageRepresentation({
+      command: params.alias,
+      subcommand: 'summarize',
+      tone: 'info',
+      text: result,
+    });
+  } catch (err) {
+    return createMessageRepresentation({
+      command: params.alias,
+      subcommand: 'summarize',
+      tone: 'error',
+      text: String(err instanceof Error ? err.message : err),
+    });
+  }
+}
