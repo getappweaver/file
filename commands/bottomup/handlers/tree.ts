@@ -200,7 +200,13 @@ export async function buildDirectoryNode(params: {
   };
 
   mkdirSync(node.absolutePath, { recursive: true });
-  writeFileSync(join(node.absolutePath, BOTTOMUP_FILE), renderBottomupMarkdown(node), 'utf8');
+
+  writeFileSync(
+    join(node.absolutePath, BOTTOMUP_FILE),
+    renderBottomupMarkdown(node),
+    'utf8',
+  );
+
   log.info(`bottomup: wrote ${join(node.absolutePath, BOTTOMUP_FILE)}`);
 
   return node;
@@ -228,11 +234,19 @@ export async function refineDirectoryNodePass2(params: {
     stale++;
   } else {
     // Check freshness: recompute hashes from disk
-    const { files } = listDirectoryEntries(params.workspaceRoot, params.directoryPath, params.filter);
+    const { files } = listDirectoryEntries(
+      params.workspaceRoot,
+      params.directoryPath,
+      params.filter,
+    );
 
     const fileHashes = Object.fromEntries(
-      files.map((entry) => [entry.name, sha256Hex(readFileSync(entry.absolutePath))]),
+      files.map((entry) => [
+        entry.name,
+        sha256Hex(readFileSync(entry.absolutePath)),
+      ]),
     );
+
     const directHash = hashObject({ files: fileHashes });
 
     if (existingDoc.directHash !== directHash) {
@@ -257,17 +271,27 @@ export async function refineDirectoryNodePass2(params: {
       } else {
         // Rebuild frontmatter from existing doc, replace body only
         const frontmatterLines = ['---'];
-        if (existingDoc.preserveScopeRootMarker) frontmatterLines.push('scope_root: true');
+
+        if (existingDoc.preserveScopeRootMarker) {
+          frontmatterLines.push('scope_root: true');
+        }
+
         frontmatterLines.push(`direct_hash: ${existingDoc.directHash}`);
         frontmatterLines.push(`subtree_hash: ${existingDoc.subtreeHash}`);
         frontmatterLines.push('files:');
-        for (const [name, hash] of Object.entries(existingDoc.fileHashes).sort((a, b) => a[0].localeCompare(b[0]))) {
+        for (const [name, hash] of Object.entries(existingDoc.fileHashes).sort(
+          (a, b) => a[0].localeCompare(b[0]),
+        )) {
           frontmatterLines.push(`  ${name}: ${hash}`);
         }
+
         frontmatterLines.push('children:');
-        for (const [name, hash] of Object.entries(existingDoc.childHashes).sort((a, b) => a[0].localeCompare(b[0]))) {
+        for (const [name, hash] of Object.entries(existingDoc.childHashes).sort(
+          (a, b) => a[0].localeCompare(b[0]),
+        )) {
           frontmatterLines.push(`  ${name}: ${hash}`);
         }
+
         frontmatterLines.push('---');
 
         const newContent = frontmatterLines.join('\n') + '\n' + refined + '\n';
@@ -280,13 +304,20 @@ export async function refineDirectoryNodePass2(params: {
 
   // Recurse top-down into children
   if (params.remainingDepth === null || params.remainingDepth > 0) {
-    const childDepth = params.remainingDepth === null ? null : params.remainingDepth - 1;
-    const { directories } = listDirectoryEntries(params.workspaceRoot, params.directoryPath, params.filter);
+    const childDepth =
+      params.remainingDepth === null ? null : params.remainingDepth - 1;
+
+    const { directories } = listDirectoryEntries(
+      params.workspaceRoot,
+      params.directoryPath,
+      params.filter,
+    );
 
     for (const directory of directories) {
       if (!existsSync(join(directory.absolutePath, BOTTOMUP_FILE))) {
         continue;
       }
+
       const result = await refineDirectoryNodePass2({
         agentCwd: params.agentCwd,
         directoryPath: directory.absolutePath,
@@ -297,6 +328,7 @@ export async function refineDirectoryNodePass2(params: {
         workspaceRoot: params.workspaceRoot,
         remainingDepth: childDepth,
       });
+
       updated += result.updated;
       skipped += result.skipped;
       stale += result.stale;
