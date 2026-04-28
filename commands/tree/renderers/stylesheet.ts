@@ -31,7 +31,11 @@ export const filePluginTreeStylesheet: WebStyleSheet = {
   overflow-x: auto;
 }
 
-.web-file-tree-lines.web-stack {
+.web-file-tree-block > .web-node.web-tree {
+  gap: 0.06rem;
+}
+
+.web-file-tree-children.web-stack {
   gap: 0.06rem;
 }
 
@@ -113,13 +117,14 @@ export const filePluginTreeStylesheet: WebStyleSheet = {
   color: inherit;
 }
 
+/* Git filename + badge share one tone per row (see web-file-tree-line-git-*). */
 .web-tree-link-git-modified {
-  color: var(--color-warning, #d7ba7d);
+  color: #d7ba7d;
 }
 
 .web-tree-link-git-added,
 .web-tree-link-git-untracked {
-  color: var(--color-success, #73c991);
+  color: #73c991;
 }
 
 .web-tree-link-git-deleted,
@@ -129,6 +134,47 @@ export const filePluginTreeStylesheet: WebStyleSheet = {
 
 .web-tree-link-git-renamed {
   color: var(--color-info, #75beff);
+}
+
+.web-file-tree-line.web-file-tree-line-git-modified .web-button.web-tree-link,
+.web-file-tree-line.web-file-tree-line-git-modified .web-node.web-badge,
+.web-file-tree-line.web-file-tree-line-git-modified .web-button.web-tree-git-badge-button {
+  color: #d7ba7d;
+}
+
+.web-file-tree-line.web-file-tree-line-git-added .web-button.web-tree-link,
+.web-file-tree-line.web-file-tree-line-git-added .web-node.web-badge,
+.web-file-tree-line.web-file-tree-line-git-added .web-button.web-tree-git-badge-button,
+.web-file-tree-line.web-file-tree-line-git-untracked .web-button.web-tree-link,
+.web-file-tree-line.web-file-tree-line-git-untracked .web-node.web-badge,
+.web-file-tree-line.web-file-tree-line-git-untracked .web-button.web-tree-git-badge-button {
+  color: #73c991;
+}
+
+.web-file-tree-line.web-file-tree-line-git-renamed .web-button.web-tree-link,
+.web-file-tree-line.web-file-tree-line-git-renamed .web-node.web-badge,
+.web-file-tree-line.web-file-tree-line-git-renamed .web-button.web-tree-git-badge-button {
+  color: var(--color-info, #75beff);
+}
+
+.web-file-tree-line.web-file-tree-line-git-deleted .web-button.web-tree-link,
+.web-file-tree-line.web-file-tree-line-git-deleted .web-node.web-badge,
+.web-file-tree-line.web-file-tree-line-git-deleted .web-button.web-tree-git-badge-button,
+.web-file-tree-line.web-file-tree-line-git-conflicted .web-button.web-tree-link,
+.web-file-tree-line.web-file-tree-line-git-conflicted .web-node.web-badge,
+.web-file-tree-line.web-file-tree-line-git-conflicted .web-button.web-tree-git-badge-button {
+  color: var(--color-danger, #f48771);
+}
+
+.web-file-tree-line.web-file-tree-line-git-deleted .web-button.web-tree-link {
+  text-decoration: line-through;
+}
+
+.web-file-tree-line.web-file-tree-line-git-deleted
+  .web-button.web-tree-link:hover,
+.web-file-tree-line.web-file-tree-line-git-deleted
+  .web-button.web-tree-link:focus-visible {
+  text-decoration: line-through underline;
 }
 
 .web-tree-link-nav {
@@ -167,12 +213,12 @@ export const filePluginTreeStylesheet: WebStyleSheet = {
 }
 
 .web-tree-git-badge.web-tree-git-modified {
-  color: var(--color-warning, #d7ba7d);
+  color: #d7ba7d;
 }
 
 .web-tree-git-badge.web-tree-git-added,
 .web-tree-git-badge.web-tree-git-untracked {
-  color: var(--color-success, #73c991);
+  color: #73c991;
 }
 
 .web-tree-git-badge.web-tree-git-deleted,

@@ -3,6 +3,7 @@ import { disposeOpencodeSdk } from '@src/backends/opencode-sdk';
 import { getOutputString } from '@src/backends/types';
 import {
   getAgentBackend,
+  getBackendExecutionProfile,
   getCurrentOrDefaultMode,
   getModelOverride,
   getProviderName,
@@ -39,6 +40,41 @@ function extractJsonObject(raw: string): string {
   throw new Error('Model did not return JSON.');
 }
 
+type ParsedDirectorySummary = {
+  directory_summary?: unknown;
+  notes?: unknown;
+  files?: unknown;
+  subdirectories?: unknown;
+};
+
+function parseDirectorySummaryJson(raw: string): ParsedDirectorySummary {
+  return JSON.parse(extractJsonObject(raw)) as ParsedDirectorySummary;
+}
+
+async function repairDirectorySummaryJson(params: {
+  agentCwd: string;
+  model: string | null;
+  raw: string;
+}): Promise<ParsedDirectorySummary> {
+  const prompt = [
+    'Repair the malformed JSON below.',
+    'Return JSON only.',
+    'Use this exact shape:',
+    JSON.stringify(AI_DIRECTORY_SUMMARY_SCHEMA),
+    'Rules:',
+    '- Preserve the original meaning when possible',
+    '- Ensure files and subdirectories are arrays of objects with name and summary strings',
+    '- Do not add commentary, markdown, or code fences',
+    '',
+    'Malformed JSON:',
+    params.raw,
+  ].join('\n');
+
+  const repaired = await runAiPrompt(params.agentCwd, prompt, params.model);
+
+  return parseDirectorySummaryJson(repaired);
+}
+
 export async function runAiPrompt(
   cwd: string,
   prompt: string,
@@ -51,13 +87,16 @@ export async function runAiPrompt(
   const coreDb = openCoreDb();
   try {
     const backendName = getAgentBackend(coreDb);
+    const executionProfile = getBackendExecutionProfile(coreDb, backendName);
     const configuredModel = getModelOverride(coreDb, backendName);
     const effectiveModel = model ?? configuredModel;
 
     const backend = createBackend({
       backendName,
       dmBotRoot,
-      mode: getCurrentOrDefaultMode(coreDb),
+      cursorMode: getCurrentOrDefaultMode(coreDb),
+      opencodeAgentName:
+        executionProfile.kind === 'opencode' ? executionProfile.agent : null,
       attachUrl: null,
       modelOverride: effectiveModel,
       providerName: getProviderName(coreDb),
@@ -68,7 +107,9 @@ export async function runAiPrompt(
     const result = await backend.runMessage({
       sessionId,
       content: prompt,
-      mode: getCurrentOrDefaultMode(coreDb),
+      cursorMode: getCurrentOrDefaultMode(coreDb),
+      opencodeAgentName:
+        executionProfile.kind === 'opencode' ? executionProfile.agent : null,
       cwd,
       getRoutstrSkKey: () => getRoutstrSkKey(coreDb),
       modelOverride: effectiveModel,
@@ -168,12 +209,21 @@ export async function summarizeDirectoryWithAi(params: {
   try {
     const raw = await runAiPrompt(params.agentCwd, prompt, params.model);
 
-    const parsed = JSON.parse(extractJsonObject(raw)) as {
-      directory_summary?: unknown;
-      notes?: unknown;
-      files?: unknown;
-      subdirectories?: unknown;
-    };
+    let parsed: ParsedDirectorySummary;
+
+    try {
+      parsed = parseDirectorySummaryJson(raw);
+    } catch (error) {
+      log.warn(
+        `bottomup: repairing malformed AI JSON for ${params.directoryRelativePosix}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+
+      parsed = await repairDirectorySummaryJson({
+        agentCwd: params.agentCwd,
+        model: params.model,
+        raw,
+      });
+    }
 
     const directorySummary =
       typeof parsed.directory_summary === 'string'
@@ -266,14 +316,12 @@ export async function refineDirectoryWithAi(params: {
   existingBody: string;
   model: string | null;
 }): Promise<string | null> {
-  log.info(
-    `bottomup: pass2 refine ${params.directoryRelativePosix}`,
-  );
+  log.info(`bottomup: pass2 refine ${params.directoryRelativePosix}`);
 
   const prompt = [
     'You are enriching local AI-agent documentation with big-picture context.',
     'This is a second pass. The documents were already generated bottom-up from source code.',
-    'Now you have the full picture of the entire subtree. Use it to improve this directory\'s doc.',
+    "Now you have the full picture of the entire subtree. Use it to improve this directory's doc.",
     '',
     'Rules:',
     '- Preserve the exact markdown structure: ## Purpose, ## Files, ## Notes, ## Subdirectories',
@@ -294,7 +342,10 @@ export async function refineDirectoryWithAi(params: {
     const raw = await runAiPrompt(params.agentCwd, prompt, params.model);
     const trimmed = raw.trim();
 
-    if (trimmed === 'NO_CHANGE' || trimmed.toUpperCase().includes('NO_CHANGE')) {
+    if (
+      trimmed === 'NO_CHANGE' ||
+      trimmed.toUpperCase().includes('NO_CHANGE')
+    ) {
       return null;
     }
 
@@ -305,6 +356,7 @@ export async function refineDirectoryWithAi(params: {
     );
   }
 }
+
 export async function summarizeTreeForUser(
   root: DirectoryNode,
   workspaceRoot: string,

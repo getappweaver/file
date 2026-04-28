@@ -3,7 +3,6 @@ import type { ParsedCliInvocation } from '@src/system/parser-cli';
 
 import { createMessageRepresentation } from '../../output/message/builder';
 
-import { executeSummarizeTool } from './handler';
 import {
   boolToOverride,
   csvToArrayOrNull,
@@ -11,6 +10,8 @@ import {
   stringOrNull,
 } from '../shared/cli-option-parsing';
 import { resolveFileWorkspaceRoot } from '../shared/workspace-root';
+
+import { executeSummarizeTool } from './handler';
 
 export async function adaptSummarizeCommand(params: {
   alias: string;
@@ -39,6 +40,8 @@ export async function adaptSummarizeCommand(params: {
         include_file_summaries: true,
         model: stringOrNull(params.parsed.options.model),
         max_file_bytes: null,
+        write_summary:
+          params.parsed.options.writeSummary === true ? true : null,
       },
     });
 

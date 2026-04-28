@@ -7,6 +7,7 @@ import { basename } from 'path';
 import { parsePluginPackageJson, type BotPlugin } from '@src/core/plugin';
 
 import { handleFile } from './adapter';
+import { aiDefinition } from './ai';
 import {
   getFileCommandDefinition,
   getFileHelpLines,
@@ -44,6 +45,7 @@ export const FilePlugin: BotPlugin = {
     `${prefix}${a} help [topic] — detailed help for a subcommand`,
     ...getFileHelpLines(prefix, a),
   ],
+  aiDefinition,
   commandDefinition: (prefix: string, pluginAlias: string) =>
     getFileCommandDefinition(prefix, pluginAlias),
 };

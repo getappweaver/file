@@ -15,9 +15,91 @@ import {
 } from './fs';
 import {
   BOTTOMUP_FILE,
+  TOPDOWN_ENRICHED_VERSION,
   type BottomupResolvedOptions,
   type DirectoryNode,
 } from './types';
+
+type CurrentDocHashes = {
+  directHash: string;
+  subtreeHash: string | null;
+};
+
+function computeCurrentDocHashes(params: {
+  workspaceRoot: string;
+  directoryPath: string;
+  filter: IgnoreFilter;
+}): CurrentDocHashes {
+  const { files, directories } = listDirectoryEntries(
+    params.workspaceRoot,
+    params.directoryPath,
+    params.filter,
+  );
+
+  const fileHashes = Object.fromEntries(
+    files.map((entry) => [
+      entry.name,
+      sha256Hex(readFileSync(entry.absolutePath)),
+    ]),
+  );
+
+  const childHashes: Record<string, string> = {};
+  for (const directory of directories) {
+    const childDoc = parseExistingBottomupDoc(
+      join(directory.absolutePath, BOTTOMUP_FILE),
+    );
+
+    if (childDoc?.subtreeHash === null || childDoc?.subtreeHash === undefined) {
+      return {
+        directHash: hashObject({ files: fileHashes }),
+        subtreeHash: null,
+      };
+    }
+
+    childHashes[directory.name] = childDoc.subtreeHash;
+  }
+
+  const directHash = hashObject({ files: fileHashes });
+
+  return {
+    directHash,
+    subtreeHash: hashObject({
+      directHash,
+      children: Object.fromEntries(
+        Object.entries(childHashes).sort((a, b) => a[0].localeCompare(b[0])),
+      ),
+    }),
+  };
+}
+
+function canReuseExistingDoc(params: {
+  existingDoc: ReturnType<typeof parseExistingBottomupDoc>;
+  fileNames: string[];
+  childNames: string[];
+  includeFileSummaries: boolean;
+}): params is {
+  existingDoc: NonNullable<ReturnType<typeof parseExistingBottomupDoc>>;
+  fileNames: string[];
+  childNames: string[];
+  includeFileSummaries: boolean;
+} {
+  const { existingDoc } = params;
+
+  if (!existingDoc?.directorySummary) {
+    return false;
+  }
+
+  if (
+    params.includeFileSummaries &&
+    params.fileNames.some((fileName) => !existingDoc.fileSummaries[fileName])
+  ) {
+    return false;
+  }
+
+  return params.childNames.every(
+    (childName) => existingDoc.subdirectorySummaries[childName],
+  );
+}
 
 export async function buildDirectoryNode(params: {
   workspaceRoot: string;
@@ -91,6 +173,9 @@ export async function buildDirectoryNode(params: {
     join(params.directoryPath, BOTTOMUP_FILE),
   );
 
+  const fileNames = files.map((file) => file.name);
+  const childNames = children.map((child) => child.name);
+
   if (
     existingDoc &&
     existingDoc.directHash === directHash &&
@@ -154,6 +239,62 @@ export async function buildDirectoryNode(params: {
       })),
       children,
     };
+  }
+
+  const reusableDoc = canReuseExistingDoc({
+    existingDoc,
+    fileNames,
+    childNames,
+    includeFileSummaries: params.options.includeFileSummaries,
+  })
+    ? existingDoc
+    : null;
+
+  if (reusableDoc) {
+    const node: DirectoryNode = {
+      name:
+        params.directoryRelativePosix === '.'
+          ? basename(params.workspaceRoot)
+          : basename(params.directoryPath),
+      relativePosix: params.directoryRelativePosix,
+      absolutePath: params.directoryPath,
+      docRelativePosix: toPosix(
+        join(params.directoryRelativePosix, BOTTOMUP_FILE),
+      ),
+      preserveScopeRootMarker: reusableDoc.preserveScopeRootMarker,
+      directHash,
+      subtreeHash,
+      fileHashes,
+      childHashes,
+      wasSkipped: false,
+      directorySummary: reusableDoc.directorySummary ?? '',
+      notes: reusableDoc.notes,
+      files: params.options.includeFileSummaries
+        ? files.map((file) => ({
+            name: file.name,
+            relativePosix: file.relativePosix,
+            summary: reusableDoc.fileSummaries[file.name] || '',
+          }))
+        : [],
+      subdirectories: children.map((child) => ({
+        name: child.name,
+        relativePosix: child.relativePosix,
+        summary: reusableDoc.subdirectorySummaries[child.name] || '',
+      })),
+      children,
+    };
+
+    mkdirSync(node.absolutePath, { recursive: true });
+
+    writeFileSync(
+      join(node.absolutePath, BOTTOMUP_FILE),
+      renderBottomupMarkdown(node),
+      'utf8',
+    );
+
+    log.info(`bottomup: refreshed hashes for ${params.directoryRelativePosix}`);
+
+    return node;
   }
 
   const aiSummary = await summarizeDirectoryWithAi({
@@ -221,6 +362,8 @@ export async function refineDirectoryNodePass2(params: {
   filter: IgnoreFilter;
   workspaceRoot: string;
   remainingDepth: number | null;
+  summaryHash: string | null;
+  force: boolean;
 }): Promise<{ updated: number; skipped: number; stale: number }> {
   const docPath = join(params.directoryPath, BOTTOMUP_FILE);
   const existingDoc = parseExistingBottomupDoc(docPath);
@@ -233,25 +376,30 @@ export async function refineDirectoryNodePass2(params: {
     log.info(`bottomup: pass2 skip (no doc) ${params.directoryRelativePosix}`);
     stale++;
   } else {
-    // Check freshness: recompute hashes from disk
-    const { files } = listDirectoryEntries(
-      params.workspaceRoot,
-      params.directoryPath,
-      params.filter,
-    );
+    // Check freshness: recompute hashes from disk and child docs.
+    const current = computeCurrentDocHashes({
+      workspaceRoot: params.workspaceRoot,
+      directoryPath: params.directoryPath,
+      filter: params.filter,
+    });
 
-    const fileHashes = Object.fromEntries(
-      files.map((entry) => [
-        entry.name,
-        sha256Hex(readFileSync(entry.absolutePath)),
-      ]),
-    );
-
-    const directHash = hashObject({ files: fileHashes });
-
-    if (existingDoc.directHash !== directHash) {
+    if (
+      existingDoc.directHash !== current.directHash ||
+      existingDoc.subtreeHash !== current.subtreeHash
+    ) {
       log.info(`bottomup: pass2 skip (stale) ${params.directoryRelativePosix}`);
       stale++;
+    } else if (
+      !params.force &&
+      existingDoc.enriched &&
+      existingDoc.enrichedSummaryHash === params.summaryHash &&
+      existingDoc.enrichedVersion === TOPDOWN_ENRICHED_VERSION
+    ) {
+      log.info(
+        `bottomup: pass2 skip (already enriched) ${params.directoryRelativePosix}`,
+      );
+
+      skipped++;
     } else {
       // Read existing body (strip frontmatter)
       const raw = readFileSync(docPath, 'utf8');
@@ -278,6 +426,16 @@ export async function refineDirectoryNodePass2(params: {
 
         frontmatterLines.push(`direct_hash: ${existingDoc.directHash}`);
         frontmatterLines.push(`subtree_hash: ${existingDoc.subtreeHash}`);
+        frontmatterLines.push('enriched: true');
+
+        if (params.summaryHash !== null) {
+          frontmatterLines.push(`enriched_summary_hash: ${params.summaryHash}`);
+        }
+
+        frontmatterLines.push(
+          `enriched_version: ${String(TOPDOWN_ENRICHED_VERSION)}`,
+        );
+
         frontmatterLines.push('files:');
         for (const [name, hash] of Object.entries(existingDoc.fileHashes).sort(
           (a, b) => a[0].localeCompare(b[0]),
@@ -327,6 +485,8 @@ export async function refineDirectoryNodePass2(params: {
         filter: params.filter,
         workspaceRoot: params.workspaceRoot,
         remainingDepth: childDepth,
+        summaryHash: params.summaryHash,
+        force: params.force,
       });
 
       updated += result.updated;

@@ -1,22 +1,22 @@
 ---
-direct_hash: f96008dc22a7f1b6e1285ac130378ad65a4ffb6797ed91fce217324c168c312f
-subtree_hash: 9ea44eb1c7a8779d24a68d8b40da9d797cb2418d4616593b3a185eac9de6387b
+direct_hash: fdbd35d27d88e97792719e54cced4bcc1018b022b775a06e34a4f9cd3a75c2b1
+subtree_hash: d225db5c181197e2a1462fcfe468f065d8ba975424c4d89aef15d7027bedb23a
 files:
-  schema.ts: e10312606a512a54fa5e4deb378f18eb5f2ddaa481712fc5fc5a7abbbfc2746e
-  tooling.ts: f0d3e09bc1289995df8561beb15269ac3324a50334cdf3f915c1275b4e0977a8
+  schema.ts: 01b9134cbab2d66e9087a004174138ad3c1b5ca44bdc13e6d1000658958475bb
+  tooling.ts: 6b0e535b76a81f9472a9902cda184d66286cad14bcc3db9e210861f06f4d0548
 children:
 ---
-
 # ai
 
 ## Purpose
-AI agent file documentation plugin providing bottom-up documentation tools. Defines schemas for file tool calls and implements execution handlers.
+AI-facing tool layer for the dm-bot file plugin. Defines the schemas and execution handlers that let agents use the plugin’s documentation-oriented file tools, especially the bottom-up documentation workflow and its big-picture enrichment pass.
 
 ## Files
-- `schema.ts` - Zod schemas for bottomup, bottomup_context, summarize calls with nullable parameters; exports skill description and rules
-- `tooling.ts` - Tool execution handlers mapping call types to implementations; exports agentInstructions with usage rules
+- `schema.ts` - Zod schemas for bottomup, bottomup_context, and summarize calls with nullable parameters; also exports the skill description and usage rules that guide agents toward stable, responsibility-focused documentation
+- `tooling.ts` - Tool execution handlers that dispatch call types to their implementations and exports `agentInstructions` for using these tools from AI workflows
 
 ## Notes
-- Tools: bottomup_context reads existing docs, bottomup generates __BOTTOMUP.md files, summarize returns flat summaries
-- Skill rules: scope_root controls parent traversal, prefer stable responsibilities over implementation details
-- Executed via cli.ts alias; does not use drafts
+- This directory is the AI bridge for the plugin’s documentation features: `bottomup_context` reads existing docs/context, `bottomup` generates `__BOTTOMUP.md` files, and `summarize` flattens subtree documentation for higher-level review or second-pass refinement
+- The schemas intentionally allow explicit nullable inputs so callers can pass all fields while still deferring behavior to option normalization in the command handlers
+- Guidance emphasizes scope-root–bounded traversal and documenting stable responsibilities over transient implementation details
+- These tools execute immediately through the plugin CLI/tooling path and do not use the draft system

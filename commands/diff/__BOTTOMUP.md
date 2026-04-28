@@ -8,11 +8,10 @@ files:
 children:
   renderers: 06a6c5f20a1bd75c3df628c415d97d02f15095482c4d37bb33624dd650c4f3ea
 ---
-
 # commands/diff
 
 ## Purpose
-Implements the diff subcommand plugin for git diff previews. Provides CLI adapter, command definition, and core handler for generating color-formatted diff output. Handles both tracked and untracked files.
+Implements the diff subcommand for workspace git diff previews. Provides the CLI adapter, command definition, and core handler for generating color-formatted diff output for both tracked and untracked files, and serves as the diff view used by the file plugin’s web tree/file-browsing flows.
 
 ## Files
 - `adapter.ts` - CLI entrypoint - parses path argument, resolves workspace, calls handler, returns message representation
@@ -20,9 +19,9 @@ Implements the diff subcommand plugin for git diff previews. Provides CLI adapte
 - `handler.ts` - Core diff logic - resolves file paths, invokes git, parses and truncates diff output for preview
 
 ## Notes
-- Uses git status and git diff to generate diff output
+- Uses git status and git diff to generate per-file diff previews within the active workspace
 - Supports truncation for large files and binary detection
-- WebUI renderers available in subdirectory
+- WebUI renderers in the subdirectory provide the structured diff view used by web navigation flows alongside tree/view
 
 ## Subdirectories
 - `renderers/` - WebUI renderers for diff output with color-coded lines (additions, deletions, context)

@@ -1,12 +1,12 @@
 import type { SubcommandDefinition } from '@src/system/command-definition';
 
-export const summarizeDefinition = (
+export const topdownDefinition = (
   prefix: string,
   alias: string,
 ): SubcommandDefinition => ({
-  name: 'summarize',
+  name: 'topdown',
   summary:
-    'Return a flat AI summary for a folder or subtree without writing files.',
+    'Enrich existing __BOTTOMUP.md files using __BOTTOMUP_SUMMARY.md context.',
   aliases: [],
   arguments: [
     {
@@ -39,7 +39,7 @@ export const summarizeDefinition = (
     },
     {
       name: 'model',
-      summary: 'Override the model used to generate summaries.',
+      summary: 'Override the model used to enrich summaries.',
       flag: '--model',
       shortFlag: null,
       kind: 'string',
@@ -74,9 +74,10 @@ export const summarizeDefinition = (
       choices: null,
     },
     {
-      name: 'writeSummary',
-      summary: 'Write __BOTTOMUP_SUMMARY.md for later topdown enrichment.',
-      flag: '--write-summary',
+      name: 'force',
+      summary:
+        'Run even when summary/doc enrichment metadata is stale or present.',
+      flag: '--force',
       shortFlag: null,
       kind: 'boolean',
       required: false,
@@ -84,10 +85,9 @@ export const summarizeDefinition = (
     },
   ],
   examples: [
-    `${prefix}${alias} summarize`,
-    `${prefix}${alias} summarize plugins/file --scope-root plugins/file`,
-    `${prefix}${alias} summarize src --depth 2`,
-    `${prefix}${alias} summarize plugins/file --scope-root plugins/file --write-summary`,
-    `${prefix}${alias} summarize plugins/file --model openai/gpt-5.1`,
+    `${prefix}${alias} topdown`,
+    `${prefix}${alias} topdown plugins/file --scope-root plugins/file`,
+    `${prefix}${alias} topdown src --depth 2`,
+    `${prefix}${alias} topdown plugins/file --force`,
   ],
 });

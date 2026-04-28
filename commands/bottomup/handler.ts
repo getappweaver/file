@@ -10,6 +10,7 @@ import { renderBottomupRunSummary } from './handlers/doc';
 import {
   IgnoreFilter,
   listChildBottomupStatus,
+  relativePosixFromRoot,
   readBottomupFile,
   resolveScopeRoot,
   resolveWorkingDirectory,
@@ -41,12 +42,17 @@ export async function executeBottomupTool(params: {
     workingDirRelative: target.relativePosix,
   });
 
+  const targetRelativeToScope = relativePosixFromRoot(
+    scopeRoot.absolutePath,
+    target.absolutePath,
+  );
+
   const filter = new IgnoreFilter(
     scopeRoot.absolutePath,
     options.respectGitignore,
     options.excludeHidden,
     options.extraIgnore,
-    target.relativePosix === '.' ? null : target.relativePosix,
+    targetRelativeToScope === '.' ? null : targetRelativeToScope,
   );
 
   const root = await buildDirectoryNode({
@@ -82,6 +88,7 @@ export async function executeBottomupTool(params: {
       include_file_summaries: true,
       model: options.model,
       max_file_bytes: null,
+      write_summary: null,
     },
     db: params.db,
   });
@@ -96,6 +103,8 @@ export async function executeBottomupTool(params: {
     filter,
     workspaceRoot: scopeRoot.absolutePath,
     remainingDepth: options.depth,
+    summaryHash: null,
+    force: false,
   });
 
   return [
@@ -125,16 +134,20 @@ export async function executeBottomupContextTool(params: {
     workingDirRelative: target.relativePosix,
   });
 
+  const targetRelativeToScope = relativePosixFromRoot(
+    scopeRoot.absolutePath,
+    target.absolutePath,
+  );
+
   const filter = new IgnoreFilter(
     scopeRoot.absolutePath,
     options.respectGitignore,
     options.excludeHidden,
     options.extraIgnore,
-    target.relativePosix === '.' ? null : target.relativePosix,
+    targetRelativeToScope === '.' ? null : targetRelativeToScope,
   );
 
-  const targetRelativePosix =
-    toPosix(relative(scopeRoot.absolutePath, target.absolutePath)) || '.';
+  const targetRelativePosix = targetRelativeToScope;
 
   const lines = [
     `Target directory: ${targetRelativePosix}`,

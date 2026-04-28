@@ -21,6 +21,13 @@ export function toPosix(value: string): string {
   return value.replace(/\\/g, '/');
 }
 
+export function relativePosixFromRoot(
+  rootAbsolute: string,
+  targetAbsolute: string,
+): string {
+  return toPosix(relative(rootAbsolute, targetAbsolute)) || '.';
+}
+
 export function resolveWorkingDirectory(
   workspaceRoot: string,
   workingDir: string | null,
@@ -71,7 +78,7 @@ export function detectScopeRoot(
     if (fileHasScopeRootMarker(join(cursor, BOTTOMUP_FILE))) {
       return {
         absolutePath: cursor,
-        relativePosix: toPosix(relative(resolvedWorkspaceRoot, cursor)) || '.',
+        relativePosix: relativePosixFromRoot(resolvedWorkspaceRoot, cursor),
       };
     }
 

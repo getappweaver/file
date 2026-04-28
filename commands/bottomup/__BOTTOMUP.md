@@ -1,28 +1,28 @@
 ---
-direct_hash: 185d79da717d1f4e9fb422b5182b36197c2ec1488a776094db30b539dd434716
-subtree_hash: 9a76ff456efae4764acf6717fb3b6333fd8dc945ad1ec65883b27a2c83a1fadb
+direct_hash: 0e826247d03f872b94e81e4fe60ddfe53b8e0369af39fa53d892c5e06551d8eb
+subtree_hash: c3058dcbf4671a932195d5445eb0a066f15153c52c0a90b3dccd34149b09a787
 files:
   adapter.ts: 97a0f44b06f198fd50b26344c45a2a6becc7b3cbcd5087c95de867deb36a5a7c
-  definition.ts: f755dcd888a3bb261e27676c4b0aa37a88faa6fedb1097e4f5f0ee90ab1d46e8
-  handler.ts: 9281f294197762f51b88db44597f21ebc957a1c66b0ba304b516c0dcfd51711f
+  definition.ts: 6510953d01271da7e138a40261942aea107653b509e3e5156333429b94266b01
+  handler.ts: b0ab5a28cf7c22169d3bf96008d4db53506c1828f509aab4eb1ae7740bd77453
 children:
-  handlers: 21974d5aa9a1b4cf5795649c42ab1fc55903aeb3608efe427587286c16eeb86b
+  handlers: 7f9e3166fcc51deb0f2179a4c55f63b50662bd2a0bec5dc35324a4d5939fa130
 ---
-
 # commands/bottomup
 
 ## Purpose
-Implements the `bottomup` subcommand that generates `__BOTTOMUP.md` files depth-first for folder subtrees. Uses AI to summarize each directory and supports an optional two-pass mode for enriched context.
+Implements the `bottomup` subcommand that generates `__BOTTOMUP.md` files for directory subtrees in a depth-first pass. This is the documentation-generation command within the file plugin: it produces the bottom-up docs that later power `bottomup_context` and `summarize`, and it optionally performs a second refinement pass to add big-picture context.
 
 ## Files
-- `adapter.ts` - CLI adapter - parses CLI invocation, calls executeBottomupTool, returns formatted message representation
+- `adapter.ts` - CLI adapter - parses CLI invocation, calls executeBottomupTool, and returns the command result as a formatted message representation
 - `definition.ts` - Command definition - declares arguments, options, and examples for the bottomup subcommand
-- `handler.ts` - Core handler - walks directory tree, builds directory nodes, renders __BOTTOMUP.md, optional two-pass refinement with summarize tool
+- `handler.ts` - Core handler - walks the directory tree, builds directory nodes, renders `__BOTTOMUP.md`, and optionally runs a second refinement pass using summarized subtree context
 
 ## Notes
-- Entrypoint is adaptBottomupCommand in adapter.ts
-- Supports --two-pass to refine summaries using big-picture context from summarize tool
-- Writes one __BOTTOMUP.md per directory in the target subtree
+- Entrypoint is `adaptBottomupCommand` in `adapter.ts`
+- Supports `--two-pass` to first generate bottom-up per-directory docs, then refine them with broader subtree context gathered through the summarize flow
+- Writes one `__BOTTOMUP.md` per directory in the target subtree
+- Serves as the producer for the plugin’s documentation pipeline: `bottomup_context` reads these docs for context, and `summarize` aggregates them for flat subtree summaries
 
 ## Subdirectories
-- `handlers/` - Implements bottom-up AI-powered documentation generation for directory trees. Handles AI summarization, doc parsing/rendering, filesystem operations, option normalization, and recursive tree building with hash-based change detection.
+- `handlers/` - Implements the bottom-up documentation engine for directory trees, including AI summarization, doc parsing/rendering, filesystem operations, option normalization, and recursive tree building with hash-based change detection.

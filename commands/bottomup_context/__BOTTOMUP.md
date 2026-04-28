@@ -6,16 +6,16 @@ files:
   definition.ts: d6ac1c4c2ad779b6fa95b614ac8ccf228490ca3cc864333d28875dcc810b5485
 children:
 ---
-
 # commands/bottomup_context
 
 ## Purpose
-Command adapter for the bottomup_context subcommand. Adapts CLI arguments and options to execute the bottomup_context tool and return a message result.
+Command adapter for the `bottomup_context` subcommand. It turns CLI arguments and options into a read-only `bottomup_context` tool call, returning contextual `__BOTTOMUP.md` documentation from nearby directories for AI and documentation workflows.
 
 ## Files
-- `adapter.ts` - CLI adapter that parses arguments/options and executes the bottomup_context tool, returning a message result.
-- `definition.ts` - Defines subcommand schema: arguments (workingDir), options (scopeRoot, parents, children, ignore, includeHidden, noGitignore), and examples.
+- `adapter.ts` - CLI adapter that parses arguments/options, executes the `bottomup_context` tool, and returns the result as a message representation.
+- `definition.ts` - Defines the subcommand schema: `workingDir` argument plus context-selection options such as `scopeRoot`, `parents`, `children`, `ignore`, `includeHidden`, and `noGitignore`, with usage examples.
 
 ## Notes
-- Part of the dm-bot CLI command system
-- Uses shared parsing utilities from ../shared/
+- Part of the dm-bot file plugin’s CLI command system.
+- Read-only companion to `bottomup` and `summarize`: it retrieves surrounding documentation context rather than generating new `__BOTTOMUP.md` files.
+- Uses shared parsing utilities from `../shared/`.

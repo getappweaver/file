@@ -2,12 +2,14 @@ import type {
   BottomupCall,
   BottomupContextCall,
   SummarizeCall,
+  TopdownCall,
 } from '../../../ai/schema';
 
 import type {
   BottomupResolvedOptions,
   ContextResolvedOptions,
   SummarizeResolvedOptions,
+  TopdownResolvedOptions,
 } from './types';
 import {
   DEFAULT_CONTEXT_CHILD_DEPTH,
@@ -36,6 +38,7 @@ export function normalizeBottomupOptions(
     model: call.model,
     maxFileBytes: call.max_file_bytes,
     twoPass: boolOrDefault(call.two_pass, false),
+    writeSummary: false,
   };
 }
 
@@ -53,6 +56,7 @@ export function normalizeSummarizeOptions(
     model: call.model,
     maxFileBytes: call.max_file_bytes,
     twoPass: false,
+    writeSummary: boolOrDefault(call.write_summary, false),
   };
 }
 
@@ -67,5 +71,20 @@ export function normalizeContextOptions(
     respectGitignore: boolOrDefault(call.respect_gitignore, true),
     excludeHidden: boolOrDefault(call.exclude_hidden, true),
     extraIgnore: call.extra_ignore ?? [],
+  };
+}
+
+export function normalizeTopdownOptions(
+  call: TopdownCall,
+): TopdownResolvedOptions {
+  return {
+    workingDir: call.working_dir,
+    scopeRoot: call.scope_root,
+    depth: call.depth,
+    respectGitignore: boolOrDefault(call.respect_gitignore, true),
+    excludeHidden: boolOrDefault(call.exclude_hidden, true),
+    extraIgnore: call.extra_ignore ?? [],
+    model: call.model,
+    force: boolOrDefault(call.force, false),
   };
 }

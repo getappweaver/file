@@ -11,20 +11,20 @@ import {
 } from '../shared/cli-option-parsing';
 import { resolveFileWorkspaceRoot } from '../shared/workspace-root';
 
-import { executeBottomupTool } from './handler';
+import { executeTopdownTool } from './handler';
 
-export async function adaptBottomupCommand(params: {
+export async function adaptTopdownCommand(params: {
   alias: string;
   command: CommandDefinition;
   parsed: ParsedCliInvocation;
 }) {
   void params.command;
   try {
-    const result = await executeBottomupTool({
+    const result = await executeTopdownTool({
       workspaceRoot: resolveFileWorkspaceRoot(),
       db: null as never,
       call: {
-        type: 'bottomup',
+        type: 'topdown',
         working_dir: stringOrNull(params.parsed.arguments.workingDir),
         scope_root: stringOrNull(params.parsed.options.scopeRoot),
         depth: intOrNull(params.parsed.options.depth),
@@ -37,23 +37,21 @@ export async function adaptBottomupCommand(params: {
           false,
         ),
         extra_ignore: csvToArrayOrNull(params.parsed.options.ignore),
-        include_file_summaries: true,
         model: stringOrNull(params.parsed.options.model),
-        max_file_bytes: null,
-        two_pass: null,
+        force: params.parsed.options.force === true ? true : null,
       },
     });
 
     return createMessageRepresentation({
       command: params.alias,
-      subcommand: 'bottomup',
+      subcommand: 'topdown',
       tone: 'success',
       text: result,
     });
   } catch (err) {
     return createMessageRepresentation({
       command: params.alias,
-      subcommand: 'bottomup',
+      subcommand: 'topdown',
       tone: 'error',
       text: String(err instanceof Error ? err.message : err),
     });

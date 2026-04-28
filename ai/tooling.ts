@@ -2,8 +2,9 @@ import { Database } from 'bun:sqlite';
 
 import { executeBottomupTool } from '../commands/bottomup/handler';
 import { executeBottomupContextTool } from '../commands/bottomup/handler';
-import { executeSummarizeTool } from '../commands/summarize/handler';
 import { resolveFileWorkspaceRoot } from '../commands/shared/workspace-root';
+import { executeSummarizeTool } from '../commands/summarize/handler';
+import { executeTopdownTool } from '../commands/topdown/handler';
 
 import type { FileToolCall } from './schema';
 
@@ -17,6 +18,7 @@ The goal is to compress stable structural knowledge about a subtree into small l
 - \`bottomup_context\` reads the current folder context from existing \`__BOTTOMUP.md\` files without rewriting anything. Use this for targeted questions about a specific directory or file — it returns the doc for that directory plus its immediate parents and children.
 - \`summarize\` returns the flat concatenated content of all existing \`__BOTTOMUP.md\` files in a subtree — use this for broad questions spanning multiple directories. Avoid using it for single-file or single-directory questions as it returns far more content than needed.
 - \`bottomup\` traverses depth-first and writes \`__BOTTOMUP.md\` files for the requested subtree.
+- \`topdown\` enriches existing \`__BOTTOMUP.md\` files using cached \`__BOTTOMUP_SUMMARY.md\` context.
 - \`scope_root\` limits parent traversal for a subtree. If omitted, the tool looks upward for an existing \`__BOTTOMUP.md\` with \`scope_root: true\` and uses that as the logical root.
 
 The generated \`__BOTTOMUP.md\` files contain:
@@ -61,6 +63,12 @@ export async function executeTool(params: {
       });
     case 'summarize':
       return executeSummarizeTool({
+        workspaceRoot,
+        call: params.call,
+        db: params.db,
+      });
+    case 'topdown':
+      return executeTopdownTool({
         workspaceRoot,
         call: params.call,
         db: params.db,

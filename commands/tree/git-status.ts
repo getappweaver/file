@@ -193,6 +193,18 @@ export function collectWorkspaceGitStatusDecorations(
       ),
     );
 
+    /**
+     * Bubble status to ancestor dirs so a row like `src/` can reflect “something
+     * changed underneath” for modified / added / untracked / conflicted.
+     *
+     * Do **not** bubble `deleted` or `renamed`: a deleted *file* under
+     * `web/src/components/` must not paint `web/`, `web/src/`, and `web/src/components/`
+     * as deleted (those dirs still exist). Same for rename old paths vs parents.
+     */
+    if (kind === 'deleted' || kind === 'renamed') {
+      return;
+    }
+
     let parentDir = posix.dirname(entry.path);
 
     while (parentDir !== '.' && parentDir !== '') {

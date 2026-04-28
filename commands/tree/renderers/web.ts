@@ -12,22 +12,43 @@ import { filePluginTreeStylesheet } from './stylesheet';
 type TreeRefreshActionProps = {
   commandAlias: string;
   rest: string[];
+  extOption: string | null;
+  expandedPaths: Set<string>;
 };
+
+function encodedExpandedPaths(expandedPaths: Set<string>): string | null {
+  if (expandedPaths.size === 0) {
+    return null;
+  }
+
+  return encodeURIComponent(JSON.stringify([...expandedPaths].sort()));
+}
 
 function treeRefreshAction(props: TreeRefreshActionProps): WebAction {
   const arguments_ = { rest: props.rest };
+  const options: Record<string, string> = {};
+  const expanded = encodedExpandedPaths(props.expandedPaths);
+
+  if (props.extOption !== null) {
+    options.ext = props.extOption;
+  }
+
+  if (expanded !== null) {
+    options.expanded = expanded;
+  }
 
   return {
     type: 'command',
     command: props.commandAlias,
     subcommand: 'tree',
     arguments: arguments_,
-    options: {},
+    options,
+    recordInTimeline: false,
     refresh: {
       command: props.commandAlias,
       subcommand: 'tree',
       arguments: arguments_,
-      options: {},
+      options,
     },
   };
 }
@@ -117,6 +138,7 @@ function treeLinkButton(props: {
     props: {
       label: props.label,
       action: props.action,
+      stopPropagation: true,
       className: `${TREE_LINK_BUTTON_CLASS} ${variantClass}${props.className ? ` ${props.className}` : ''}`,
     },
   };
@@ -133,6 +155,7 @@ function treeGitStatusBadge(props: {
       props: {
         label: props.status.label,
         action: props.action,
+        stopPropagation: true,
         className: `web-tree-git-badge web-tree-git-badge-button web-tree-git-${props.status.kind} web-tree-git-scope-${props.status.scope}`,
       },
     };
@@ -148,108 +171,197 @@ function treeGitStatusBadge(props: {
   };
 }
 
-function buildTreeLineRows(params: {
-  rows: WorkspaceTreeListRow[];
+type WorkspaceTreeListRowWithDepth = WorkspaceTreeListRow & {
+  depth: number;
+};
+
+function rowDepth(row: WorkspaceTreeListRow): number {
+  return row.treePrefix.length / 4;
+}
+
+function rowsWithDepth(
+  rows: WorkspaceTreeListRow[],
+): WorkspaceTreeListRowWithDepth[] {
+  return rows.map((r) => ({ ...r, depth: rowDepth(r) }));
+}
+
+function fileTreeItemId(relativePosix: string): string {
+  return `file-tree-item-${relativePosix.replace(/[^a-zA-Z0-9_-]+/g, '_')}`;
+}
+
+function fileTreeSummaryLine(params: {
+  row: WorkspaceTreeListRow;
   commandAlias: string;
   displayPath: string;
-}): WebNode[] {
-  const { rows, commandAlias, displayPath } = params;
+  extOption: string | null;
+}): WebNode {
+  const { row, commandAlias, displayPath, extOption } = params;
 
-  if (rows.length === 0) {
-    return [
-      {
-        type: 'element',
-        tag: 'text',
-        props: {
-          className: 'web-file-tree-glyph-line',
-        },
-        children: [textNode('(empty directory)')],
-      },
-    ];
-  }
+  const action = row.isDirectory
+    ? treeRefreshAction({
+        commandAlias,
+        rest: [row.relativePosix],
+        extOption,
+        expandedPaths: new Set(),
+      })
+    : viewFileAction({
+        commandAlias,
+        relativePosix: row.relativePosix,
+        previousDir: displayPath,
+      });
 
-  const lines: WebNode[] = [];
+  const linkLabel = row.isDirectory ? `${row.name}/` : row.name;
 
-  rows.forEach((row) => {
-    const glyph = `${row.treePrefix}${row.connector}`;
+  const gitClassName = row.git
+    ? `web-tree-link-git web-tree-link-git-${row.git.kind}`
+    : undefined;
 
-    const action = row.isDirectory
-      ? treeRefreshAction({
-          commandAlias,
-          rest: [row.relativePosix],
-        })
-      : viewFileAction({
+  const gitBadgeAction =
+    row.git !== null && !row.isDirectory && row.git.scope === 'file'
+      ? viewDiffAction({
           commandAlias,
           relativePosix: row.relativePosix,
           previousDir: displayPath,
-        });
+        })
+      : null;
 
-    const linkLabel = row.isDirectory ? `${row.name}/` : row.name;
+  return {
+    type: 'element',
+    tag: 'row',
+    props: {
+      align: 'start',
+      itemAlign: 'center',
+      className: `web-file-tree-line${row.git ? ` web-file-tree-line-git web-file-tree-line-git-${row.git.kind}` : ''}`,
+    },
+    children: [
+      {
+        type: 'element',
+        tag: 'row',
+        props: {
+          className: 'web-file-tree-link-wrap',
+          fill: true,
+        },
+        children: [
+          treeLinkButton({
+            label: linkLabel,
+            action,
+            variant: row.isDirectory ? 'dir' : 'file',
+            className: gitClassName,
+          }),
+        ],
+      },
+      ...(row.git
+        ? [
+            treeGitStatusBadge({
+              status: row.git,
+              action: gitBadgeAction,
+            }),
+          ]
+        : []),
+    ],
+  };
+}
 
-    const gitClassName = row.git
-      ? `web-tree-link-git web-tree-link-git-${row.git.kind}`
-      : undefined;
+/**
+ * Same depth semantics as `collectWorkspaceTreeRows`: flat DFS rows → nested
+ * `treeItem` nodes so the host `tag: 'tree'` gets collapse/expand-all and folding.
+ */
+function buildFileTreeItemsFromRows(params: {
+  rows: WorkspaceTreeListRowWithDepth[];
+  commandAlias: string;
+  displayPath: string;
+  extOption: string | null;
+  expandedPaths: Set<string>;
+  startIndex: number;
+  levelDepth: number;
+}): { nodes: WebNode[]; nextIndex: number } {
+  const {
+    rows,
+    commandAlias,
+    displayPath,
+    extOption,
+    expandedPaths,
+    startIndex,
+    levelDepth,
+  } = params;
 
-    const gitBadgeAction =
-      row.git !== null && !row.isDirectory && row.git.scope === 'file'
-        ? viewDiffAction({
-            commandAlias,
-            relativePosix: row.relativePosix,
-            previousDir: displayPath,
-          })
-        : null;
+  const nodes: WebNode[] = [];
+  let i = startIndex;
 
-    lines.push({
+  while (i < rows.length && rows[i].depth === levelDepth) {
+    const row = rows[i];
+    i += 1;
+    let childNodes: WebNode[] = [];
+
+    if (
+      row.isDirectory &&
+      i < rows.length &&
+      rows[i].depth === levelDepth + 1
+    ) {
+      const nested = buildFileTreeItemsFromRows({
+        rows,
+        commandAlias,
+        displayPath,
+        extOption,
+        expandedPaths,
+        startIndex: i,
+        levelDepth: levelDepth + 1,
+      });
+
+      childNodes = nested.nodes;
+      i = nested.nextIndex;
+    }
+
+    const lazyExpandedPaths = new Set(expandedPaths);
+    lazyExpandedPaths.add(row.relativePosix);
+
+    nodes.push({
       type: 'element',
-      tag: 'row',
+      tag: 'treeItem',
       props: {
-        align: 'start',
-        itemAlign: 'center',
-        className: `web-file-tree-line${row.git ? ` web-file-tree-line-git web-file-tree-line-git-${row.git.kind}` : ''}`,
+        id: fileTreeItemId(row.relativePosix),
+        ui: 'file-tree-item',
+        defaultExpanded: row.loaded,
+        lazyLoaded: row.loaded,
+        ...(row.isDirectory && row.hasChildren && !row.loaded
+          ? {
+              lazyLoadAction: treeRefreshAction({
+                commandAlias,
+                rest: displayPath === '.' ? [] : [displayPath],
+                extOption,
+                expandedPaths: lazyExpandedPaths,
+              }),
+              lazyLoadingLabel: 'Loading folder…',
+            }
+          : {}),
       },
       children: [
-        {
-          type: 'element',
-          tag: 'text',
-          props: {
-            className: 'web-file-tree-glyph-line',
-          },
-          children: [textNode(glyph)],
-        },
-        {
-          type: 'element',
-          tag: 'row',
-          props: {
-            className: 'web-file-tree-link-wrap',
-            fill: true,
-          },
-          children: [
-            treeLinkButton({
-              label: linkLabel,
-              action,
-              variant: row.isDirectory ? 'dir' : 'file',
-              className: gitClassName,
-            }),
-          ],
-        },
-        ...(row.git
+        fileTreeSummaryLine({ row, commandAlias, displayPath, extOption }),
+        ...(childNodes.length > 0
           ? [
-              treeGitStatusBadge({
-                status: row.git,
-                action: gitBadgeAction,
-              }),
+              {
+                type: 'element' as const,
+                tag: 'stack' as const,
+                props: {
+                  gap: 'xs' as const,
+                  className: 'web-file-tree-children',
+                },
+                children: childNodes,
+              },
             ]
           : []),
       ],
     });
-  });
+  }
 
-  return lines;
+  return { nodes, nextIndex: i };
 }
 
 type RenderFileTreeBrowserWebProps = {
   commandAlias: string;
   list: ListWorkspaceDirectoryResult;
+  extOption: string | null;
+  expandedPaths: Set<string>;
 };
 
 export function renderFileTreeBrowserWeb(
@@ -284,6 +396,8 @@ export function renderFileTreeBrowserWeb(
       action: treeRefreshAction({
         commandAlias: props.commandAlias,
         rest: [],
+        extOption: props.extOption,
+        expandedPaths: new Set(),
       }),
       variant: 'nav',
     }),
@@ -304,6 +418,8 @@ export function renderFileTreeBrowserWeb(
         action: treeRefreshAction({
           commandAlias: props.commandAlias,
           rest: parentPath === '.' ? [] : [parentPath],
+          extOption: props.extOption,
+          expandedPaths: new Set(),
         }),
         variant: 'nav',
       }),
@@ -342,11 +458,29 @@ export function renderFileTreeBrowserWeb(
     ],
   };
 
-  const treeLines = buildTreeLineRows({
-    rows,
-    commandAlias: props.commandAlias,
-    displayPath,
-  });
+  const rowsDepth = rowsWithDepth(rows);
+
+  const treeBodyChildren: WebNode[] =
+    rows.length === 0
+      ? [
+          {
+            type: 'element',
+            tag: 'text',
+            props: {
+              className: 'web-file-tree-glyph-line',
+            },
+            children: [textNode('(empty directory)')],
+          },
+        ]
+      : buildFileTreeItemsFromRows({
+          rows: rowsDepth,
+          commandAlias: props.commandAlias,
+          displayPath,
+          extOption: props.extOption,
+          expandedPaths: props.expandedPaths,
+          startIndex: 0,
+          levelDepth: 0,
+        }).nodes;
 
   const treeBlock: WebNode = {
     type: 'element',
@@ -357,11 +491,12 @@ export function renderFileTreeBrowserWeb(
     children: [
       {
         type: 'element',
-        tag: 'stack',
+        tag: 'tree',
         props: {
-          className: 'web-file-tree-lines',
+          gap: 'xs',
+          ui: 'file-workspace-tree',
         },
-        children: treeLines,
+        children: treeBodyChildren,
       },
     ],
   };

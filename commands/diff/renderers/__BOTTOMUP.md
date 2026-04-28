@@ -6,17 +6,17 @@ files:
   web.ts: 8217b73be5486e4f1a2c17c3107d44cf6e5fe9263007ee0063ff1ea77220573e
 children:
 ---
-
 # commands/diff/renderers
 
 ## Purpose
-WebUI renderers for diff command plugin output. Defines styles and renders diff results as WebNodeRoot with color-coded lines for additions, deletions, and context.
+Web UI renderers for the `diff` subcommand’s output. They turn diff results from the command handler into generic `WebNodeRoot` views, pairing scoped styling with line-by-line rendering for additions, deletions, context, and hunk metadata.
 
 ## Files
-- `stylesheet.ts` - WebStyleSheet with scoped CSS for diff blocks, line headers, hunk markers, and colored diff lines (green add/remove/red context)
-- `web.ts` - renderFileDiffWeb function producing WebNodeRoot for FileDiffOk/err results, includes navigation action to parent directory
+- `stylesheet.ts` - Defines the scoped `WebStyleSheet` for diff rendering, including the diff container, file headers, hunk markers, and per-line color treatment for additions, deletions, and context.
+- `web.ts` - Renders `FileDiffOk`/error results into `WebNodeRoot`, including navigation back to the parent folder and presentation for normal, truncated, binary, and error cases.
 
 ## Notes
-- Styled with CSS variables supporting dark/light theme
-- Handles errors, truncated, and binary file states
-- Provides Back to folder navigation action
+- Follows the repo’s generic Web UI model: command output is rendered as reusable `WebNodeRoot` data rather than plugin-specific frontend logic.
+- Styling is scoped and theme-friendly via CSS variables, matching the broader web renderer approach used by other file-plugin surfaces.
+- Supports the main diff edge cases surfaced by the handler, including errors, truncation, and binary files.
+- Provides a “Back to folder” action so the diff view fits into the larger tree/view/diff navigation flow.

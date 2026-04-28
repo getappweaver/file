@@ -15,6 +15,7 @@ import { adaptHelpCommand } from './commands/help/adapter';
 import { getFileCommandDefinition } from './commands/help/module';
 import { resolveFileWorkspaceRoot } from './commands/shared/workspace-root';
 import { adaptSummarizeCommand } from './commands/summarize/adapter';
+import { adaptTopdownCommand } from './commands/topdown/adapter';
 import {
   adaptTreeCommand,
   parseTreeTokensFromParsed,
@@ -43,7 +44,8 @@ type FileSubcommand =
   | 'diff'
   | 'bottomup'
   | 'bottomup_context'
-  | 'summarize';
+  | 'summarize'
+  | 'topdown';
 
 type MaybePromise<T> = T | Promise<T>;
 
@@ -69,6 +71,7 @@ const subcommandAdapters: Record<FileSubcommand, FileCommandAdapter> = {
   bottomup: adaptBottomupCommand,
   bottomup_context: adaptBottomupContextCommand,
   summarize: adaptSummarizeCommand,
+  topdown: adaptTopdownCommand,
 };
 
 function getDefinitionKey(prefix: string, alias: string): string {
@@ -100,7 +103,8 @@ function isFileSubcommand(value: string): value is FileSubcommand {
     value === 'diff' ||
     value === 'bottomup' ||
     value === 'bottomup_context' ||
-    value === 'summarize'
+    value === 'summarize' ||
+    value === 'topdown'
   );
 }
 
@@ -145,30 +149,40 @@ export async function handleFile(params: {
     }
 
     if (params.source === 'web' && parsed.subcommand === 'tree') {
-      const { restTokens, extOption } = parseTreeTokensFromParsed(parsed);
+      const { restTokens, extOption, expandedOption } =
+        parseTreeTokensFromParsed(parsed);
 
       const merged = [
         ...restTokens,
         ...(extOption !== null ? ['--ext', extOption] : []),
+        ...(expandedOption !== null ? ['--expanded', expandedOption] : []),
       ];
 
-      const { maxDepth, maxDepthExplicit, targetDirRelative, extFilter } =
-        parseTreeCliArgs(merged);
+      const {
+        maxDepth,
+        maxDepthExplicit,
+        targetDirRelative,
+        extFilter,
+        expandedPaths,
+      } = parseTreeCliArgs(merged);
 
       const workspaceRoot = resolveFileWorkspaceRoot();
 
-      const listMaxDepth = maxDepthExplicit ? maxDepth : Math.max(maxDepth, 1);
+      const listMaxDepth = maxDepthExplicit ? maxDepth : 0;
 
       const list = listWorkspaceDirectoryEntries({
         workspaceRoot,
         targetDirRelative,
         extFilter,
         maxDepth: listMaxDepth,
+        expandedPaths,
       });
 
       return renderFileTreeBrowserWeb({
         commandAlias: params.alias,
         list,
+        extOption,
+        expandedPaths,
       });
     }
 

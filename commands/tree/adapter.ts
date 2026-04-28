@@ -16,15 +16,22 @@ function toStringArray(value: unknown): string[] {
 export function parseTreeTokensFromParsed(parsed: ParsedCliInvocation): {
   restTokens: string[];
   extOption: string | null;
+  expandedOption: string | null;
 } {
   const rawRest = parsed.arguments.rest;
   const restTokens = toStringArray(rawRest);
   const extRaw = parsed.options.ext;
+  const expandedRaw = parsed.options.expanded;
 
   const extOption =
     typeof extRaw === 'string' && extRaw.trim().length > 0 ? extRaw : null;
 
-  return { restTokens, extOption };
+  const expandedOption =
+    typeof expandedRaw === 'string' && expandedRaw.trim().length > 0
+      ? expandedRaw
+      : null;
+
+  return { restTokens, extOption, expandedOption };
 }
 
 export function adaptTreeCommand(params: {

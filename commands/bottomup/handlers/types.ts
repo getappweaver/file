@@ -1,4 +1,6 @@
 export const BOTTOMUP_FILE = '__BOTTOMUP.md';
+export const BOTTOMUP_SUMMARY_FILE = '__BOTTOMUP_SUMMARY.md';
+export const TOPDOWN_ENRICHED_VERSION = 1;
 export const DEFAULT_CONTEXT_PARENT_DEPTH = 2;
 export const DEFAULT_CONTEXT_CHILD_DEPTH = 1;
 
@@ -20,6 +22,7 @@ export type BottomupResolvedOptions = {
   model: string | null;
   maxFileBytes: number | null;
   twoPass: boolean;
+  writeSummary: boolean;
 };
 
 export type SummarizeResolvedOptions = BottomupResolvedOptions;
@@ -32,6 +35,17 @@ export type ContextResolvedOptions = {
   respectGitignore: boolean;
   excludeHidden: boolean;
   extraIgnore: string[];
+};
+
+export type TopdownResolvedOptions = {
+  workingDir: string | null;
+  scopeRoot: string | null;
+  depth: number | null;
+  respectGitignore: boolean;
+  excludeHidden: boolean;
+  extraIgnore: string[];
+  model: string | null;
+  force: boolean;
 };
 
 export type FileSummary = {
@@ -68,6 +82,9 @@ export type ExistingBottomupDoc = {
   preserveScopeRootMarker: boolean;
   directHash: string | null;
   subtreeHash: string | null;
+  enriched: boolean;
+  enrichedSummaryHash: string | null;
+  enrichedVersion: number | null;
   fileHashes: Record<string, string>;
   childHashes: Record<string, string>;
   directorySummary: string | null;

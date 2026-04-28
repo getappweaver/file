@@ -36,6 +36,19 @@ export function parseExistingBottomupDoc(
   const subtreeHash =
     frontmatter.match(/^subtree_hash:\s*(.+)\s*$/m)?.[1] ?? null;
 
+  const enriched = /^enriched:\s*true\s*$/m.test(frontmatter);
+
+  const enrichedSummaryHash =
+    frontmatter.match(/^enriched_summary_hash:\s*(.+)\s*$/m)?.[1] ?? null;
+
+  const enrichedVersionRaw =
+    frontmatter.match(/^enriched_version:\s*(\d+)\s*$/m)?.[1] ?? null;
+
+  const enrichedVersion =
+    enrichedVersionRaw !== null
+      ? Number.parseInt(enrichedVersionRaw, 10)
+      : null;
+
   const fileHashes: Record<string, string> = {};
   const childHashes: Record<string, string> = {};
   let mode: 'files' | 'children' | null = null;
@@ -107,6 +120,9 @@ export function parseExistingBottomupDoc(
     preserveScopeRootMarker,
     directHash,
     subtreeHash,
+    enriched,
+    enrichedSummaryHash,
+    enrichedVersion,
     fileHashes,
     childHashes,
     directorySummary,

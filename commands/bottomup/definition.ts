@@ -73,15 +73,6 @@ export const bottomupDefinition = (
       required: false,
       choices: null,
     },
-    {
-      name: 'twoPass',
-      summary: 'After generating docs, run a second top-down pass using big-picture context to enrich summaries.',
-      flag: '--two-pass',
-      shortFlag: null,
-      kind: 'boolean',
-      required: false,
-      choices: null,
-    },
   ],
   examples: [
     `${prefix}${alias} bottomup`,
@@ -89,6 +80,5 @@ export const bottomupDefinition = (
     `${prefix}${alias} bottomup plugins/file --scope-root plugins/file`,
     `${prefix}${alias} bottomup src --depth 2`,
     `${prefix}${alias} bottomup docs --model openai/gpt-5.1`,
-    `${prefix}${alias} bottomup plugins/file --scope-root plugins/file --two-pass`,
   ],
 });

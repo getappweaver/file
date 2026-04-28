@@ -30,19 +30,43 @@ export type ParsedTreeCliArgs = {
   maxDepthExplicit: boolean;
   targetDirRelative: string | null;
   extFilter: Set<string> | null;
+  expandedPaths: Set<string>;
 };
+
+function parseExpandedPaths(raw: string): Set<string> {
+  try {
+    const parsed = JSON.parse(decodeURIComponent(raw));
+
+    if (!Array.isArray(parsed)) {
+      return new Set();
+    }
+
+    return new Set(
+      parsed
+        .filter((value): value is string => typeof value === 'string')
+        .filter((value) => value.length > 0),
+    );
+  } catch {
+    return new Set();
+  }
+}
 
 export function parseTreeCliArgs(args: string[]): ParsedTreeCliArgs {
   let maxDepth = 0;
   let maxDepthExplicit = false;
   let targetDirRelative: string | null = null;
   let extFilter: Set<string> | null = null;
+  let expandedPaths = new Set<string>();
 
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--ext' && args[i + 1]) {
       extFilter = new Set(
         args[i + 1].split(',').map((e) => (e.startsWith('.') ? e : `.${e}`)),
       );
+
+      i++;
+    } else if (args[i] === '--expanded' && args[i + 1]) {
+      expandedPaths = parseExpandedPaths(args[i + 1]);
 
       i++;
     } else if (!Number.isNaN(Number(args[i])) && args[i].trim() !== '') {
@@ -53,7 +77,13 @@ export function parseTreeCliArgs(args: string[]): ParsedTreeCliArgs {
     }
   }
 
-  return { maxDepth, maxDepthExplicit, targetDirRelative, extFilter };
+  return {
+    maxDepth,
+    maxDepthExplicit,
+    targetDirRelative,
+    extFilter,
+    expandedPaths,
+  };
 }
 
 type AssertUnderWorkspaceRootProps = {
@@ -199,6 +229,8 @@ export type WorkspaceTreeListRow = {
   name: string;
   relativePosix: string;
   isDirectory: boolean;
+  hasChildren: boolean;
+  loaded: boolean;
   git: WorkspaceGitStatusDecoration | null;
   /** Spaces and `│` segments before the `├──` / `└──` connector. */
   treePrefix: string;
@@ -216,26 +248,31 @@ type CollectTreeRowsProps = {
   depth: number;
   maxDepth: number;
   extFilter: Set<string> | null;
+  expandedPaths: Set<string>;
   rows: WorkspaceTreeListRow[];
 };
 
-function collectWorkspaceTreeRows(props: CollectTreeRowsProps): void {
-  const {
-    workspaceRoot,
-    dirAbs,
-    treePrefix,
-    depth,
-    maxDepth,
-    extFilter,
-    rows,
-  } = props;
+function listVisibleTreeEntryNames(
+  dirAbs: string,
+  extFilter: Set<string> | null,
+): string[] {
+  return readdirSync(dirAbs)
+    .filter((e) => {
+      if (shouldIgnore(e)) {
+        return false;
+      }
 
-  if (depth > maxDepth) {
-    return;
-  }
+      const fullPath = join(dirAbs, e);
+      const isDir = statSync(fullPath).isDirectory();
 
-  const names = readdirSync(dirAbs)
-    .filter((e) => !shouldIgnore(e))
+      if (!isDir && extFilter !== null) {
+        const ext = e.includes('.') ? e.slice(e.lastIndexOf('.')) : '';
+
+        return extFilter.has(ext);
+      }
+
+      return true;
+    })
     .sort((a, b) => {
       const pa = join(dirAbs, a);
       const pb = join(dirAbs, b);
@@ -248,6 +285,21 @@ function collectWorkspaceTreeRows(props: CollectTreeRowsProps): void {
 
       return a.localeCompare(b);
     });
+}
+
+function collectWorkspaceTreeRows(props: CollectTreeRowsProps): void {
+  const {
+    workspaceRoot,
+    dirAbs,
+    treePrefix,
+    depth,
+    maxDepth,
+    extFilter,
+    expandedPaths,
+    rows,
+  } = props;
+
+  const names = listVisibleTreeEntryNames(dirAbs, extFilter);
 
   names.forEach((name, i) => {
     const full = join(dirAbs, name);
@@ -255,27 +307,27 @@ function collectWorkspaceTreeRows(props: CollectTreeRowsProps): void {
     const isDir = st.isDirectory();
     const relPosix = relative(workspaceRoot, full).replace(/\\/g, '/');
 
-    if (!isDir && extFilter !== null) {
-      const ext = name.includes('.') ? name.slice(name.lastIndexOf('.')) : '';
-
-      if (!extFilter.has(ext)) {
-        return;
-      }
-    }
-
     const isLast = i === names.length - 1;
     const connector: '├── ' | '└── ' = isLast ? '└── ' : '├── ';
+
+    const hasChildren = isDir
+      ? listVisibleTreeEntryNames(full, extFilter).length > 0
+      : false;
+
+    const loaded = isDir && (depth < maxDepth || expandedPaths.has(relPosix));
 
     rows.push({
       name,
       relativePosix: relPosix,
       isDirectory: isDir,
+      hasChildren,
+      loaded,
       git: null,
       treePrefix,
       connector,
     });
 
-    if (isDir) {
+    if (loaded) {
       const childPrefix = isLast ? '    ' : '│   ';
 
       collectWorkspaceTreeRows({
@@ -285,6 +337,7 @@ function collectWorkspaceTreeRows(props: CollectTreeRowsProps): void {
         depth: depth + 1,
         maxDepth,
         extFilter,
+        expandedPaths,
         rows,
       });
     }
@@ -300,6 +353,7 @@ type ListWorkspaceDirectoryEntriesProps = {
    * `1` = include immediate children of subfolders, etc.
    */
   maxDepth: number;
+  expandedPaths: Set<string>;
 };
 
 export function listWorkspaceDirectoryEntries(
@@ -323,6 +377,7 @@ export function listWorkspaceDirectoryEntries(
       depth: 0,
       maxDepth: props.maxDepth,
       extFilter: props.extFilter,
+      expandedPaths: props.expandedPaths,
       rows,
     });
 
