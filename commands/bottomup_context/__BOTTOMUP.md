@@ -1,14 +1,12 @@
 ---
-direct_hash: 4257f44b87ef81ef14c9b05045816004ff4fefee255784e233a9aa2b4c4829a0
-subtree_hash: d03fc7198caa796e0dec214bc64ab3f88d348e8b82bfa53b6fa02685dbeef38a
-enriched: true
-enriched_summary_hash: 7de4cb4e9692c3afc7619ba8286bbe45f67197922e901eeb731fa5481b11d1ad
-enriched_version: 1
+direct_hash: 7fa542b1ef51271334a2f1dac8369fc5c36bd0e56be3202d5d76f0b380a59645
+subtree_hash: b14ee555dbcfc5c760d3a3734aa8510764ee04ae4c1dee69042da29312b82902
 files:
-  adapter.ts: bdde998ad4a6259867e5a7417b8b29722539d3ebb36b99b23f1903821cba303f
+  adapter.ts: a59d3b0d6217785da6c844d91822523297ac7a810651363d1f3dee9c4663083a
   definition.ts: d6ac1c4c2ad779b6fa95b614ac8ccf228490ca3cc864333d28875dcc810b5485
 children:
 ---
+
 # commands/bottomup_context
 
 ## Purpose

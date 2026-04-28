@@ -1,15 +1,13 @@
 ---
-direct_hash: 43359ffb39c473e4456c882983e524b19d1373be25fd989a5df87b707273e8d3
-subtree_hash: 0f433f07b16704cbb8c179f7cc3eba5b45208555f8b3c0af4fd85ae3426ab4b5
-enriched: true
-enriched_summary_hash: 7de4cb4e9692c3afc7619ba8286bbe45f67197922e901eeb731fa5481b11d1ad
-enriched_version: 1
+direct_hash: e1e7d7a417ca1640a46edbd7c98f86c6f5d25a2f12d8e1bfbaa4cc0cb8da17e4
+subtree_hash: 7c84390d1c2494223a47eb18e50b600c224e4417ba2c6e708c9481acc1623377
 files:
-  adapter.ts: 1ca1db4d0c93de9ed5ab0002933803504c22a79f31c1b15164cb90ae9272f8e6
+  adapter.ts: 379d28d61a86c8221f71344851347b64aaee3d453c714429953c1fdabb8d7d50
   definition.ts: 1b673ccf9b2859b8393878898b45d15da416097a604b5cc89805b13ebe2932d4
   handler.ts: eeb8818b2c0dda27fa9f841ff40aa7630398f0576b5d462d885d54915672fa85
 children:
 ---
+
 # commands/topdown
 
 ## Purpose

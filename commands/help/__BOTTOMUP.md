@@ -1,14 +1,12 @@
 ---
-direct_hash: e6f5ea222d509a6505b01e9e21d72fdfb46b2cbcdd17e326e2fc06f12c38d694
-subtree_hash: a13ce5e043ef15a7c213779a6ff00ca6532ab78214967dc7dab733c12583ca32
-enriched: true
-enriched_summary_hash: 7de4cb4e9692c3afc7619ba8286bbe45f67197922e901eeb731fa5481b11d1ad
-enriched_version: 1
+direct_hash: 13d894b4c215d6f91878549730e918dc17802d44c95d8e0483bed46b3a35b18d
+subtree_hash: 8eb1ff78fe64c6675af88e07e633f77ba4c28ddccdf8dc09587576099cfabab4
 files:
-  adapter.ts: 2c908917641574c1b3932d150c937e844fdbab420b126fabeb74e0f1bd876c3d
+  adapter.ts: cd4eba3ab35ed1c4b81291525f6b5dd745b41afd1c7e82d79dcb2471366a786c
   module.ts: 4289984e5cfdec74b9c6495436f044a4203395f1c5c1a9b844bf3e4c9c0167a2
 children:
 ---
+
 # commands/help
 
 ## Purpose

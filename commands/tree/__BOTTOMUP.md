@@ -1,11 +1,8 @@
 ---
-direct_hash: 67c0cb9edba5522ebf61d0f863f6e4293790d2208d1583e7bc1de4000150a0d5
-subtree_hash: fb5af23bc4d9507dc11ffc7322cd7f0b3f5cdbcebf8685ec14d669ea2724b362
-enriched: true
-enriched_summary_hash: 7de4cb4e9692c3afc7619ba8286bbe45f67197922e901eeb731fa5481b11d1ad
-enriched_version: 1
+direct_hash: 8f20ef71e41a11ce5526afdd76a48aad7a5431a0aa4010404612e3d438bac7ad
+subtree_hash: 79999ab7455722f7f3123c2582b915492cf088a15d6f69724a1eaafe0e9dce20
 files:
-  adapter.ts: ae82db44558b9327b51d73f0ba8bc5e95a73b8f2e690b23a68b28b431c828312
+  adapter.ts: ef66d4ad91c27457726fe0301f8051697f8fe0fe112f0cc9672a7f38467f91a2
   cli.ts: 7e40d5096b421b0ff9b5164d261b0c73b6fad18adbf8a94cd8daf424d2189043
   definition.ts: 3fad7f3d09e5b7dd8f10fa5b6b16968d0c2583d7f89c37c5d409b5a2beb54ef9
   git-status.ts: b5e81a52a8a29a3ee7e6f43310003d5631ea484f9dc1ff7a13f2e9947aefbf62
@@ -14,6 +11,7 @@ files:
 children:
   renderers: f8cfa5cbc0f7f5ca8856ccfebab995216ac6adf1c1b4406b3077b9ce37f1f38b
 ---
+
 # commands/tree
 
 ## Purpose

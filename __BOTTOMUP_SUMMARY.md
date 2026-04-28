@@ -1,6 +1,6 @@
 ---
-subtree_hash: 261f13bd9f297ec18aa2cc1e5be1dab46daddc01e966958fc0292e45ebdb1478
-summary_hash: 7de4cb4e9692c3afc7619ba8286bbe45f67197922e901eeb731fa5481b11d1ad
+subtree_hash: 2644e8bfc326b1aa8a55f963fce84057ff7f309e67931168d87b4877f8b8f3e0
+summary_hash: 743ce05ef4f96b26c40b268bfa9b24ad9eec8fb860a7dc37a1e86bf62c74e4d4
 depth: 6
 respect_gitignore: true
 exclude_hidden: true
@@ -10,29 +10,27 @@ include_file_summaries: true
 # file
 
 ## Purpose
-dm-bot file plugin providing workspace file operations (tree, view, diff, upload, download, summarize, bottomup). It serves as the top-level entrypoint that connects bot subcommands, AI-facing file tools, and the standalone tree CLI. Unlike draft-based plugins, file operations execute immediately and route each subcommand to its per-command adapter.
+This directory defines the file plugin’s local entrypoints and wiring: plugin initialization, command definition, subcommand dispatch, AI tool exposure, and a small CLI launcher. It delegates concrete behavior to the local ai/, commands/, output/, and types/ subdirectories.
 
 ## Files
-- `.gitignore` - Empty gitignore placeholder
-- `adapter.ts` - Main handler: parses subcommand, routes to adapter, returns text or WebNodeRoot representation
-- `ai.ts` - Exports AI tool schemas (BottomupCall, FileToolCall, SummarizeCall) and executeTool function
-- `definition.ts` - Declares command definition with 9 subcommands: help, upload, download, tree, view, diff, bottomup, bottomup_context, summarize
-- `init.ts` - Plugin initialization: defines FilePlugin with handler, helpText, and commandDefinition
-- `package.json` - dm-bot-file-plugin v1.1.0, coreApiVersion ^7.0.0
-- `README.md` - Usage docs: !file commands and standalone tree CLI with --dm-bot-workspace option
-- `tree` - Executable CLI script that imports and runs tree-cli main function
+- `.gitignore` - Empty placeholder with no ignore rules defined here.
+- `adapter.ts` - Top-level file command dispatcher that validates the subcommand, parses CLI-style input, and routes to the matching local adapter.
+- `ai.ts` - Exports the file plugin’s AI definition by bundling tool schemas, instructions, database access, and tool execution hooks for agents.
+- `definition.ts` - Builds the plugin’s command definition and registers the supported file-related subcommands and help metadata.
+- `init.ts` - Plugin bootstrap that reads package metadata, exposes the BotPlugin object, and connects runtime handling, help text, AI support, and command definitions.
+- `package.json` - Local package metadata for the file plugin, including its dm-bot compatibility and a contributor setup script for git hooks.
+- `README.md` - User-facing overview of the file plugin’s commands plus usage notes for the standalone tree CLI entrypoint.
+- `tree` - Minimal Bun executable that invokes the local tree CLI main function.
 
 ## Notes
-- Plugin alias is derived from the directory name
-- This plugin is stateless compared with draft-backed plugins: it does not use SQLite and mutating commands execute immediately
-- Web source triggers specialized renderers for tree/view/diff, while help/message output goes through the shared representation/rendering path
-- The standalone CLI entry point is the `plugins/file/tree` executable, which wraps the tree command outside chat usage
+- Commands default to help when no subcommand is provided.
+- The plugin alias is derived from the directory name at init time.
+- The tree file is a thin Bun executable that forwards into tree-cli.
 
 ## Subdirectories
-- `ai/` - Zod schemas and execution for AI file tools (bottomup, bottomup_context, summarize)
-- `commands/` - Per-subcommand implementations with adapter/handler/renderer structure
-- `output/` - Message representation builder and tone-aware formatting
-- `renderers/` - Text renderer dispatching to help or message renderers by representation kind
+- `ai/` - AI-facing tool layer for the plugin, including schemas and execution handlers for documentation and summarization workflows.
+- `commands/` - Subcommand implementations and related adapters/helpers for workspace inspection, documentation generation, file transfer, and browsing flows.
+- `types/` - Local TypeScript contracts for the command adapter layer and its parameter shapes.
 
 
 # ai
@@ -55,12 +53,12 @@ AI-facing tool layer for the dm-bot file plugin. Defines the schemas and executi
 # commands
 
 ## Purpose
-This directory contains the file plugin’s subcommand implementations. Its children provide the command-specific adapters, handlers, and related helpers behind the plugin’s workspace inspection, documentation-generation, and file transfer features across CLI, bot, web, and AI-facing flows.
+This directory contains the file plugin’s subcommand implementations. Its children provide the command-specific adapters, handlers, and related helpers behind the plugin’s workspace inspection, documentation-generation, file transfer, and git/file browsing features across CLI, bot, web, and AI-facing flows.
 
 ## Notes
-- This is the plugin’s main subcommand surface: command adapters here route into the per-command logic used by the top-level file plugin entrypoints.
-- Documentation workflows span generation (`bottomup`), context lookup (`bottomup_context`), aggregation (`summarize`), and second-pass enrichment (`topdown`).
-- Several subcommands back both direct CLI usage and structured bot/web navigation flows, especially `tree`, `view`, and `diff`.
+- This is the plugin’s main subcommand surface: the top-level file plugin routes subcommands into the adapters and handlers defined here.
+- Documentation workflows span generation (`bottomup`), context lookup (`bottomup_context`), aggregation (`summarize`), and second-pass enrichment (`topdown`), forming the core of the plugin’s `__BOTTOMUP.md` documentation pipeline.
+- Several subcommands back both direct CLI usage and structured bot/web navigation flows, especially `tree`, `view`, and `diff`; those richer browsing commands also have dedicated web renderers, while most other commands return standard message output.
 - Shared command-level parsing, workspace resolution, and Nostr/Blossom file-transfer helpers live in the local shared utilities directory.
 - Unlike draft-based plugins elsewhere in the repo, these command flows execute immediately rather than creating review drafts.
 
@@ -82,7 +80,7 @@ This directory contains the file plugin’s subcommand implementations. Its chil
 # commands/bottomup
 
 ## Purpose
-Implements the `bottomup` subcommand that generates `__BOTTOMUP.md` files for directory subtrees in a depth-first pass. This is the primary documentation-generation command within the file plugin: it creates the per-directory bottom-up docs that later power `bottomup_context` and `summarize`, and it can also run the initial big-picture enrichment pass used by the broader documentation workflow.
+Implements the `bottomup` subcommand that generates `__BOTTOMUP.md` files for directory subtrees in a depth-first pass. This is the primary documentation-generation command within the file plugin: it creates the per-directory bottom-up docs that later power `bottomup_context` and `summarize`, and it can also trigger the same big-picture enrichment workflow that the standalone `topdown` command exposes as a separate second pass.
 
 ## Files
 - `adapter.ts` - CLI adapter - parses CLI invocation, calls executeBottomupTool, and returns the command result as a formatted message representation
@@ -93,8 +91,9 @@ Implements the `bottomup` subcommand that generates `__BOTTOMUP.md` files for di
 - Entrypoint is `adaptBottomupCommand` in `adapter.ts`
 - Supports `--two-pass` to first generate bottom-up per-directory docs, then refine them with broader subtree context gathered through the summarize flow
 - Writes one `__BOTTOMUP.md` per directory in the target subtree
-- Serves as the producer for the plugin’s documentation pipeline: `bottomup_context` reads these docs for context, `summarize` aggregates them for flat subtree summaries, and the separate `topdown` command can later rerun enrichment against existing bottom-up artifacts
+- Serves as the producer for the plugin’s documentation pipeline: `bottomup_context` reads these docs for context, `summarize` aggregates them for flat subtree summaries, and the separate `topdown` command can later rerun the same enrichment logic against existing bottom-up artifacts
 - The refinement flow depends on summary/cache data managed by the handlers layer, so this command is both the initial doc writer and the first stage in the plugin’s larger bottom-up → summarize → enrich workflow
+- Like the rest of the file plugin’s command surface, it operates immediately within the resolved workspace rather than using the repo’s draft/review pattern
 
 ## Subdirectories
 - `handlers/` - Implements the bottom-up documentation engine for directory trees, including AI summarization, doc parsing/rendering, filesystem operations, option normalization, and recursive tree building with hash-based change detection.
@@ -122,6 +121,7 @@ This directory is the core implementation layer behind the file plugin’s docum
 - Path handling and ignore behavior are workspace-bounded and can respect `.gitignore` plus extra ignore patterns.
 
 
+
 # commands/bottomup_context
 
 ## Purpose
@@ -138,24 +138,26 @@ Command adapter for the `bottomup_context` subcommand. It turns CLI arguments an
 - Uses shared parsing utilities from `../shared/`.
 
 
+
 # commands/diff
 
 ## Purpose
-Implements the diff subcommand for workspace git diff previews. Provides the CLI adapter, command definition, and core handler for generating color-formatted diff output for both tracked and untracked files, and serves as the diff view used by the file plugin’s larger tree/view/diff browsing flow.
+Implements the `diff` subcommand for workspace-bounded git diff previews. It provides the adapter, command definition, and core handler for generating color-formatted previews for tracked and untracked files, and serves as the diff side of the file plugin’s broader tree/view/diff browsing flow across CLI and web surfaces.
 
 ## Files
-- `adapter.ts` - CLI entrypoint - parses path argument, resolves workspace, calls handler, returns message representation
+- `adapter.ts` - CLI entrypoint - parses path argument, resolves the effective workspace root, calls the handler, and returns a message representation
 - `definition.ts` - Subcommand metadata - defines arguments, options, and usage examples for the diff command
-- `handler.ts` - Core diff logic - resolves file paths, invokes git, parses and truncates diff output for preview
+- `handler.ts` - Core diff logic - resolves file paths, invokes git, and parses/truncates diff output for preview
 
 ## Notes
-- Uses git status and git diff to generate per-file diff previews within the active workspace
+- Uses `git status` and `git diff` to generate per-file diff previews within the active workspace selected by the plugin’s shared workspace-resolution flow
 - Supports truncation for large files and binary detection
-- WebUI renderers in the subdirectory provide the structured diff view used by web navigation flows alongside tree/view
-- Fits the plugin’s generic WebNodeRoot rendering model rather than adding plugin-specific frontend behavior
+- Web UI renderers in the subdirectory provide the structured diff view used by web navigation flows alongside `tree` and `view`
+- Fits the repo’s generic `WebNodeRoot` rendering model rather than adding plugin-specific frontend behavior
+- Executes immediately like the rest of the file plugin’s browsing commands; it is a read-oriented inspection surface, not part of the draft-based workflow used by some other plugins
 
 ## Subdirectories
-- `renderers/` - WebUI renderers for diff output with color-coded lines (additions, deletions, context)
+- `renderers/` - Web UI renderers for diff output with color-coded lines (additions, deletions, context)
 
 
 # commands/diff/renderers
@@ -173,6 +175,7 @@ Web UI renderers for the `diff` subcommand’s output. They turn diff results fr
 - Styling is scoped and theme-friendly via CSS variables, matching the broader web renderer approach used by other file-plugin surfaces.
 - Supports the main diff edge cases surfaced by the handler, including errors, truncation, and binary files.
 - Provides a “Back to folder” action so the diff view fits into the larger tree/view/diff navigation flow.
+
 
 
 # commands/download
@@ -193,10 +196,11 @@ Implements the `download` subcommand for importing a shared file into the worksp
 - Detects local file conflicts and preserves divergent incoming content as a `.incoming` file instead of overwriting silently.
 
 
+
 # commands/help
 
 ## Purpose
-Help command adapter and formatting utilities for the dm-bot file plugin’s CLI subcommands. This directory provides the user-facing usage/help surface for the plugin’s command set, turning command definitions into consistent help output for command-line and bot-driven flows.
+Help command adapter and formatting utilities for the dm-bot file plugin’s CLI subcommands. This directory provides the user-facing usage/help surface for the plugin’s command set, turning command definitions into consistent help output for command-line and bot-driven flows across the plugin’s file-browsing, transfer, and documentation commands.
 
 ## Files
 - `adapter.ts` - Adapts parsed CLI invocation into the plugin’s help message representation, so help output goes through the same shared response pipeline as other file commands
@@ -205,13 +209,14 @@ Help command adapter and formatting utilities for the dm-bot file plugin’s CLI
 ## Notes
 - Small adapter/module pattern: the adapter delegates to shared help-line/definition builders
 - Sits at the command-surface layer: it documents the file plugin’s available subcommands rather than implementing file operations itself
+- Help output uses the plugin’s generic message/representation path, unlike the specialized WebNode renderers used by interactive commands such as `tree`, `view`, and `diff`
 - Public exports: `adaptHelpCommand`, `getFileHelpLines`, `getFileCommandDefinition`
 
 
 # commands/shared
 
 ## Purpose
-Shared utilities for file-plugin subcommands. This directory centralizes common CLI coercion, workspace-root resolution, and Nostr/Blossom file-transfer helpers so upload/download and other command adapters can share the same workspace-bounded behavior.
+Shared utilities for file-plugin subcommands. This directory centralizes common CLI coercion, workspace-root resolution, and Nostr/Blossom file-transfer helpers so command adapters across the plugin can share the same workspace-bounded behavior, whether they are invoked from the standalone CLI or through dm-bot.
 
 ## Files
 - `cli-option-parsing.ts` - CLI option coercion helpers for string, int, bool, and CSV-array values used across command adapters
@@ -219,9 +224,11 @@ Shared utilities for file-plugin subcommands. This directory centralizes common 
 - `workspace-root.ts` - Resolves the effective workspace root from dm-bot/core context so CLI and bot-invoked commands operate on the correct target workspace
 
 ## Notes
-- Provides the common parsing layer used by multiple file-plugin subcommands instead of duplicating option handling per command
-- `workspace-root.ts` is part of the bridge between standalone CLI usage and dm-bot-managed workspace selection/state
-- Nostr/Blossom helpers are the shared foundation beneath the plugin’s upload/download flows and integrate with `nostr-tools`
+- Provides the common parsing layer used by multiple file-plugin subcommands instead of duplicating option handling per command.
+- `workspace-root.ts` is part of the bridge between standalone CLI usage and dm-bot-managed workspace selection/state, helping keep all file operations scoped to the intended workspace root.
+- Nostr/Blossom helpers are the shared foundation beneath the plugin’s immediate-execution upload/download flows and integrate with `nostr-tools`.
+- This directory is infrastructure for the command layer rather than a user-facing surface: it supplies the reusable glue that lets different subcommands share consistent path resolution, option handling, and file-transfer behavior.
+
 
 
 # commands/summarize
@@ -241,6 +248,7 @@ Implements the `summarize` CLI command that reads generated bottom-up documentat
 - No AI model invocation in this command; despite sharing option patterns with the broader documentation workflow, it is a read-only file aggregation step.
 
 
+
 # commands/topdown
 
 ## Purpose
@@ -258,10 +266,11 @@ This directory exposes the `topdown` subcommand as the standalone second-pass re
 - Like the rest of the file plugin, it executes immediately and surfaces failures as user-facing command messages in the adapter.
 
 
+
 # commands/tree
 
 ## Purpose
-Tree command implementation for workspace file tree display. It is the primary navigation surface for the file plugin, serving both standalone CLI usage and bot/web file-browsing flows with text tree output and git status decoration.
+Tree command implementation for workspace file tree display. It is the primary navigation surface for the file plugin, serving both standalone CLI usage and bot/web file-browsing flows with text tree output, git status decoration, and the underlying directory data that the interactive tree/view/diff web flow builds on.
 
 ## Files
 - `adapter.ts` - Bot command adapter: parses tree tokens from parsed CLI invocation and delegates to handler for workspace tree output
@@ -275,7 +284,8 @@ Tree command implementation for workspace file tree display. It is the primary n
 - Supports max depth, extension filtering, and optional dm-bot workspace root
 - CLI entrypoint at `cli.ts`, bot adapter at `adapter.ts`
 - Git status decorations are applied to files and propagated to parent directories
-- This command underpins the plugin’s broader navigation flow: web renderers layer tree browsing on top of these results and link into the sibling `view` and `diff` commands
+- This command is the main entry into the file plugin’s browsing experience: specialized web renderers turn its results into navigable UI and connect outward to the sibling `view` and `diff` commands
+- Unlike the plugin’s documentation-generation commands, this is an immediate inspection/navigation surface rather than part of the `__BOTTOMUP.md` pipeline
 - The standalone `plugins/file/tree` executable wraps this command for non-chat usage
 
 ## Subdirectories
@@ -298,6 +308,7 @@ This directory contains the web-facing renderer assets for the tree command. It 
 - This folder is a self-contained renderer surface with no child directories.
 
 
+
 # commands/upload
 
 ## Purpose
@@ -316,24 +327,24 @@ Implements the upload subcommand for immediately encrypting and sharing workspac
 - Builds an `naddr` reference for the uploaded file so it can be shared and downloaded later.
 - Operates on workspace-relative paths, fitting the plugin’s workspace-bounded file access model.
 
-## Subdirectories
 
 
 # commands/view
 
 ## Purpose
-File viewer subcommand. Reads files from the active workspace, detects binary content, handles truncation, and returns either CLI text or generic `WebNodeRoot` output. Within the file plugin, it serves as the file-content counterpart to the tree and diff subcommands in the shared workspace browsing flow.
+File viewer subcommand. Reads files from the active workspace, detects binary content, handles truncation, and returns either CLI text or generic `WebNodeRoot` output. Within the file plugin, it is the file-content surface in the shared tree/view/diff browsing flow used by both direct command execution and web navigation.
 
 ## Files
-- `adapter.ts` - CLI adapter - parses path arg, resolves workspace root, calls handler, formats result as text message
-- `definition.ts` - Subcommand definition - declares 'view' name, required 'path' argument, optional --previous-dir option
-- `handler.ts` - Core logic - validates path, reads file via fs, detects binary, handles truncation, returns ok/error result
+- `adapter.ts` - Command adapter - parses the path argument, resolves the workspace root, calls the handler, and formats the result as a standard message response
+- `definition.ts` - Subcommand definition - declares `view`, its required `path` argument, and the optional `--previous-dir` navigation hint used by the browsing flow
+- `handler.ts` - Core logic - validates workspace-relative paths, reads files, detects binary content, handles truncation, and returns typed success/error results
 
 ## Notes
-- Uses `handler.ts` for the core file-reading and validation logic
-- Web output is provided via the `renderers/` subdirectory as part of the plugin’s shared tree/view/diff navigation flow
-- Paths must be relative to the resolved workspace root, keeping reads workspace-bounded
-- The web path uses the repo’s generic Web UI model rather than plugin-specific frontend behavior
+- `handler.ts` is the core read/validation layer for this command.
+- This command is the file-content counterpart to sibling `tree` and `diff` commands in the plugin’s workspace browsing surface.
+- Web output is provided via the `renderers/` subdirectory and plugs into the broader tree/view/diff navigation flow.
+- Paths must stay relative to the resolved workspace root, keeping reads workspace-bounded.
+- The web path follows the repo’s generic `WebNodeRoot` rendering model rather than adding plugin-specific frontend behavior.
 
 ## Subdirectories
 - `renderers/` - Web renderers for file view output
@@ -355,23 +366,21 @@ Web renderers for the file view command. Contains the scoped styling and WebNode
 - Follows the repo’s plugin-agnostic web rendering model by producing generic WebNodeRoot output rather than frontend-specific behavior
 
 
+
 # output
 
 ## Purpose
-Output layer for the file plugin’s command responses. It defines the shared representation used for non-specialized command output—especially tone-aware message responses—and the text-rendering path that adapters use when a command returns standard CLI text instead of a specialized tree/view/diff Web UI.
+Output layer for the file plugin’s generic command responses. It defines the shared structured representation used for non-specialized output—especially tone-aware message responses—that sibling renderer code later turns into CLI text, while richer tree/view/diff flows bypass this path with dedicated WebNode renderers.
 
 ## Subdirectories
-- `message/` - Message representation layer for standard command responses, with tone-aware structured data and text rendering used by adapters across the plugin when output does not go through specialized tree/view/diff renderers.
+- `message/` - Message representation layer for standard non-specialized command responses, with tone-aware structured data used by adapters across the plugin before the shared text-rendering path converts it to plain output.
+
 
 
 # output/message
 
 ## Purpose
 Message output layer for file-plugin command responses. It provides the generic structured representation used by most non-specialized subcommands before the top-level text renderer dispatches output, with tone (info/success/error), command metadata, and text content. The `renderers/` subdirectory handles simple CLI text output.
-
-## Files
-- `builder.ts` - Creates `MessageRepresentation` objects from command, subcommand, tone, and text params.
-- `schema.ts` - Zod schemas for message data (tone, text) and the full representation using `createRepresentationSchema`.
 
 ## Notes
 - Part of the plugin’s shared output system for command responses.
@@ -383,38 +392,15 @@ Message output layer for file-plugin command responses. It provides the generic 
 - `renderers/` - Simple CLI text renderer returning raw message text without formatting.
 
 
-# output/message/renderers
+
+# types
 
 ## Purpose
-CLI text renderer for the file plugin’s generic message representation. It returns the message body without extra formatting and is used for command responses that flow through the shared representation/rendering path rather than specialized tree/view/diff web renderers.
+This types folder holds local TypeScript contract types for command adapter integration. It defines the parameter shape passed into the file-command adapter layer, tying together message source, parsed CLI input, command metadata, and adapter identity values.
 
 ## Files
-- `cli.ts` - Returns raw `MessageRepresentation.data.text` for terminal/console output
+- `adapter-params.ts` - Defines the typed parameter object used when invoking the file command adapter, bundling prefix, alias, message source, parsed CLI input, and the resolved file-command definition.
 
 ## Notes
-- Minimal pass-through renderer for generic command messages
-- Sits at the end of the plugin’s shared message-output pipeline used by adapters that emit `message` representations
-- Distinct from the structured WebNode-based renderers used by richer file-browsing commands such as tree, view, and diff
-
-
-# renderers
-
-## Purpose
-Unified text-rendering entrypoint for the file plugin’s shared command-output path. It dispatches representation kinds such as help and message to their CLI text renderers, complementing the plugin’s separate WebNode-based renderers used by interactive tree/view/diff flows.
-
-## Files
-- `text.ts` - Dispatcher routing shared representation kinds like `help` and `message` to their respective text renderers for CLI/plain-text output.
-
-## Notes
-- This directory handles only the plugin’s generic text output path, not the specialized web renderers used by commands such as `tree`, `view`, and `diff`.
-- It sits above the concrete help/message renderers and keeps command adapters decoupled from representation-specific text formatting.
-
-## Subdirectories
-- `shared/` - Empty directory.
-
-
-
-# renderers/shared
-
-## Purpose
-Empty shared directory under renderers. No files or subdirectories present.
+- Focused on adapter call contracts, not implementations.
+- Uses imported command and parser types to keep adapter inputs aligned.

@@ -1,16 +1,14 @@
 ---
-direct_hash: 99ffadc09495557e17d35bbd2f8145e6d5d5ae77b140b043c95e5d4318963270
-subtree_hash: 69ad2deaab9cb5ff3b6cd8f3d1b1cc8dbe720c2a06119bebf42681f6b2b67800
-enriched: true
-enriched_summary_hash: 7de4cb4e9692c3afc7619ba8286bbe45f67197922e901eeb731fa5481b11d1ad
-enriched_version: 1
+direct_hash: e7c346e9ab0953e4fa39d76d24bd5da0e67ef6d2dbcf94240cd659db86d90628
+subtree_hash: 5a3e34d393814d4537c8637569d97655d016cf50ccd0de576c34d1542d06e05a
 files:
-  adapter.ts: 150640efeb750f6fb3b952d75bf5c8685b1e70ab6ff414f55d1516c7b2e1928c
+  adapter.ts: 55d720150f0ae006c0ad5d107eccc440f8ae4eea9e96b558ee24a9c38dc70da6
   definition.ts: d05534507d88624373da6fb53b39d0d047c29ae62951f7529dcdad50f6a79a8c
   handler.ts: a6f15431cc8d317b76f90ba2663b587dc7028f653d5f6570cde28740c50ebf9f
   sync.ts: 0c7ae80bad212b06a25e45222abe53c6ffa6f2989d6d837b87e1a8ea7938b5e8
 children:
 ---
+
 # commands/upload
 
 ## Purpose
@@ -28,5 +26,3 @@ Implements the upload subcommand for immediately encrypting and sharing workspac
 - Skips upload when the local file hash matches the remote version, avoiding unnecessary re-uploads.
 - Builds an `naddr` reference for the uploaded file so it can be shared and downloaded later.
 - Operates on workspace-relative paths, fitting the plugin’s workspace-bounded file access model.
-
-## Subdirectories

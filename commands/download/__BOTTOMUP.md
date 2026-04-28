@@ -1,16 +1,14 @@
 ---
-direct_hash: 0c9b0cdb1a4f91e99a2d66d17af3f97f3f5407d7c6ef350e670a10c78e66cfa4
-subtree_hash: c2129fd68a2207394531a92326bde4ecbf2e34969b4e8f06890f89a5dfdf9bc7
-enriched: true
-enriched_summary_hash: 7de4cb4e9692c3afc7619ba8286bbe45f67197922e901eeb731fa5481b11d1ad
-enriched_version: 1
+direct_hash: 164e46e79da07ee8f373e7cffff670927dc17cf314e566cc43e1231bb6f12fbd
+subtree_hash: 09aa49f038e8245444a6994f5fe0633baffc97f13ec4d6037ccbf13fd9b96154
 files:
-  adapter.ts: 3d179441784dc65bc8fcac2d38242d36f01f3be0c6a49bf96a2b481588f8b6f8
+  adapter.ts: 7adb97a646ca3cac68f1a58105371405e944c9c37dd364829b7c0cf34380f197
   definition.ts: 29005d59a4bca632610ab7f8227a5aa39c29cecd4f403e7af415faebedfb8232
   handler.ts: 29f6a798406c3081c3a685b85c01c1caa782c05d3cce6a6c1656bfc63a73f270
   sync.ts: 58a9cf4523b00cc43940b23ae4df8a5831baa13e8cda1689996c03bfbc03b4b2
 children:
 ---
+
 # commands/download
 
 ## Purpose

@@ -1,15 +1,13 @@
 ---
-direct_hash: eb5ef3ec18279787f71c88de6ac2d66b7ec05a53a6e2c86219785163821826d8
-subtree_hash: 6aa8814f93c43023a8543a45254ae7405943bfc236937514eb034a593393be5b
-enriched: true
-enriched_summary_hash: 7de4cb4e9692c3afc7619ba8286bbe45f67197922e901eeb731fa5481b11d1ad
-enriched_version: 1
+direct_hash: 66c534469dac0132514470953fc63c38ec6d58379a1c9dbf464895f931072324
+subtree_hash: faae2d5f274c393f72ae6692aabedd4e68354b909601112a33bb75e45dd5725e
 files:
-  adapter.ts: ea356aea3352e8453486a2b82e82f04bb4fb1cf4f6cb703cea0f07421fa84cbe
+  adapter.ts: 3a74bcccdc1ea742d409defef8b7f4cfb6e74936a06fbb5bb5e335c0c9cb532b
   definition.ts: 23efc00ddf161c4a4e12515aadf752c14a84e5d557aa213ed2a08b84715faea7
   handler.ts: 9db34d48bde00460df6ddc909244fad8efee54e89cd7b01a94c5a949288352c0
 children:
 ---
+
 # commands/summarize
 
 ## Purpose
