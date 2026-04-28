@@ -1,7 +1,6 @@
-import type { CommandDefinition } from '@src/system/command-definition';
-import type { ParsedCliInvocation } from '@src/system/parser-cli';
+import type { WebNodeRoot } from '@src/web/ui-schema';
 
-import { createMessageRepresentation } from '../../output/message/builder';
+import type { FileCommandAdapterParams } from '../../types/adapter-params';
 
 import { resolveFileWorkspaceRoot } from '../shared/workspace-root';
 
@@ -10,6 +9,7 @@ import {
   handleDiffCommand,
   type FileDiffResult,
 } from './handler';
+import { renderFileDiffWeb } from './renderers/web';
 
 function fileDiffResultToCliText(result: FileDiffResult): string {
   if (result.type === 'error') {
@@ -31,11 +31,9 @@ function fileDiffResultToCliText(result: FileDiffResult): string {
   return parts.join('\n');
 }
 
-export function adaptDiffCommand(params: {
-  alias: string;
-  parsed: ParsedCliInvocation;
-  command: CommandDefinition;
-}) {
+export function adaptDiffCommand(
+  params: FileCommandAdapterParams,
+): string | WebNodeRoot {
   const pathRaw = params.parsed.arguments.path;
 
   const path =
@@ -44,25 +42,36 @@ export function adaptDiffCommand(params: {
       : null;
 
   if (path === null) {
-    return createMessageRepresentation({
-      command: params.alias,
-      subcommand: 'diff',
-      tone: 'error',
-      text: 'Missing required path argument.',
-    });
+    return params.source === 'web'
+      ? renderFileDiffWeb({
+          commandAlias: params.alias,
+          result: { type: 'error', text: 'Missing required path argument.' },
+          previousDir: null,
+        })
+      : 'Missing required path argument.';
   }
+
+  const previousDirRaw = params.parsed.options.previousDir;
+
+  const previousDir =
+    typeof previousDirRaw === 'string' && previousDirRaw.trim().length > 0
+      ? previousDirRaw.trim()
+      : null;
 
   let workspaceRoot: string;
 
   try {
     workspaceRoot = resolveFileWorkspaceRoot();
   } catch (err) {
-    return createMessageRepresentation({
-      command: params.alias,
-      subcommand: 'diff',
-      tone: 'error',
-      text: String(err instanceof Error ? err.message : err),
-    });
+    const text = String(err instanceof Error ? err.message : err);
+
+    return params.source === 'web'
+      ? renderFileDiffWeb({
+          commandAlias: params.alias,
+          result: { type: 'error', text },
+          previousDir,
+        })
+      : text;
   }
 
   const result = handleDiffCommand({
@@ -71,10 +80,13 @@ export function adaptDiffCommand(params: {
     maxBytes: defaultDiffMaxBytes(),
   });
 
-  return createMessageRepresentation({
-    command: params.alias,
-    subcommand: 'diff',
-    tone: result.type === 'error' ? 'error' : 'info',
-    text: fileDiffResultToCliText(result),
-  });
+  if (params.source === 'web') {
+    return renderFileDiffWeb({
+      commandAlias: params.alias,
+      result,
+      previousDir,
+    });
+  }
+
+  return fileDiffResultToCliText(result);
 }

@@ -1,7 +1,4 @@
-import type { CommandDefinition } from '@src/system/command-definition';
-import type { ParsedCliInvocation } from '@src/system/parser-cli';
-
-import { createMessageRepresentation } from '../../output/message/builder';
+import type { FileCommandAdapterParams } from '../../types/adapter-params';
 
 import { executeBottomupContextTool } from '../bottomup/handler';
 import {
@@ -12,11 +9,9 @@ import {
 } from '../shared/cli-option-parsing';
 import { resolveFileWorkspaceRoot } from '../shared/workspace-root';
 
-export async function adaptBottomupContextCommand(params: {
-  alias: string;
-  command: CommandDefinition;
-  parsed: ParsedCliInvocation;
-}) {
+export async function adaptBottomupContextCommand(
+  params: FileCommandAdapterParams,
+): Promise<string> {
   void params.command;
   try {
     const result = await executeBottomupContextTool({
@@ -40,18 +35,8 @@ export async function adaptBottomupContextCommand(params: {
       },
     });
 
-    return createMessageRepresentation({
-      command: params.alias,
-      subcommand: 'bottomup_context',
-      tone: 'info',
-      text: result,
-    });
+    return result;
   } catch (err) {
-    return createMessageRepresentation({
-      command: params.alias,
-      subcommand: 'bottomup_context',
-      tone: 'error',
-      text: String(err instanceof Error ? err.message : err),
-    });
+    return String(err instanceof Error ? err.message : err);
   }
 }

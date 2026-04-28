@@ -1,7 +1,6 @@
-import type { CommandDefinition } from '@src/system/command-definition';
-import type { ParsedCliInvocation } from '@src/system/parser-cli';
+import type { WebNodeRoot } from '@src/web/ui-schema';
 
-import { createMessageRepresentation } from '../../output/message/builder';
+import type { FileCommandAdapterParams } from '../../types/adapter-params';
 
 import { resolveFileWorkspaceRoot } from '../shared/workspace-root';
 
@@ -10,6 +9,7 @@ import {
   handleViewCommand,
   type FileViewResult,
 } from './handler';
+import { renderFileViewWeb } from './renderers/web';
 
 function fileViewResultToCliText(result: FileViewResult): string {
   if (result.type === 'error') {
@@ -34,11 +34,9 @@ function fileViewResultToCliText(result: FileViewResult): string {
   return parts.join('\n');
 }
 
-export function adaptViewCommand(params: {
-  alias: string;
-  parsed: ParsedCliInvocation;
-  command: CommandDefinition;
-}) {
+export function adaptViewCommand(
+  params: FileCommandAdapterParams,
+): string | WebNodeRoot {
   const pathRaw = params.parsed.arguments.path;
 
   const path =
@@ -47,25 +45,36 @@ export function adaptViewCommand(params: {
       : null;
 
   if (path === null) {
-    return createMessageRepresentation({
-      command: params.alias,
-      subcommand: 'view',
-      tone: 'error',
-      text: 'Missing required path argument.',
-    });
+    return params.source === 'web'
+      ? renderFileViewWeb({
+          commandAlias: params.alias,
+          result: { type: 'error', text: 'Missing required path argument.' },
+          previousDir: null,
+        })
+      : 'Missing required path argument.';
   }
+
+  const previousDirRaw = params.parsed.options.previousDir;
+
+  const previousDir =
+    typeof previousDirRaw === 'string' && previousDirRaw.trim().length > 0
+      ? previousDirRaw.trim()
+      : null;
 
   let workspaceRoot: string;
 
   try {
     workspaceRoot = resolveFileWorkspaceRoot();
   } catch (err) {
-    return createMessageRepresentation({
-      command: params.alias,
-      subcommand: 'view',
-      tone: 'error',
-      text: String(err instanceof Error ? err.message : err),
-    });
+    const text = String(err instanceof Error ? err.message : err);
+
+    return params.source === 'web'
+      ? renderFileViewWeb({
+          commandAlias: params.alias,
+          result: { type: 'error', text },
+          previousDir,
+        })
+      : text;
   }
 
   const result = handleViewCommand({
@@ -74,19 +83,13 @@ export function adaptViewCommand(params: {
     maxBytes: defaultViewMaxBytes(),
   });
 
-  if (result.type === 'error') {
-    return createMessageRepresentation({
-      command: params.alias,
-      subcommand: 'view',
-      tone: 'error',
-      text: result.text,
+  if (params.source === 'web') {
+    return renderFileViewWeb({
+      commandAlias: params.alias,
+      result,
+      previousDir,
     });
   }
 
-  return createMessageRepresentation({
-    command: params.alias,
-    subcommand: 'view',
-    tone: 'info',
-    text: fileViewResultToCliText(result),
-  });
+  return fileViewResultToCliText(result);
 }

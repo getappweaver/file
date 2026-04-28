@@ -1,16 +1,10 @@
-import type { CommandDefinition } from '@src/system/command-definition';
-import type { ParsedCliInvocation } from '@src/system/parser-cli';
-
-import { createMessageRepresentation } from '../../output/message/builder';
+import type { FileCommandAdapterParams } from '../../types/adapter-params';
 
 import { handleUploadCommand } from './handler';
 
-export async function adaptUploadCommand(params: {
-  prefix: string;
-  alias: string;
-  parsed: ParsedCliInvocation;
-  command: CommandDefinition;
-}) {
+export async function adaptUploadCommand(
+  params: FileCommandAdapterParams,
+): Promise<string> {
   const filePathArg =
     typeof params.parsed.arguments.filePath === 'string'
       ? params.parsed.arguments.filePath
@@ -29,27 +23,12 @@ export async function adaptUploadCommand(params: {
   });
 
   if (result.type === 'usage') {
-    return createMessageRepresentation({
-      command: params.alias,
-      subcommand: 'upload',
-      tone: 'error',
-      text: result.text,
-    });
+    return result.text;
   }
 
   if (result.type === 'error') {
-    return createMessageRepresentation({
-      command: params.alias,
-      subcommand: 'upload',
-      tone: 'error',
-      text: result.text,
-    });
+    return result.text;
   }
 
-  return createMessageRepresentation({
-    command: params.alias,
-    subcommand: 'upload',
-    tone: result.tone,
-    text: result.text,
-  });
+  return result.text;
 }

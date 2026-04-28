@@ -1,9 +1,16 @@
-import type { CommandDefinition } from '@src/system/command-definition';
 import type { ParsedCliInvocation } from '@src/system/parser-cli';
+import type { WebNodeRoot } from '@src/web/ui-schema';
 
-import { createMessageRepresentation } from '../../output/message/builder';
+import type { FileCommandAdapterParams } from '../../types/adapter-params';
+
+import { resolveFileWorkspaceRoot } from '../shared/workspace-root';
 
 import { handleTreeCommand } from './handler';
+import { renderFileTreeBrowserWeb } from './renderers/web';
+import {
+  listWorkspaceDirectoryEntries,
+  parseTreeCliArgs,
+} from './workspace-tree';
 
 function toStringArray(value: unknown): string[] {
   if (Array.isArray(value)) {
@@ -34,31 +41,55 @@ export function parseTreeTokensFromParsed(parsed: ParsedCliInvocation): {
   return { restTokens, extOption, expandedOption };
 }
 
-export function adaptTreeCommand(params: {
-  alias: string;
-  parsed: ParsedCliInvocation;
-  command: CommandDefinition;
-}) {
+export function adaptTreeCommand(
+  params: FileCommandAdapterParams,
+): string | WebNodeRoot {
   const { restTokens, extOption } = parseTreeTokensFromParsed(params.parsed);
+  const expandedRaw = params.parsed.options.expanded;
+
+  const expandedOption =
+    typeof expandedRaw === 'string' && expandedRaw.trim().length > 0
+      ? expandedRaw
+      : null;
+
+  if (params.source === 'web') {
+    const merged = [
+      ...restTokens,
+      ...(extOption !== null ? ['--ext', extOption] : []),
+      ...(expandedOption !== null ? ['--expanded', expandedOption] : []),
+    ];
+
+    const {
+      maxDepth,
+      maxDepthExplicit,
+      targetDirRelative,
+      extFilter,
+      expandedPaths,
+    } = parseTreeCliArgs(merged);
+
+    const workspaceRoot = resolveFileWorkspaceRoot();
+    const listMaxDepth = maxDepthExplicit ? maxDepth : 0;
+
+    const list = listWorkspaceDirectoryEntries({
+      workspaceRoot,
+      targetDirRelative,
+      extFilter,
+      maxDepth: listMaxDepth,
+      expandedPaths,
+    });
+
+    return renderFileTreeBrowserWeb({
+      commandAlias: params.alias,
+      list,
+      extOption,
+      expandedPaths,
+    });
+  }
 
   const result = handleTreeCommand({
     restTokens,
     extOption,
   });
 
-  if (result.type === 'error') {
-    return createMessageRepresentation({
-      command: params.alias,
-      subcommand: 'tree',
-      tone: 'error',
-      text: result.text,
-    });
-  }
-
-  return createMessageRepresentation({
-    command: params.alias,
-    subcommand: 'tree',
-    tone: 'info',
-    text: result.text,
-  });
+  return result.text;
 }

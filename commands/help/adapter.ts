@@ -1,15 +1,9 @@
 import { buildHelpSubcommandRepresentation } from '@src/commands/help/command';
-import type { CommandDefinition } from '@src/system/command-definition';
-import type { ParsedCliInvocation } from '@src/system/parser-cli';
+import { renderHelpText } from '@src/commands/help/renderers/text';
 
-import { createMessageRepresentation } from '../../output/message/builder';
+import type { FileCommandAdapterParams } from '../../types/adapter-params';
 
-export function adaptHelpCommand(params: {
-  prefix: string;
-  alias: string;
-  parsed: ParsedCliInvocation;
-  command: CommandDefinition;
-}) {
+export function adaptHelpCommand(params: FileCommandAdapterParams): string {
   const result = buildHelpSubcommandRepresentation({
     prefix: params.prefix,
     alias: params.alias,
@@ -18,13 +12,8 @@ export function adaptHelpCommand(params: {
   });
 
   if (result.type === 'error') {
-    return createMessageRepresentation({
-      command: params.alias,
-      subcommand: 'help',
-      tone: 'error',
-      text: result.message,
-    });
+    return result.message;
   }
 
-  return result.representation;
+  return renderHelpText(result.representation, { prefix: params.prefix });
 }
