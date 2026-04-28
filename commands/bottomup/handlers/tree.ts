@@ -72,6 +72,50 @@ function computeCurrentDocHashes(params: {
   };
 }
 
+function renderEnrichedFrontmatter(params: {
+  existingDoc: NonNullable<ReturnType<typeof parseExistingBottomupDoc>>;
+  summaryHash: string | null;
+}): string {
+  const { existingDoc, summaryHash } = params;
+  const frontmatterLines = ['---'];
+
+  if (existingDoc.preserveScopeRootMarker) {
+    frontmatterLines.push('scope_root: true');
+  }
+
+  frontmatterLines.push(`direct_hash: ${existingDoc.directHash}`);
+  frontmatterLines.push(`subtree_hash: ${existingDoc.subtreeHash}`);
+  frontmatterLines.push('enriched: true');
+
+  if (summaryHash !== null) {
+    frontmatterLines.push(`enriched_summary_hash: ${summaryHash}`);
+  }
+
+  frontmatterLines.push(
+    `enriched_version: ${String(TOPDOWN_ENRICHED_VERSION)}`,
+  );
+
+  frontmatterLines.push('files:');
+
+  for (const [name, hash] of Object.entries(existingDoc.fileHashes).sort(
+    (a, b) => a[0].localeCompare(b[0]),
+  )) {
+    frontmatterLines.push(`  ${name}: ${hash}`);
+  }
+
+  frontmatterLines.push('children:');
+
+  for (const [name, hash] of Object.entries(existingDoc.childHashes).sort(
+    (a, b) => a[0].localeCompare(b[0]),
+  )) {
+    frontmatterLines.push(`  ${name}: ${hash}`);
+  }
+
+  frontmatterLines.push('---');
+
+  return frontmatterLines.join('\n');
+}
+
 function canReuseExistingDoc(params: {
   existingDoc: ReturnType<typeof parseExistingBottomupDoc>;
   fileNames: string[];
@@ -415,44 +459,28 @@ export async function refineDirectoryNodePass2(params: {
 
       if (refined === null) {
         log.info(`bottomup: pass2 no change ${params.directoryRelativePosix}`);
+
+        writeFileSync(
+          docPath,
+          `${renderEnrichedFrontmatter({
+            existingDoc,
+            summaryHash: params.summaryHash,
+          })}\n${body}`,
+          'utf8',
+        );
+
         skipped++;
       } else {
         // Rebuild frontmatter from existing doc, replace body only
-        const frontmatterLines = ['---'];
+        const newContent =
+          renderEnrichedFrontmatter({
+            existingDoc,
+            summaryHash: params.summaryHash,
+          }) +
+          '\n' +
+          refined +
+          '\n';
 
-        if (existingDoc.preserveScopeRootMarker) {
-          frontmatterLines.push('scope_root: true');
-        }
-
-        frontmatterLines.push(`direct_hash: ${existingDoc.directHash}`);
-        frontmatterLines.push(`subtree_hash: ${existingDoc.subtreeHash}`);
-        frontmatterLines.push('enriched: true');
-
-        if (params.summaryHash !== null) {
-          frontmatterLines.push(`enriched_summary_hash: ${params.summaryHash}`);
-        }
-
-        frontmatterLines.push(
-          `enriched_version: ${String(TOPDOWN_ENRICHED_VERSION)}`,
-        );
-
-        frontmatterLines.push('files:');
-        for (const [name, hash] of Object.entries(existingDoc.fileHashes).sort(
-          (a, b) => a[0].localeCompare(b[0]),
-        )) {
-          frontmatterLines.push(`  ${name}: ${hash}`);
-        }
-
-        frontmatterLines.push('children:');
-        for (const [name, hash] of Object.entries(existingDoc.childHashes).sort(
-          (a, b) => a[0].localeCompare(b[0]),
-        )) {
-          frontmatterLines.push(`  ${name}: ${hash}`);
-        }
-
-        frontmatterLines.push('---');
-
-        const newContent = frontmatterLines.join('\n') + '\n' + refined + '\n';
         writeFileSync(docPath, newContent, 'utf8');
         log.info(`bottomup: pass2 updated ${params.directoryRelativePosix}`);
         updated++;

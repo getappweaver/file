@@ -1,25 +1,28 @@
 ---
-direct_hash: b8321b3fa7cdb1213a44b4537e7c65af6a269cb5eb2f2b5bb73858eceef61474
-subtree_hash: 4cb74b8b82808afb3e1f5d79176f677733092853ed180697dcdc7fd8c1ca7ae8
+direct_hash: eaf297d8b71f4b17acd715fdf92bad6494d4d2c7dfa0c3a5dfe4fefce8ee545a
+subtree_hash: 261f13bd9f297ec18aa2cc1e5be1dab46daddc01e966958fc0292e45ebdb1478
+enriched: true
+enriched_summary_hash: 7de4cb4e9692c3afc7619ba8286bbe45f67197922e901eeb731fa5481b11d1ad
+enriched_version: 1
 files:
   .gitignore: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
-  adapter.ts: 265cc417dc2203777e4d164a88d288eade6a92d7ece26881b04c8fd36f8afb1e
+  adapter.ts: d2cc609466acc59ef82cbb6dcff5c683515f2c479510c53cf2b1ddbb22295b4e
   ai.ts: d1d0d139b489d61da31f5c4961c4feb4939eadb44ab3edee920b389af8e543b2
-  definition.ts: c5fe58a49ffbaf4dd71bbbf454ab9c51bbd482efd23ce4326da15a5e982c4403
+  definition.ts: 2a13bd07dfc9596275741dc08dbe6923dfb839d141b65c2fe0a30ffc61fcf7dd
   init.ts: 795942547b2337c54efb990ad65e2f866132758c30c039b5726a3709b15c9306
   package.json: 33356dc3833c6ed216e2343bbca4eeb433198db7818e37fa8a49631952430f5d
   README.md: 181e4ad9622d790fffcc1a08a49319bbc368cee3c2cbe8613dab5ea0497bae93
   tree: 01a411c3d1b2a3a0852b87bd6003dbd7e4556faa87998135b50f8bc8e683c06b
 children:
-  ai: d225db5c181197e2a1462fcfe468f065d8ba975424c4d89aef15d7027bedb23a
-  commands: 40d9d942c79f9eaa6b42179cf1d0f0fe2e23b133e8d4bfe9cb0a1d826c21fa47
+  ai: 569deb369460b8a3365739fc522c95e4964afd7e21705bbd3191b433b3f8a75e
+  commands: 8129728015280d89003fa5264b7dcbe6915d3ced509256b4631896386699d43e
   output: 7f736272f2dab1f269ec2c23ab3720afb38db4a2805584798f1966d0b70b938e
   renderers: 27dc7388c008afd4eb926393e8e002801241b8fa804d6ca6af205c196555d8f0
 ---
 # file
 
 ## Purpose
-dm-bot file plugin providing workspace file operations (tree, view, diff, upload, download, summarize, bottomup). It serves as the top-level entrypoint that connects bot subcommands, AI-facing file tools, and the standalone tree CLI. Unlike draft-based plugins, file operations execute immediately and route each subcommand to its per-command adapter.
+dm-bot file plugin providing workspace file operations and documentation-oriented tooling across tree, view, diff, upload, download, bottomup, bottomup_context, and summarize. It is the top-level entrypoint that connects bot subcommands, AI-facing file tools, and the standalone tree CLI, combining everyday workspace browsing/file transfer with the bottom-up documentation pipeline used to generate, read, and aggregate `__BOTTOMUP.md` context. Unlike draft-based plugins, file operations execute immediately and route each subcommand to its per-command adapter.
 
 ## Files
 - `.gitignore` - Empty gitignore placeholder
@@ -34,6 +37,7 @@ dm-bot file plugin providing workspace file operations (tree, view, diff, upload
 ## Notes
 - Plugin alias is derived from the directory name
 - This plugin is stateless compared with draft-backed plugins: it does not use SQLite and mutating commands execute immediately
+- It has two main roles in the wider bot: workspace browsing/sharing (`tree`, `view`, `diff`, `upload`, `download`) and documentation support (`bottomup`, `bottomup_context`, `summarize`) for generating and consuming `__BOTTOMUP.md` subtree docs
 - Web source triggers specialized renderers for tree/view/diff, while help/message output goes through the shared representation/rendering path
 - The standalone CLI entry point is the `plugins/file/tree` executable, which wraps the tree command outside chat usage
 

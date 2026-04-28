@@ -1,6 +1,9 @@
 ---
 direct_hash: 67c0cb9edba5522ebf61d0f863f6e4293790d2208d1583e7bc1de4000150a0d5
 subtree_hash: fb5af23bc4d9507dc11ffc7322cd7f0b3f5cdbcebf8685ec14d669ea2724b362
+enriched: true
+enriched_summary_hash: 7de4cb4e9692c3afc7619ba8286bbe45f67197922e901eeb731fa5481b11d1ad
+enriched_version: 1
 files:
   adapter.ts: ae82db44558b9327b51d73f0ba8bc5e95a73b8f2e690b23a68b28b431c828312
   cli.ts: 7e40d5096b421b0ff9b5164d261b0c73b6fad18adbf8a94cd8daf424d2189043
@@ -11,11 +14,10 @@ files:
 children:
   renderers: f8cfa5cbc0f7f5ca8856ccfebab995216ac6adf1c1b4406b3077b9ce37f1f38b
 ---
-
 # commands/tree
 
 ## Purpose
-Tree command implementation for workspace file tree display. Provides both CLI and bot subcommand interfaces with text/tree and git status decoration support.
+Tree command implementation for workspace file tree display. It is the primary navigation surface for the file plugin, serving both standalone CLI usage and bot/web file-browsing flows with text tree output, git status decoration, and the underlying directory data that the interactive tree/view/diff web flow builds on.
 
 ## Files
 - `adapter.ts` - Bot command adapter: parses tree tokens from parsed CLI invocation and delegates to handler for workspace tree output
@@ -27,8 +29,11 @@ Tree command implementation for workspace file tree display. Provides both CLI a
 
 ## Notes
 - Supports max depth, extension filtering, and optional dm-bot workspace root
-- CLI entrypoint at cli.ts, bot adapter at adapter.ts
-- Git status decorations applied to files and parent directories
+- CLI entrypoint at `cli.ts`, bot adapter at `adapter.ts`
+- Git status decorations are applied to files and propagated to parent directories
+- This command is the main entry into the file plugin’s browsing experience: specialized web renderers turn its results into navigable UI and connect outward to the sibling `view` and `diff` commands
+- Unlike the plugin’s documentation-generation commands, this is an immediate inspection/navigation surface rather than part of the `__BOTTOMUP.md` pipeline
+- The standalone `plugins/file/tree` executable wraps this command for non-chat usage
 
 ## Subdirectories
 - `renderers/` - Web UI renderers for file tree browser with git status badges, navigation controls, and clickable links

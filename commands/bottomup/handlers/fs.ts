@@ -3,7 +3,7 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'fs';
 import { dirname, join, relative, resolve } from 'path';
 
 import type { DirectoryEntry } from './types';
-import { BOTTOMUP_FILE } from './types';
+import { BOTTOMUP_FILE, BOTTOMUP_SUMMARY_FILE } from './types';
 
 const HIDDEN_FILE_ALLOWLIST = new Set([
   '.editorconfig',
@@ -171,7 +171,7 @@ export class IgnoreFilter {
       }
     }
 
-    if (entry.name === BOTTOMUP_FILE) {
+    if (entry.name === BOTTOMUP_FILE || entry.name === BOTTOMUP_SUMMARY_FILE) {
       return true;
     }
 
