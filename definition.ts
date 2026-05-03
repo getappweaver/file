@@ -5,6 +5,7 @@ import { bottomupDefinition } from './commands/bottomup/definition';
 import { bottomupContextDefinition } from './commands/bottomup_context/definition';
 import { diffDefinition } from './commands/diff/definition';
 import { downloadDefinition } from './commands/download/definition';
+import { searchDefinition } from './commands/search/definition';
 import { summarizeDefinition } from './commands/summarize/definition';
 import { topdownDefinition } from './commands/topdown/definition';
 import { treeDefinition } from './commands/tree/definition';
@@ -22,11 +23,12 @@ export const commandDefinition = (
   subcommands: [
     createHelpSubcommandDefinition(prefix, alias, {
       topicArgSummary:
-        'Optional subcommand name: upload, download, tree, view, diff, bottomup, bottomup_context, summarize, or topdown.',
+        'Optional subcommand name: upload, download, tree, search, view, diff, bottomup, bottomup_context, summarize, or topdown.',
       exampleTopics: [
         'upload',
         'download',
         'tree',
+        'search',
         'view',
         'diff',
         'bottomup',
@@ -38,6 +40,7 @@ export const commandDefinition = (
     uploadDefinition(prefix, alias),
     downloadDefinition(prefix, alias),
     treeDefinition(prefix, alias),
+    searchDefinition(prefix, alias),
     viewDefinition(prefix, alias),
     diffDefinition(prefix, alias),
     bottomupDefinition(prefix, alias),

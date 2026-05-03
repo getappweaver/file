@@ -2,7 +2,7 @@
 // plugins/file/workspace-tree.ts — text tree of workspace (no DB)
 // ---------------------------------------------------------------------------
 
-import { readdirSync, statSync } from 'fs';
+import { existsSync, readFileSync, readdirSync, statSync } from 'fs';
 import { join, relative, resolve } from 'path';
 
 import {
@@ -23,6 +23,12 @@ const IGNORE = new Set([
 ]);
 
 const IGNORE_EXT = new Set(['.sqlite', '.sqlite-wal', '.sqlite-shm']);
+
+type IgnoreRule = {
+  baseDirAbs: string;
+  regex: RegExp;
+  directoryOnly: boolean;
+};
 
 export type ParsedTreeCliArgs = {
   maxDepth: number;
@@ -121,19 +127,95 @@ function shouldIgnore(name: string): boolean {
   return IGNORE_EXT.has(ext);
 }
 
+function escapeRegex(value: string): string {
+  return value.replace(/[|\\{}()[\]^$+?.]/g, '\\$&');
+}
+
+function compileGitignorePattern(pattern: string): RegExp {
+  const normalized = pattern.startsWith('/') ? pattern.slice(1) : pattern;
+
+  const escaped = normalized
+    .replace(/\*\*/g, '::DOUBLE_STAR::')
+    .replace(/\*/g, '::STAR::')
+    .split('/')
+    .map((part) => escapeRegex(part))
+    .join('/')
+    .replace(/::DOUBLE_STAR::/g, '.*')
+    .replace(/::STAR::/g, '[^/]*');
+
+  return pattern.includes('/')
+    ? new RegExp(`^${escaped}(?:/.*)?$`)
+    : new RegExp(`^(?:${escaped}|.*/${escaped})(?:/.*)?$`);
+}
+
+function gitignoreRulesForDir(props: {
+  dirAbs: string;
+  workspaceRoot: string;
+}): IgnoreRule[] {
+  const gitignorePath = join(props.dirAbs, '.gitignore');
+
+  if (!existsSync(gitignorePath)) {
+    return [];
+  }
+
+  const isWorkspaceRoot =
+    resolve(props.dirAbs) === resolve(props.workspaceRoot);
+
+  return readFileSync(gitignorePath, 'utf8')
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0 && !line.startsWith('#'))
+    .filter((line) => !line.startsWith('!'))
+    .filter((line) => !(isWorkspaceRoot && line === 'plugins/'))
+    .map((line) => {
+      const directoryOnly = line.endsWith('/');
+      const pattern = directoryOnly ? line.slice(0, -1) : line;
+
+      return {
+        baseDirAbs: props.dirAbs,
+        regex: compileGitignorePattern(pattern),
+        directoryOnly,
+      };
+    });
+}
+
+function isIgnoredByGitignoreRules(props: {
+  fullPath: string;
+  isDirectory: boolean;
+  rules: IgnoreRule[];
+}): boolean {
+  return props.rules.some((rule) => {
+    if (rule.directoryOnly && !props.isDirectory) {
+      return false;
+    }
+
+    const rel = relative(rule.baseDirAbs, props.fullPath).replace(/\\/g, '/');
+
+    return rel.length > 0 && rule.regex.test(rel);
+  });
+}
+
 function collectTreeLines(props: {
+  workspaceRoot: string;
   dir: string;
   prefix: string;
   depth: number;
   maxDepth: number;
   extFilter: Set<string> | null;
+  gitignoreRules: IgnoreRule[];
   lines: string[];
 }): void {
-  const { dir, prefix, depth, maxDepth, extFilter, lines } = props;
+  const { workspaceRoot, dir, prefix, depth, maxDepth, extFilter, lines } =
+    props;
 
   if (depth > maxDepth) {
     return;
   }
+
+  const gitignoreRules = [
+    ...props.gitignoreRules,
+    ...gitignoreRulesForDir({ dirAbs: dir, workspaceRoot }),
+  ];
 
   const entries = readdirSync(dir)
     .filter((e) => {
@@ -143,6 +225,16 @@ function collectTreeLines(props: {
 
       const fullPath = join(dir, e);
       const isDir = statSync(fullPath).isDirectory();
+
+      if (
+        isIgnoredByGitignoreRules({
+          fullPath,
+          isDirectory: isDir,
+          rules: gitignoreRules,
+        })
+      ) {
+        return false;
+      }
 
       if (!isDir && extFilter) {
         const ext = e.slice(e.lastIndexOf('.'));
@@ -178,11 +270,13 @@ function collectTreeLines(props: {
 
     if (isDir) {
       collectTreeLines({
+        workspaceRoot,
         dir: fullPath,
         prefix: prefix + childPrefix,
         depth: depth + 1,
         maxDepth,
         extFilter,
+        gitignoreRules,
         lines,
       });
     }
@@ -206,11 +300,13 @@ export function buildWorkspaceTree({
   const lines: string[] = [targetDir];
 
   collectTreeLines({
+    workspaceRoot,
     dir: targetDir,
     prefix: '',
     depth: 0,
     maxDepth,
     extFilter,
+    gitignoreRules: [],
     lines,
   });
 
@@ -249,12 +345,14 @@ type CollectTreeRowsProps = {
   maxDepth: number;
   extFilter: Set<string> | null;
   expandedPaths: Set<string>;
+  gitignoreRules: IgnoreRule[];
   rows: WorkspaceTreeListRow[];
 };
 
 function listVisibleTreeEntryNames(
   dirAbs: string,
   extFilter: Set<string> | null,
+  gitignoreRules: IgnoreRule[],
 ): string[] {
   return readdirSync(dirAbs)
     .filter((e) => {
@@ -264,6 +362,16 @@ function listVisibleTreeEntryNames(
 
       const fullPath = join(dirAbs, e);
       const isDir = statSync(fullPath).isDirectory();
+
+      if (
+        isIgnoredByGitignoreRules({
+          fullPath,
+          isDirectory: isDir,
+          rules: gitignoreRules,
+        })
+      ) {
+        return false;
+      }
 
       if (!isDir && extFilter !== null) {
         const ext = e.includes('.') ? e.slice(e.lastIndexOf('.')) : '';
@@ -296,10 +404,20 @@ function collectWorkspaceTreeRows(props: CollectTreeRowsProps): void {
     maxDepth,
     extFilter,
     expandedPaths,
+    gitignoreRules,
     rows,
   } = props;
 
-  const names = listVisibleTreeEntryNames(dirAbs, extFilter);
+  const nextGitignoreRules = [
+    ...gitignoreRules,
+    ...gitignoreRulesForDir({ dirAbs, workspaceRoot }),
+  ];
+
+  const names = listVisibleTreeEntryNames(
+    dirAbs,
+    extFilter,
+    nextGitignoreRules,
+  );
 
   names.forEach((name, i) => {
     const full = join(dirAbs, name);
@@ -311,7 +429,8 @@ function collectWorkspaceTreeRows(props: CollectTreeRowsProps): void {
     const connector: '├── ' | '└── ' = isLast ? '└── ' : '├── ';
 
     const hasChildren = isDir
-      ? listVisibleTreeEntryNames(full, extFilter).length > 0
+      ? listVisibleTreeEntryNames(full, extFilter, nextGitignoreRules).length >
+        0
       : false;
 
     const loaded = isDir && (depth < maxDepth || expandedPaths.has(relPosix));
@@ -338,6 +457,7 @@ function collectWorkspaceTreeRows(props: CollectTreeRowsProps): void {
         maxDepth,
         extFilter,
         expandedPaths,
+        gitignoreRules: nextGitignoreRules,
         rows,
       });
     }
@@ -378,6 +498,7 @@ export function listWorkspaceDirectoryEntries(
       maxDepth: props.maxDepth,
       extFilter: props.extFilter,
       expandedPaths: props.expandedPaths,
+      gitignoreRules: [],
       rows,
     });
 

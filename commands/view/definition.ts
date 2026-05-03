@@ -25,7 +25,14 @@ export const viewDefinition = (
       kind: 'string',
       required: false,
       shortFlag: null,
-      choices: null,
+    },
+    {
+      name: 'line',
+      summary: 'Line number to highlight in the web file viewer.',
+      flag: '--line',
+      kind: 'integer',
+      required: false,
+      shortFlag: null,
     },
   ],
   examples: [

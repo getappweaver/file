@@ -5,12 +5,12 @@ export const diffDefinition = (
   alias: string,
 ): SubcommandDefinition => ({
   name: 'diff',
-  summary: 'Show a simple git diff preview for one workspace file.',
+  summary: 'Show a simple git diff preview for one workspace path.',
   aliases: [],
   arguments: [
     {
       name: 'path',
-      summary: 'File path relative to workspace root.',
+      summary: 'File or folder path relative to workspace root.',
       kind: 'string',
       required: true,
       variadic: false,
@@ -22,6 +22,15 @@ export const diffDefinition = (
       summary: 'Tree directory to return to in the web UI.',
       flag: '--previous-dir',
       kind: 'string',
+      required: false,
+      shortFlag: null,
+      choices: null,
+    },
+    {
+      name: 'timeline',
+      summary: 'Render web output with the timeline diff card.',
+      flag: '--timeline',
+      kind: 'boolean',
       required: false,
       shortFlag: null,
       choices: null,

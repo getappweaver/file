@@ -1,6 +1,12 @@
 import type { WebAction, WebNode, WebNodeRoot } from '@src/web/ui-schema';
 import { stack, textNode } from '@src/web/widgets';
 
+import {
+  openTimelineAction,
+  openTimelineButton,
+  renderFileBreadcrumb,
+} from '../../shared/web-breadcrumb';
+
 import type {
   ListWorkspaceDirectoryResult,
   WorkspaceGitStatusDecoration,
@@ -70,14 +76,6 @@ function viewFileAction(props: ViewFileActionProps): WebAction {
     options: {
       previousDir: props.previousDir,
     },
-    refresh: {
-      command: props.commandAlias,
-      subcommand: 'view',
-      arguments: arguments_,
-      options: {
-        previousDir: props.previousDir,
-      },
-    },
   };
 }
 
@@ -99,22 +97,70 @@ function viewDiffAction(props: ViewDiffActionProps): WebAction {
   };
 }
 
-function parentDisplayPosix(displayPath: string): string | null {
-  if (displayPath === '.' || displayPath === '') {
-    return null;
+function viewTimelineDiffAction(props: ViewDiffActionProps): WebAction {
+  return {
+    type: 'command',
+    command: props.commandAlias,
+    subcommand: 'diff',
+    arguments: { path: props.relativePosix },
+    options: {
+      previousDir: props.previousDir,
+      timeline: true,
+    },
+    recordInTimeline: false,
+    surface: 'timeline',
+  };
+}
+
+function searchFormAction(props: {
+  commandAlias: string;
+  displayPath: string;
+  extOption: string | null;
+}): WebAction {
+  const options: Record<string, string> = {};
+
+  if (props.displayPath !== '.') {
+    options.path = props.displayPath;
   }
 
-  const idx = displayPath.lastIndexOf('/');
-
-  if (idx < 0) {
-    return '.';
+  if (props.extOption !== null) {
+    options.ext = props.extOption;
   }
 
-  if (idx === 0) {
-    return '.';
-  }
+  return {
+    type: 'command',
+    command: props.commandAlias,
+    subcommand: 'search',
+    arguments: {},
+    options,
+    presentation: 'form',
+  };
+}
 
-  return displayPath.slice(0, idx);
+function searchFormButton(action: WebAction): WebNode {
+  return {
+    type: 'element',
+    tag: 'button',
+    props: {
+      label: 'Advanced search',
+      action,
+      stopPropagation: true,
+      className: 'web-file-advanced-search-button',
+    },
+  };
+}
+
+function timelineDiffButton(action: WebAction): WebNode {
+  return {
+    type: 'element',
+    tag: 'button',
+    props: {
+      label: 'Show folder diff',
+      action,
+      stopPropagation: true,
+      className: 'web-file-timeline-diff-button',
+    },
+  };
 }
 
 const TREE_LINK_BUTTON_CLASS = 'web-tree-link';
@@ -124,6 +170,7 @@ function treeLinkButton(props: {
   action: WebAction;
   variant: 'dir' | 'file' | 'nav';
   className?: string;
+  storyTargetId?: string;
 }): WebNode {
   const variantClass =
     props.variant === 'dir'
@@ -140,6 +187,7 @@ function treeLinkButton(props: {
       action: props.action,
       stopPropagation: true,
       className: `${TREE_LINK_BUTTON_CLASS} ${variantClass}${props.className ? ` ${props.className}` : ''}`,
+      ...(props.storyTargetId ? { storyTargetId: props.storyTargetId } : {}),
     },
   };
 }
@@ -147,6 +195,7 @@ function treeLinkButton(props: {
 function treeGitStatusBadge(props: {
   status: WorkspaceGitStatusDecoration;
   action: WebAction | null;
+  storyTargetId?: string;
 }): WebNode {
   if (props.action !== null) {
     return {
@@ -157,6 +206,7 @@ function treeGitStatusBadge(props: {
         action: props.action,
         stopPropagation: true,
         className: `web-tree-git-badge web-tree-git-badge-button web-tree-git-${props.status.kind} web-tree-git-scope-${props.status.scope}`,
+        ...(props.storyTargetId ? { storyTargetId: props.storyTargetId } : {}),
       },
     };
   }
@@ -187,6 +237,13 @@ function rowsWithDepth(
 
 function fileTreeItemId(relativePosix: string): string {
   return `file-tree-item-${relativePosix.replace(/[^a-zA-Z0-9_-]+/g, '_')}`;
+}
+
+function fileTreeStoryTargetId(
+  kind: 'open' | 'diff',
+  relativePosix: string,
+): string {
+  return `file-tree-${kind}-${relativePosix.replace(/[^a-zA-Z0-9_-]+/g, '_')}`;
 }
 
 function fileTreeSummaryLine(params: {
@@ -247,6 +304,7 @@ function fileTreeSummaryLine(params: {
             action,
             variant: row.isDirectory ? 'dir' : 'file',
             className: gitClassName,
+            storyTargetId: fileTreeStoryTargetId('open', row.relativePosix),
           }),
         ],
       },
@@ -255,6 +313,10 @@ function fileTreeSummaryLine(params: {
             treeGitStatusBadge({
               status: row.git,
               action: gitBadgeAction,
+              storyTargetId:
+                gitBadgeAction === null
+                  ? undefined
+                  : fileTreeStoryTargetId('diff', row.relativePosix),
             }),
           ]
         : []),
@@ -321,7 +383,10 @@ function buildFileTreeItemsFromRows(params: {
       props: {
         id: fileTreeItemId(row.relativePosix),
         ui: 'file-tree-item',
-        defaultExpanded: row.loaded,
+        filterText: `${row.name}\n${row.relativePosix}${row.git ? `\n${row.git.label}\n${row.git.kind}\n${row.git.scope}` : ''}`,
+        filterName: row.name,
+        filterPath: row.relativePosix,
+        defaultExpanded: false,
         lazyLoaded: row.loaded,
         ...(row.isDirectory && row.hasChildren && !row.loaded
           ? {
@@ -390,71 +455,50 @@ export function renderFileTreeBrowserWeb(
 
   const { rows, displayPath } = props.list;
 
-  const navLinks: WebNode[] = [
-    treeLinkButton({
-      label: 'Root',
-      action: treeRefreshAction({
-        commandAlias: props.commandAlias,
-        rest: [],
-        extOption: props.extOption,
-        expandedPaths: new Set(),
-      }),
-      variant: 'nav',
-    }),
-  ];
+  const openTreeOptions: Record<string, unknown> = {};
 
-  const parentPath = parentDisplayPosix(displayPath);
-
-  if (parentPath !== null) {
-    navLinks.push(
-      {
-        type: 'element',
-        tag: 'text',
-        props: { className: 'web-file-tree-nav-sep' },
-        children: [textNode(' ')],
-      },
-      treeLinkButton({
-        label: 'Up',
-        action: treeRefreshAction({
-          commandAlias: props.commandAlias,
-          rest: parentPath === '.' ? [] : [parentPath],
-          extOption: props.extOption,
-          expandedPaths: new Set(),
-        }),
-        variant: 'nav',
-      }),
-    );
+  if (props.extOption !== null) {
+    openTreeOptions.ext = props.extOption;
   }
-
-  const pathLabel = displayPath === '.' ? '.' : displayPath;
 
   const controlsRow: WebNode = {
     type: 'element',
     tag: 'row',
     props: {
       gap: 'sm',
-      align: 'start',
+      align: 'between',
       itemAlign: 'baseline',
       className: 'web-file-tree-controls',
     },
     children: [
-      {
-        type: 'element',
-        tag: 'text',
-        props: {
-          className: 'web-file-tree-path',
-          tone: 'muted',
-          whiteSpace: 'pre-wrap',
-        },
-        children: [textNode(pathLabel)],
-      },
-      {
-        type: 'element',
-        tag: 'text',
-        props: { className: 'web-file-tree-nav-sep' },
-        children: [textNode('·')],
-      },
-      ...navLinks,
+      renderFileBreadcrumb({
+        commandAlias: props.commandAlias,
+        path: displayPath,
+        className: 'web-file-tree-breadcrumb',
+        extOption: props.extOption,
+      }),
+      searchFormButton(
+        searchFormAction({
+          commandAlias: props.commandAlias,
+          displayPath,
+          extOption: props.extOption,
+        }),
+      ),
+      timelineDiffButton(
+        viewTimelineDiffAction({
+          commandAlias: props.commandAlias,
+          relativePosix: displayPath,
+          previousDir: displayPath,
+        }),
+      ),
+      openTimelineButton(
+        openTimelineAction({
+          commandAlias: props.commandAlias,
+          subcommand: 'tree',
+          arguments_: { rest: displayPath === '.' ? [] : [displayPath] },
+          options: openTreeOptions,
+        }),
+      ),
     ],
   };
 
@@ -495,6 +539,9 @@ export function renderFileTreeBrowserWeb(
         props: {
           gap: 'xs',
           ui: 'file-workspace-tree',
+          filterable: true,
+          filterIndexKey: `file-tree:${displayPath}:ext=${props.extOption ?? ''}:rows=${rows.length}`,
+          filterPlaceholder: 'Filter files',
         },
         children: treeBodyChildren,
       },
@@ -508,7 +555,7 @@ export function renderFileTreeBrowserWeb(
       gap: 'md',
       className: 'web-file-tree-modal-layout',
     },
-    children: [treeBlock, controlsRow],
+    children: [controlsRow, treeBlock],
   };
 
   return {

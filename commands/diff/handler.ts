@@ -3,6 +3,8 @@ import { relative, resolve } from 'path';
 
 import { spawnSync } from 'bun';
 
+import type { AgentFileDiff } from '@src/backends/agent-stream-chunk';
+
 const DEFAULT_MAX_DIFF_BYTES = 256 * 1024;
 
 type FileDiffLineKind = 'header' | 'hunk' | 'add' | 'remove' | 'context';
@@ -38,6 +40,15 @@ type HandleDiffCommandProps = {
   maxBytes: number;
 };
 
+export type TimelineDiffResult =
+  | {
+      type: 'ok';
+      relativePath: string;
+      files: AgentFileDiff[];
+      truncated: boolean;
+    }
+  | FileDiffErr;
+
 function resolveWorkspaceFilePath({
   workspaceRoot,
   relativePath,
@@ -59,7 +70,7 @@ function resolveWorkspaceFilePath({
 
   return {
     abs,
-    relPosix: under.replace(/\\/g, '/'),
+    relPosix: under.length === 0 ? '.' : under.replace(/\\/g, '/'),
   };
 }
 
@@ -167,6 +178,89 @@ function buildUntrackedDiff(props: {
   };
 }
 
+function parseGitPatchFiles(patchText: string): AgentFileDiff[] {
+  return patchText
+    .split(/(?=^diff --git )/m)
+    .map((chunk) => chunk.trimEnd())
+    .filter((chunk) => chunk.trim().length > 0)
+    .map((chunk) => {
+      const lines = chunk.split('\n');
+      const header = lines[0] ?? '';
+      const headerMatch = /^diff --git a\/(.+) b\/(.+)$/.exec(header);
+      const plusLine = lines.find((line) => line.startsWith('+++ b/'));
+      const minusLine = lines.find((line) => line.startsWith('--- a/'));
+
+      const file =
+        plusLine?.slice('+++ b/'.length) ??
+        minusLine?.slice('--- a/'.length) ??
+        headerMatch?.[2] ??
+        headerMatch?.[1] ??
+        '(unknown)';
+
+      const additions = lines.filter(
+        (line) => line.startsWith('+') && !line.startsWith('+++'),
+      ).length;
+
+      const deletions = lines.filter(
+        (line) => line.startsWith('-') && !line.startsWith('---'),
+      ).length;
+
+      const status = lines.some((line) => line.startsWith('new file mode '))
+        ? 'added'
+        : lines.some((line) => line.startsWith('deleted file mode '))
+          ? 'deleted'
+          : 'modified';
+
+      return {
+        file,
+        patch: chunk,
+        additions,
+        deletions,
+        status,
+      };
+    });
+}
+
+function untrackedDiffToTimelineFile(
+  result: FileDiffResult,
+): AgentFileDiff | null {
+  if (result.type === 'error') {
+    return null;
+  }
+
+  return {
+    file: result.relativePath,
+    patch: result.lines.map((line) => line.text).join('\n'),
+    additions: result.lines.filter((line) => line.kind === 'add').length,
+    deletions: 0,
+    status: 'added',
+  };
+}
+
+function listUntrackedFiles(props: {
+  workspaceRoot: string;
+  relPosix: string;
+}): string[] {
+  const result = spawnSync(
+    ['git', 'ls-files', '--others', '--exclude-standard', '--', props.relPosix],
+    {
+      cwd: props.workspaceRoot,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    },
+  );
+
+  if (result.exitCode !== 0) {
+    return [];
+  }
+
+  return Buffer.from(result.stdout)
+    .toString('utf8')
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
+}
+
 export function handleDiffCommand(
   props: HandleDiffCommandProps,
 ): FileDiffResult {
@@ -256,6 +350,80 @@ export function handleDiffCommand(
     lines: parseDiffLines(truncatedPatch.text),
     truncated: truncatedPatch.truncated,
     binary: truncatedPatch.text.includes('Binary files '),
+  };
+}
+
+export function handleTimelineDiffCommand(
+  props: HandleDiffCommandProps,
+): TimelineDiffResult {
+  const resolved = resolveWorkspaceFilePath({
+    workspaceRoot: props.workspaceRoot,
+    relativePath: props.relativePath,
+  });
+
+  if ('type' in resolved) {
+    return resolved;
+  }
+
+  const { abs, relPosix } = resolved;
+  const exists = existsSync(abs);
+  const isDirectory = exists ? statSync(abs).isDirectory() : false;
+
+  const diffResult = spawnSync(
+    ['git', 'diff', '--no-ext-diff', '--no-color', 'HEAD', '--', relPosix],
+    {
+      cwd: props.workspaceRoot,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    },
+  );
+
+  if (diffResult.exitCode !== 0) {
+    const stderr = Buffer.from(diffResult.stderr).toString('utf8').trim();
+
+    return {
+      type: 'error',
+      text: stderr.length > 0 ? stderr : `Could not diff ${relPosix}.`,
+    };
+  }
+
+  const patchText = Buffer.from(diffResult.stdout).toString('utf8');
+  const truncatedPatch = truncateUtf8Text(patchText, props.maxBytes);
+  const files = parseGitPatchFiles(truncatedPatch.text);
+
+  for (const untrackedPath of listUntrackedFiles({
+    workspaceRoot: props.workspaceRoot,
+    relPosix,
+  })) {
+    const untrackedAbs = resolve(props.workspaceRoot, untrackedPath);
+
+    if (existsSync(untrackedAbs) && !statSync(untrackedAbs).isDirectory()) {
+      const file = untrackedDiffToTimelineFile(
+        buildUntrackedDiff({
+          relativePath: untrackedPath,
+          absPath: untrackedAbs,
+          maxBytes: props.maxBytes,
+        }),
+      );
+
+      if (file !== null) {
+        files.push(file);
+      }
+    }
+  }
+
+  if (files.length === 0) {
+    return {
+      type: 'error',
+      text: `No git diff available for ${relPosix}${isDirectory ? '/' : ''}.`,
+    };
+  }
+
+  return {
+    type: 'ok',
+    relativePath: relPosix,
+    files,
+    truncated: truncatedPatch.truncated,
   };
 }
 

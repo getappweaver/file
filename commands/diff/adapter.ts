@@ -1,4 +1,4 @@
-import type { WebNodeRoot } from '@src/web/ui-schema';
+import type { ClientViewRoot, WebNodeRoot } from '@src/web/ui-schema';
 
 import type { FileCommandAdapterParams } from '../../types/adapter-params';
 
@@ -7,9 +7,13 @@ import { resolveFileWorkspaceRoot } from '../shared/workspace-root';
 import {
   defaultDiffMaxBytes,
   handleDiffCommand,
+  handleTimelineDiffCommand,
   type FileDiffResult,
 } from './handler';
-import { renderFileDiffWeb } from './renderers/web';
+import {
+  renderFileDiffWeb,
+  renderTimelineDiffClientView,
+} from './renderers/web';
 
 function fileDiffResultToCliText(result: FileDiffResult): string {
   if (result.type === 'error') {
@@ -33,7 +37,7 @@ function fileDiffResultToCliText(result: FileDiffResult): string {
 
 export function adaptDiffCommand(
   params: FileCommandAdapterParams,
-): string | WebNodeRoot {
+): string | WebNodeRoot | ClientViewRoot {
   const pathRaw = params.parsed.arguments.path;
 
   const path =
@@ -58,6 +62,9 @@ export function adaptDiffCommand(
       ? previousDirRaw.trim()
       : null;
 
+  const timelineRaw = params.parsed.options.timeline;
+  const timeline = timelineRaw === true || timelineRaw === 'true';
+
   let workspaceRoot: string;
 
   try {
@@ -72,6 +79,17 @@ export function adaptDiffCommand(
           previousDir,
         })
       : text;
+  }
+
+  if (params.source === 'web' && timeline) {
+    return renderTimelineDiffClientView({
+      commandAlias: params.alias,
+      result: handleTimelineDiffCommand({
+        workspaceRoot,
+        relativePath: path,
+        maxBytes: defaultDiffMaxBytes(),
+      }),
+    });
   }
 
   const result = handleDiffCommand({

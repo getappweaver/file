@@ -8,6 +8,7 @@ import { adaptDiffCommand } from './commands/diff/adapter';
 import { adaptDownloadCommand } from './commands/download/adapter';
 import { adaptHelpCommand } from './commands/help/adapter';
 import { getFileCommandDefinition } from './commands/help/module';
+import { adaptSearchCommand } from './commands/search/adapter';
 import { adaptSummarizeCommand } from './commands/summarize/adapter';
 import { adaptTopdownCommand } from './commands/topdown/adapter';
 import { adaptTreeCommand } from './commands/tree/adapter';
@@ -20,6 +21,7 @@ type FileSubcommand =
   | 'upload'
   | 'download'
   | 'tree'
+  | 'search'
   | 'view'
   | 'diff'
   | 'bottomup'
@@ -43,6 +45,7 @@ const subcommandAdapters: Record<FileSubcommand, FileCommandAdapter> = {
   upload: adaptUploadCommand,
   download: adaptDownloadCommand,
   tree: adaptTreeCommand,
+  search: adaptSearchCommand,
   view: adaptViewCommand,
   diff: adaptDiffCommand,
   bottomup: adaptBottomupCommand,
@@ -76,6 +79,7 @@ function isFileSubcommand(value: string): value is FileSubcommand {
     value === 'upload' ||
     value === 'download' ||
     value === 'tree' ||
+    value === 'search' ||
     value === 'view' ||
     value === 'diff' ||
     value === 'bottomup' ||

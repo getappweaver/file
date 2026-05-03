@@ -12,6 +12,7 @@ import {
   getFileCommandDefinition,
   getFileHelpLines,
 } from './commands/help/module';
+import { fileStories } from './stories';
 
 const pluginDir = import.meta.dir;
 const alias = basename(pluginDir);
@@ -48,4 +49,5 @@ export const FilePlugin: BotPlugin = {
   aiDefinition,
   commandDefinition: (prefix: string, pluginAlias: string) =>
     getFileCommandDefinition(prefix, pluginAlias),
+  stories: fileStories,
 };

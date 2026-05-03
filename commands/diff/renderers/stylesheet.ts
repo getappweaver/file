@@ -1,5 +1,10 @@
 import type { WebStyleSheet } from '@src/web/ui-schema';
 
+import {
+  fileBreadcrumbCss,
+  fileOpenTimelineButtonCss,
+} from '../../shared/web-breadcrumb';
+
 export const filePluginDiffStylesheet: WebStyleSheet = {
   id: 'file-plugin-diff',
   cssText: `
@@ -45,5 +50,17 @@ export const filePluginDiffStylesheet: WebStyleSheet = {
   color: var(--color-text, #d4d4d4);
   opacity: 0.82;
 }
+
+.web-file-diff-header.web-row {
+  flex-wrap: wrap;
+}
+
+.web-file-diff-breadcrumb {
+  flex: 1;
+}
+
+${fileBreadcrumbCss}
+
+${fileOpenTimelineButtonCss}
 `.trim(),
 };

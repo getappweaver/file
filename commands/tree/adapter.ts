@@ -59,16 +59,11 @@ export function adaptTreeCommand(
       ...(expandedOption !== null ? ['--expanded', expandedOption] : []),
     ];
 
-    const {
-      maxDepth,
-      maxDepthExplicit,
-      targetDirRelative,
-      extFilter,
-      expandedPaths,
-    } = parseTreeCliArgs(merged);
+    const { targetDirRelative, extFilter, expandedPaths } =
+      parseTreeCliArgs(merged);
 
     const workspaceRoot = resolveFileWorkspaceRoot();
-    const listMaxDepth = maxDepthExplicit ? maxDepth : 0;
+    const listMaxDepth = Number.POSITIVE_INFINITY;
 
     const list = listWorkspaceDirectoryEntries({
       workspaceRoot,

@@ -34,6 +34,20 @@ function fileViewResultToCliText(result: FileViewResult): string {
   return parts.join('\n');
 }
 
+function parsePositiveInteger(value: unknown): number | null {
+  if (typeof value === 'number' && Number.isInteger(value) && value > 0) {
+    return value;
+  }
+
+  if (typeof value !== 'string') {
+    return null;
+  }
+
+  const parsed = Number(value);
+
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
+}
+
 export function adaptViewCommand(
   params: FileCommandAdapterParams,
 ): string | WebNodeRoot {
@@ -50,6 +64,7 @@ export function adaptViewCommand(
           commandAlias: params.alias,
           result: { type: 'error', text: 'Missing required path argument.' },
           previousDir: null,
+          highlightLine: null,
         })
       : 'Missing required path argument.';
   }
@@ -60,6 +75,8 @@ export function adaptViewCommand(
     typeof previousDirRaw === 'string' && previousDirRaw.trim().length > 0
       ? previousDirRaw.trim()
       : null;
+
+  const highlightLine = parsePositiveInteger(params.parsed.options.line);
 
   let workspaceRoot: string;
 
@@ -73,6 +90,7 @@ export function adaptViewCommand(
           commandAlias: params.alias,
           result: { type: 'error', text },
           previousDir,
+          highlightLine,
         })
       : text;
   }
@@ -88,6 +106,7 @@ export function adaptViewCommand(
       commandAlias: params.alias,
       result,
       previousDir,
+      highlightLine,
     });
   }
 

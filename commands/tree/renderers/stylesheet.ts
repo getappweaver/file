@@ -1,5 +1,10 @@
 import type { WebStyleSheet } from '@src/web/ui-schema';
 
+import {
+  fileBreadcrumbCss,
+  fileOpenTimelineButtonCss,
+} from '../../shared/web-breadcrumb';
+
 export const filePluginTreeStylesheet: WebStyleSheet = {
   id: 'file-plugin-tree',
   cssText: `
@@ -68,9 +73,74 @@ export const filePluginTreeStylesheet: WebStyleSheet = {
   margin-top: 0.2rem;
 }
 
+.web-file-tree-breadcrumb {
+  flex: 1;
+}
+
 .web-file-tree-nav-sep {
   opacity: 0.45;
   user-select: none;
+}
+
+.web-button.web-file-advanced-search-button,
+.web-button.web-file-timeline-diff-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.55rem;
+  height: 1.45rem;
+  min-height: 0;
+  padding: 0 !important;
+  border: 1px solid #000;
+  border-radius: 0;
+  background: color-mix(in srgb, var(--color-accent, #8ecae6) 86%, transparent) !important;
+  box-shadow: 3px 3px 0 var(--color-panel-shadow, rgba(0, 0, 0, 0.7));
+  color: #000;
+  font-size: 0;
+  line-height: 1;
+  transform: none;
+}
+
+.web-button.web-file-advanced-search-button::before,
+.web-button.web-file-timeline-diff-button::before {
+  content: '';
+  display: block;
+  width: 0.82rem;
+  height: 0.82rem;
+  background: currentColor;
+  mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M208 32c97.2 0 176 78.8 176 176 0 40.8-13.9 78.4-37.2 108.2l112.5 112.5-30.6 30.6-112.5-112.5C286.4 370.1 248.8 384 208 384 110.8 384 32 305.2 32 208S110.8 32 208 32Zm0 43C134.5 75 75 134.5 75 208s59.5 133 133 133 133-59.5 133-133S281.5 75 208 75Z'/%3E%3C/svg%3E") center / contain no-repeat;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M208 32c97.2 0 176 78.8 176 176 0 40.8-13.9 78.4-37.2 108.2l112.5 112.5-30.6 30.6-112.5-112.5C286.4 370.1 248.8 384 208 384 110.8 384 32 305.2 32 208S110.8 32 208 32Zm0 43C134.5 75 75 134.5 75 208s59.5 133 133 133 133-59.5 133-133S281.5 75 208 75Z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.web-button.web-file-advanced-search-button:hover,
+.web-button.web-file-timeline-diff-button:hover,
+.web-button.web-file-timeline-diff-button:focus-visible,
+.web-button.web-file-advanced-search-button:focus-visible {
+  background: var(--color-accent, #8ecae6) !important;
+  color: #000;
+  box-shadow: 3px 3px 0 var(--color-panel-shadow, rgba(0, 0, 0, 0.7));
+  transform: none;
+}
+
+.web-button.web-file-advanced-search-button:active,
+.web-button.web-file-timeline-diff-button:active {
+  background: color-mix(in srgb, var(--color-accent, #8ecae6) 72%, #000) !important;
+  box-shadow: 1px 1px 0 var(--color-panel-shadow, rgba(0, 0, 0, 0.7));
+  transform: translate(2px, 2px);
+}
+
+.web-button.web-file-timeline-diff-button {
+  background: color-mix(in srgb, var(--color-warning, #f2cc60) 86%, transparent) !important;
+}
+
+.web-button.web-file-timeline-diff-button::before {
+  mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M160 64h192v48H160V64Zm-48 96h288v48H112v-48Zm48 96h192v48H160v-48Zm-48 96h288v48H112v-48Z'/%3E%3C/svg%3E") center / contain no-repeat;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M160 64h192v48H160V64Zm-48 96h288v48H112v-48Zm48 96h192v48H160v-48Zm-48 96h288v48H112v-48Z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.web-button.web-file-timeline-diff-button:hover,
+.web-button.web-file-timeline-diff-button:focus-visible {
+  background: var(--color-warning, #f2cc60) !important;
 }
 
 .web-button.web-tree-link {
@@ -229,5 +299,9 @@ export const filePluginTreeStylesheet: WebStyleSheet = {
 .web-tree-git-badge.web-tree-git-renamed {
   color: var(--color-info, #75beff);
 }
+
+${fileBreadcrumbCss}
+
+${fileOpenTimelineButtonCss}
 `.trim(),
 };

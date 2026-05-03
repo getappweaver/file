@@ -1,7 +1,13 @@
-import type { WebNode, WebNodeRoot } from '@src/web/ui-schema';
+import type { ClientViewRoot, WebNode, WebNodeRoot } from '@src/web/ui-schema';
 import { row, stack, textBlock } from '@src/web/widgets';
 
-import type { FileDiffErr, FileDiffOk } from '../handler';
+import {
+  openTimelineAction,
+  openTimelineButton,
+  renderFileBreadcrumb,
+} from '../../shared/web-breadcrumb';
+
+import type { FileDiffErr, FileDiffOk, TimelineDiffResult } from '../handler';
 
 import { filePluginDiffStylesheet } from './stylesheet';
 
@@ -10,26 +16,6 @@ type RenderFileDiffWebProps = {
   result: FileDiffOk | FileDiffErr;
   previousDir: string | null;
 };
-
-function parentTreeAction(
-  commandAlias: string,
-  relativePath: string,
-  previousDir: string | null,
-) {
-  const slash = relativePath.lastIndexOf('/');
-  const fallbackParentPath = slash >= 0 ? relativePath.slice(0, slash) : '.';
-  const parentPath = previousDir ?? fallbackParentPath;
-
-  return {
-    type: 'command' as const,
-    command: commandAlias,
-    subcommand: 'tree',
-    arguments: {
-      rest: parentPath === '.' ? [] : [parentPath],
-    },
-    options: {},
-  };
-}
 
 function diffLineNode(line: FileDiffOk['lines'][number]): WebNode {
   return {
@@ -56,23 +42,41 @@ export function renderFileDiffWeb(props: RenderFileDiffWebProps): WebNodeRoot {
   const r = props.result;
 
   const metaParts = [
-    {
-      type: 'element' as const,
-      tag: 'button' as const,
-      props: {
-        label: 'Back to folder',
-        action: parentTreeAction(
-          props.commandAlias,
-          r.relativePath,
-          props.previousDir,
-        ),
-      },
-    },
     ...(r.truncated ? [textBlock('truncated', 'warning')] : []),
     ...(r.binary ? [textBlock('binary', 'warning')] : []),
   ];
 
-  const children: WebNode[] = [textBlock(r.relativePath, 'info')];
+  const children: WebNode[] = [
+    {
+      type: 'element',
+      tag: 'row',
+      props: {
+        gap: 'sm',
+        align: 'between',
+        itemAlign: 'baseline',
+        className: 'web-file-diff-header',
+      },
+      children: [
+        renderFileBreadcrumb({
+          commandAlias: props.commandAlias,
+          path: r.relativePath,
+          className: 'web-file-diff-breadcrumb',
+          extOption: null,
+        }),
+        openTimelineButton(
+          openTimelineAction({
+            commandAlias: props.commandAlias,
+            subcommand: 'diff',
+            arguments_: { path: r.relativePath },
+            options:
+              props.previousDir === null
+                ? {}
+                : { previousDir: props.previousDir },
+          }),
+        ),
+      ],
+    },
+  ];
 
   if (metaParts.length > 0) {
     children.push(row(metaParts, 'sm'));
@@ -103,5 +107,31 @@ export function renderFileDiffWeb(props: RenderFileDiffWebProps): WebNodeRoot {
     meta: { command: props.commandAlias, subcommand: 'diff' },
     tree: stack(children, 'sm'),
     stylesheets: [filePluginDiffStylesheet],
+  };
+}
+
+export function renderTimelineDiffClientView(props: {
+  commandAlias: string;
+  result: TimelineDiffResult;
+}): ClientViewRoot | WebNodeRoot {
+  if (props.result.type === 'error') {
+    return {
+      kind: 'ui',
+      version: 1,
+      meta: { command: props.commandAlias, subcommand: 'diff' },
+      tree: stack([textBlock(props.result.text, 'danger')], 'sm'),
+    };
+  }
+
+  return {
+    kind: 'client_view',
+    version: 1,
+    view: 'timeline-diff',
+    meta: { command: props.commandAlias, subcommand: 'diff' },
+    payload: {
+      relativePath: props.result.relativePath,
+      files: props.result.files,
+      truncated: props.result.truncated,
+    },
   };
 }
