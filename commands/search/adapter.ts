@@ -38,10 +38,22 @@ export async function adaptSearchCommand(
 ): Promise<string | WebNodeRoot> {
   const keywordRaw = params.parsed.arguments.keyword;
 
-  const keyword =
-    typeof keywordRaw === 'string' && keywordRaw.trim().length > 0
-      ? keywordRaw.trim()
-      : null;
+  const keyword = (() => {
+    if (typeof keywordRaw === 'string' && keywordRaw.trim().length > 0) {
+      return keywordRaw.trim();
+    }
+
+    if (Array.isArray(keywordRaw)) {
+      return (
+        keywordRaw
+          .filter((item): item is string => typeof item === 'string')
+          .join(' ')
+          .trim() || null
+      );
+    }
+
+    return null;
+  })();
 
   const extRaw = params.parsed.options.ext;
 
@@ -56,6 +68,8 @@ export async function adaptSearchCommand(
     typeof pathRaw === 'string' && pathRaw.trim().length > 0
       ? pathRaw.trim()
       : null;
+
+  const regex = params.parsed.options.regex === true;
 
   if (keyword === null) {
     const result: FileSearchResult = {
@@ -88,6 +102,7 @@ export async function adaptSearchCommand(
     keyword,
     extOption,
     pathOption,
+    regex,
     limit: 100,
   });
 

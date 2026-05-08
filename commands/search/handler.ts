@@ -32,6 +32,7 @@ type HandleSearchCommandProps = {
   keyword: string;
   extOption: string | null;
   pathOption: string | null;
+  regex: boolean;
   limit: number;
 };
 
@@ -178,6 +179,10 @@ export async function handleSearchCommand(
       '--glob',
       '!build/**',
     ];
+
+    if (!props.regex) {
+      args.push('--fixed-strings');
+    }
 
     for (const ext of normalizeExts(props.extOption)) {
       args.push('--glob', `*.${ext}`);

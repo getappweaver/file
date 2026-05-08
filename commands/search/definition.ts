@@ -11,10 +11,11 @@ export const searchDefinition = (
   arguments: [
     {
       name: 'keyword',
-      summary: 'Text or regex pattern to search for.',
+      summary:
+        'Literal text to search for. Use --regex to treat it as a regex pattern.',
       kind: 'string',
       required: true,
-      variadic: false,
+      variadic: true,
     },
   ],
   options: [
@@ -34,10 +35,21 @@ export const searchDefinition = (
       required: false,
       shortFlag: null,
     },
+    {
+      name: 'regex',
+      summary: 'Treat keyword as a regular expression instead of literal text.',
+      flag: '--regex',
+      kind: 'boolean',
+      required: false,
+      shortFlag: null,
+    },
   ],
   examples: [
     `${prefix}${alias} search TODO`,
+    `${prefix}${alias} search client view plugin outputs`,
+    `${prefix}${alias} search "icon: string | undefined;"`,
     `${prefix}${alias} search nostr --ext md,txt`,
     `${prefix}${alias} search WebNode --path src --ext ts,tsx`,
+    `${prefix}${alias} search "icon: string|undefined" --regex`,
   ],
 });
