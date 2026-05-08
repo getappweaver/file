@@ -46,10 +46,9 @@ export const searchDefinition = (
   ],
   examples: [
     `${prefix}${alias} search TODO`,
-    `${prefix}${alias} search client view plugin outputs`,
-    `${prefix}${alias} search "icon: string | undefined;"`,
+    `${prefix}${alias} search project notes`,
     `${prefix}${alias} search nostr --ext md,txt`,
-    `${prefix}${alias} search WebNode --path src --ext ts,tsx`,
-    `${prefix}${alias} search "icon: string|undefined" --regex`,
+    `${prefix}${alias} search meeting agenda --path docs`,
+    `${prefix}${alias} search invoice|receipt --regex`,
   ],
 });
