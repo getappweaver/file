@@ -4,6 +4,10 @@ All notable changes for each version are listed under the corresponding `v*.*.*`
 Tags and this file are updated by the post-commit hook when you commit with `--patch`, `--minor`, or `--major` (see CONTRIBUTING.md).
 You can also run `bun run release:changelog` to rewrite this file from tags.
 
+## [v2.0.2] - 2026-05-08
+
+- fix: support client view plugin outputs (1b0bec1)
+
 ## [v2.0.1] - 2026-05-06
 
 - new contrib setup script, show pwd before tree --patch (9cc1f85)
@@ -16,7 +20,7 @@ You can also run `bun run release:changelog` to rewrite this file from tags.
 - refactor (7b82ac0)
 - docs updated (0323a26)
 - $msg (8daf67f)
-- added licence (bab48ca)
+- added licence (ce6f005)
 
 ## [v1.1.0] - 2026-03-22
 

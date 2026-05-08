@@ -1,6 +1,6 @@
 import type { MessageSource } from '@src/messaging';
 import { parseCliInput } from '@src/system/parser-cli';
-import type { WebNodeRoot } from '@src/web/ui-schema';
+import type { ClientViewRoot, WebNodeRoot } from '@src/web/ui-schema';
 
 import { adaptBottomupCommand } from './commands/bottomup/adapter';
 import { adaptBottomupContextCommand } from './commands/bottomup_context/adapter';
@@ -33,7 +33,7 @@ type MaybePromise<T> = T | Promise<T>;
 
 type FileCommandAdapter = (
   params: FileCommandAdapterParams,
-) => MaybePromise<string | WebNodeRoot>;
+) => MaybePromise<string | WebNodeRoot | ClientViewRoot>;
 
 const normalizedDefinitions = new Map<
   string,
@@ -94,7 +94,7 @@ export async function handleFile(params: {
   prefix: string;
   alias: string;
   source: MessageSource;
-}): Promise<string | WebNodeRoot> {
+}): Promise<string | WebNodeRoot | ClientViewRoot> {
   const normalizedArgs = params.args.length === 0 ? ['help'] : params.args;
   const subcommand = normalizedArgs[0]?.toLowerCase();
 

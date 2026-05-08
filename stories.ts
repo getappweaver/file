@@ -109,6 +109,7 @@ function buildViewOutput(params: {
       commandAlias: params.alias,
       result: demoMarkdownView,
       previousDir: '.',
+      highlightLine: null,
     }),
     clientView: null,
   };
