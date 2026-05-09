@@ -82,13 +82,19 @@ export function adaptDiffCommand(
   }
 
   if (params.source === 'web' && timeline) {
+    const result = handleTimelineDiffCommand({
+      workspaceRoot,
+      relativePath: path,
+      maxBytes: defaultDiffMaxBytes(),
+    });
+
+    if (result.type === 'error') {
+      return result.text;
+    }
+
     return renderTimelineDiffClientView({
       commandAlias: params.alias,
-      result: handleTimelineDiffCommand({
-        workspaceRoot,
-        relativePath: path,
-        maxBytes: defaultDiffMaxBytes(),
-      }),
+      result,
     });
   }
 

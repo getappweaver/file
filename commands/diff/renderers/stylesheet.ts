@@ -17,38 +17,65 @@ export const filePluginDiffStylesheet: WebStyleSheet = {
   box-sizing: border-box;
 }
 
-.web-file-diff-lines.web-stack {
+.diff-file__patch.web-stack {
+  display: table;
+  width: 100%;
   gap: 0;
+  margin: 0;
+  overflow-x: hidden;
+  white-space: normal;
+  color: var(--color-text, #d4d4d4);
+  background: #0d1117;
+  padding: 0.45rem 0;
 }
 
-.web-file-diff-line {
-  display: block;
+.diff-line {
+  display: table-row;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 0.8rem;
   line-height: 1.45;
+}
+
+.diff-line__number {
+  display: table-cell;
+  width: 1%;
+  padding: 0 0.5rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.24);
+  color: #8b949e;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  user-select: none;
+  vertical-align: top;
+  white-space: nowrap;
+}
+
+.diff-line__text {
+  display: table-cell;
+  width: auto;
+  min-width: 0;
+  padding: 0 0.55rem;
+  overflow-wrap: anywhere;
+  vertical-align: top;
   white-space: pre-wrap;
-  word-break: break-word;
 }
 
-.web-file-diff-line-header {
+.diff-line--add {
+  color: #7ee787;
+  background: rgba(46, 160, 67, 0.16);
+}
+
+.diff-line--del {
+  color: #ff7b72;
+  background: rgba(248, 81, 73, 0.16);
+}
+
+.diff-line--hunk {
+  color: #a5d6ff;
+  background: rgba(56, 139, 253, 0.14);
+}
+
+.diff-line--meta {
   color: var(--color-text-muted, #a8a8a8);
-}
-
-.web-file-diff-line-hunk {
-  color: var(--color-accent, #8ecae6);
-}
-
-.web-file-diff-line-add {
-  color: var(--color-success, #73c991);
-}
-
-.web-file-diff-line-remove {
-  color: var(--color-danger, #f48771);
-}
-
-.web-file-diff-line-context {
-  color: var(--color-text, #d4d4d4);
-  opacity: 0.82;
 }
 
 .web-file-diff-header.web-row {

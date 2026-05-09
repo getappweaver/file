@@ -4,9 +4,13 @@ All notable changes for each version are listed under the corresponding `v*.*.*`
 Tags and this file are updated by the post-commit hook when you commit with `--patch`, `--minor`, or `--major` (see CONTRIBUTING.md).
 You can also run `bun run release:changelog` to rewrite this file from tags.
 
+## [v2.0.5] - 2026-05-09
+
+- fix: improve file diff web controls (0f19173)
+
 ## [v2.0.4] - 2026-05-09
 
-- docs: clarify file search examples (cab669b)
+- docs: clarify file search examples (13e4dea)
 
 ## [v2.0.3] - 2026-05-09
 

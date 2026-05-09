@@ -11,6 +11,8 @@ type FileDiffLineKind = 'header' | 'hunk' | 'add' | 'remove' | 'context';
 
 export type FileDiffLine = {
   kind: FileDiffLineKind;
+  oldLine: number | null;
+  newLine: number | null;
   text: string;
 };
 
@@ -75,6 +77,9 @@ function resolveWorkspaceFilePath({
 }
 
 function parseDiffLines(text: string): FileDiffLine[] {
+  let oldLine: number | null = null;
+  let newLine: number | null = null;
+
   return text.split('\n').map((line) => {
     if (
       line.startsWith('diff --git ') ||
@@ -88,22 +93,69 @@ function parseDiffLines(text: string): FileDiffLine[] {
       line.startsWith('+++ ') ||
       line.startsWith('Binary files ')
     ) {
-      return { kind: 'header', text: line };
+      return { kind: 'header', oldLine: null, newLine: null, text: line };
     }
 
     if (line.startsWith('@@')) {
-      return { kind: 'hunk', text: line };
+      const match = line.match(/^@@ -(\d+)(?:,\d+)? \+(\d+)(?:,\d+)? @@/);
+
+      oldLine = match ? Number(match[1]) : null;
+      newLine = match ? Number(match[2]) : null;
+
+      return { kind: 'hunk', oldLine: null, newLine: null, text: line };
     }
 
     if (line.startsWith('+')) {
-      return { kind: 'add', text: line };
+      const currentNewLine = newLine;
+
+      if (newLine !== null) {
+        newLine += 1;
+      }
+
+      return {
+        kind: 'add',
+        oldLine: null,
+        newLine: currentNewLine,
+        text: line,
+      };
     }
 
     if (line.startsWith('-')) {
-      return { kind: 'remove', text: line };
+      const currentOldLine = oldLine;
+
+      if (oldLine !== null) {
+        oldLine += 1;
+      }
+
+      return {
+        kind: 'remove',
+        oldLine: currentOldLine,
+        newLine: null,
+        text: line,
+      };
     }
 
-    return { kind: 'context', text: line };
+    if (line.startsWith('\\ ')) {
+      return { kind: 'header', oldLine: null, newLine: null, text: line };
+    }
+
+    const currentOldLine = oldLine;
+    const currentNewLine = newLine;
+
+    if (oldLine !== null) {
+      oldLine += 1;
+    }
+
+    if (newLine !== null) {
+      newLine += 1;
+    }
+
+    return {
+      kind: 'context',
+      oldLine: currentOldLine,
+      newLine: currentNewLine,
+      text: line,
+    };
   });
 }
 
@@ -142,6 +194,8 @@ function buildUntrackedDiff(props: {
       lines: [
         {
           kind: 'header',
+          oldLine: null,
+          newLine: null,
           text: `Untracked binary file: ${props.relativePath}`,
         },
       ],
@@ -157,14 +211,38 @@ function buildUntrackedDiff(props: {
   const lines = [
     {
       kind: 'header' as const,
+      oldLine: null,
+      newLine: null,
       text: `diff --git a/${props.relativePath} b/${props.relativePath}`,
     },
-    { kind: 'header' as const, text: 'new file mode 100644' },
-    { kind: 'header' as const, text: '--- /dev/null' },
-    { kind: 'header' as const, text: `+++ b/${props.relativePath}` },
-    { kind: 'hunk' as const, text: `@@ -0,0 +1,${hunkSize} @@` },
-    ...contentLines.map((line) => ({
+    {
+      kind: 'header' as const,
+      oldLine: null,
+      newLine: null,
+      text: 'new file mode 100644',
+    },
+    {
+      kind: 'header' as const,
+      oldLine: null,
+      newLine: null,
+      text: '--- /dev/null',
+    },
+    {
+      kind: 'header' as const,
+      oldLine: null,
+      newLine: null,
+      text: `+++ b/${props.relativePath}`,
+    },
+    {
+      kind: 'hunk' as const,
+      oldLine: null,
+      newLine: null,
+      text: `@@ -0,0 +1,${hunkSize} @@`,
+    },
+    ...contentLines.map((line, index) => ({
       kind: 'add' as const,
+      oldLine: null,
+      newLine: index + 1,
       text: `+${line}`,
     })),
   ];

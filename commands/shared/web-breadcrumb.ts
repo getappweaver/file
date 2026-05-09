@@ -229,7 +229,7 @@ export const fileOpenTimelineButtonCss = `
   padding: 0 !important;
   border: 1px solid #000;
   border-radius: 0;
-  background: color-mix(in srgb, var(--color-warning, #ffd166) 88%, transparent) !important;
+  background: color-mix(in srgb, var(--color-accent, #8ecae6) 86%, transparent) !important;
   box-shadow: 3px 3px 0 var(--color-panel-shadow, rgba(0, 0, 0, 0.7));
   color: #000;
   font-size: 0;
@@ -249,14 +249,14 @@ export const fileOpenTimelineButtonCss = `
 
 .web-button.web-file-open-timeline-button:hover,
 .web-button.web-file-open-timeline-button:focus-visible {
-  background: var(--color-warning, #ffd166) !important;
+  background: var(--color-accent, #8ecae6) !important;
   color: #000;
   box-shadow: 3px 3px 0 var(--color-panel-shadow, rgba(0, 0, 0, 0.7));
   transform: none;
 }
 
 .web-button.web-file-open-timeline-button:active {
-  background: color-mix(in srgb, var(--color-warning, #ffd166) 72%, #000) !important;
+  background: color-mix(in srgb, var(--color-accent, #8ecae6) 72%, #000) !important;
   box-shadow: 1px 1px 0 var(--color-panel-shadow, rgba(0, 0, 0, 0.7));
   transform: translate(2px, 2px);
 }

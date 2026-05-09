@@ -17,15 +17,48 @@ type RenderFileDiffWebProps = {
   previousDir: string | null;
 };
 
-function diffLineNode(line: FileDiffOk['lines'][number]): WebNode {
+function diffLineClass(line: FileDiffOk['lines'][number]): string {
+  switch (line.kind) {
+    case 'header':
+      return 'diff-line diff-line--meta';
+    case 'hunk':
+      return 'diff-line diff-line--hunk';
+    case 'add':
+      return 'diff-line diff-line--add';
+    case 'remove':
+      return 'diff-line diff-line--del';
+    case 'context':
+      return 'diff-line';
+  }
+}
+
+function diffLineNode(
+  line: FileDiffOk['lines'][number],
+  lineIndex: number,
+): WebNode {
   return {
     type: 'element',
     tag: 'text',
     props: {
-      className: `web-file-diff-line web-file-diff-line-${line.kind}`,
-      whiteSpace: 'pre-wrap',
+      className: diffLineClass(line),
     },
-    children: [{ type: 'text', value: line.text }],
+    children: [
+      {
+        type: 'element',
+        tag: 'text',
+        props: { className: 'diff-line__number' },
+        children: [{ type: 'text', value: String(lineIndex + 1) }],
+      },
+      {
+        type: 'element',
+        tag: 'text',
+        props: {
+          className: 'diff-line__text',
+          whiteSpace: 'pre-wrap',
+        },
+        children: [{ type: 'text', value: line.text || ' ' }],
+      },
+    ],
   };
 }
 
@@ -93,10 +126,10 @@ export function renderFileDiffWeb(props: RenderFileDiffWebProps): WebNodeRoot {
         type: 'element',
         tag: 'stack',
         props: {
-          className: 'web-file-diff-lines',
+          className: 'diff-file__patch web-file-diff-lines',
           gap: 'xs',
         },
-        children: r.lines.map(diffLineNode),
+        children: r.lines.map((line, index) => diffLineNode(line, index)),
       },
     ],
   });
