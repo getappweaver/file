@@ -35,6 +35,15 @@ export const diffDefinition = (
       shortFlag: null,
       choices: null,
     },
+    {
+      name: 'commit',
+      summary: 'Commit hash to show as a timeline diff card.',
+      flag: '--commit',
+      kind: 'string',
+      required: false,
+      shortFlag: null,
+      choices: null,
+    },
   ],
   examples: [
     `${prefix}${alias} diff README.md`,

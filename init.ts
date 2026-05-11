@@ -41,7 +41,7 @@ export const FilePlugin: BotPlugin = {
     }),
   onInit: () => {},
   helpText: (a: string, prefix: string) => [
-    `Files: browse the workspace tree, generate bottom-up documentation, upload files encrypted for another bot (NIP-17), and download/decrypt by naddr. Commands run immediately (no draft flow).`,
+    `Files: browse the workspace tree, inspect git history, generate bottom-up documentation, upload files encrypted for another AppWeaver bot (NIP-17), and download/decrypt by naddr. Commands run immediately (no draft flow).`,
     '',
     `${prefix}${a} help [topic] — detailed help for a subcommand`,
     ...getFileHelpLines(prefix, a),

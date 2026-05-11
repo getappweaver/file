@@ -112,6 +112,19 @@ function viewTimelineDiffAction(props: ViewDiffActionProps): WebAction {
   };
 }
 
+function viewHistoryAction(props: {
+  commandAlias: string;
+  relativePosix: string;
+}): WebAction {
+  return {
+    type: 'command',
+    command: props.commandAlias,
+    subcommand: 'history',
+    arguments: props.relativePosix === '.' ? {} : { path: props.relativePosix },
+    options: {},
+  };
+}
+
 function searchFormAction(props: {
   commandAlias: string;
   displayPath: string;
@@ -159,6 +172,19 @@ function timelineDiffButton(action: WebAction): WebNode {
       action,
       stopPropagation: true,
       className: 'web-file-timeline-diff-button',
+    },
+  };
+}
+
+function historyButton(action: WebAction): WebNode {
+  return {
+    type: 'element',
+    tag: 'button',
+    props: {
+      label: 'View history',
+      action,
+      stopPropagation: true,
+      className: 'web-file-history-button',
     },
   };
 }
@@ -489,6 +515,12 @@ export function renderFileTreeBrowserWeb(
           commandAlias: props.commandAlias,
           relativePosix: displayPath,
           previousDir: displayPath,
+        }),
+      ),
+      historyButton(
+        viewHistoryAction({
+          commandAlias: props.commandAlias,
+          relativePosix: displayPath,
         }),
       ),
       openTimelineButton(

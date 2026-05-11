@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------
-// plugins/file/workspace-root.ts — resolve workspace root from core DB + dm-bot paths
+// plugins/file/workspace-root.ts — resolve workspace root from core DB + AppWeaver paths
 // ---------------------------------------------------------------------------
 
 import { join } from 'path';
@@ -13,7 +13,7 @@ export function resolveFileWorkspaceRoot(): string {
   try {
     const ws = getWorkspaceTarget(db);
 
-    return ws === 'bot' ? dmBotRoot : join(dmBotRoot, '..');
+    return ws === 'appweaver' ? dmBotRoot : join(dmBotRoot, '..');
   } finally {
     db.close();
   }

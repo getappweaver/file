@@ -1,6 +1,6 @@
 import type { MessageSource } from '@src/messaging';
 import { parseCliInput } from '@src/system/parser-cli';
-import type { ClientViewRoot, WebNodeRoot } from '@src/web/ui-schema';
+import type { WebHandlerResult } from '@src/web/ui-schema';
 
 import { adaptBottomupCommand } from './commands/bottomup/adapter';
 import { adaptBottomupContextCommand } from './commands/bottomup_context/adapter';
@@ -8,6 +8,7 @@ import { adaptDiffCommand } from './commands/diff/adapter';
 import { adaptDownloadCommand } from './commands/download/adapter';
 import { adaptHelpCommand } from './commands/help/adapter';
 import { getFileCommandDefinition } from './commands/help/module';
+import { adaptHistoryCommand } from './commands/history/adapter';
 import { adaptSearchCommand } from './commands/search/adapter';
 import { adaptSummarizeCommand } from './commands/summarize/adapter';
 import { adaptTopdownCommand } from './commands/topdown/adapter';
@@ -24,6 +25,7 @@ type FileSubcommand =
   | 'search'
   | 'view'
   | 'diff'
+  | 'history'
   | 'bottomup'
   | 'bottomup_context'
   | 'summarize'
@@ -33,7 +35,7 @@ type MaybePromise<T> = T | Promise<T>;
 
 type FileCommandAdapter = (
   params: FileCommandAdapterParams,
-) => MaybePromise<string | WebNodeRoot | ClientViewRoot>;
+) => MaybePromise<WebHandlerResult>;
 
 const normalizedDefinitions = new Map<
   string,
@@ -48,6 +50,7 @@ const subcommandAdapters: Record<FileSubcommand, FileCommandAdapter> = {
   search: adaptSearchCommand,
   view: adaptViewCommand,
   diff: adaptDiffCommand,
+  history: adaptHistoryCommand,
   bottomup: adaptBottomupCommand,
   bottomup_context: adaptBottomupContextCommand,
   summarize: adaptSummarizeCommand,
@@ -82,6 +85,7 @@ function isFileSubcommand(value: string): value is FileSubcommand {
     value === 'search' ||
     value === 'view' ||
     value === 'diff' ||
+    value === 'history' ||
     value === 'bottomup' ||
     value === 'bottomup_context' ||
     value === 'summarize' ||
@@ -94,7 +98,7 @@ export async function handleFile(params: {
   prefix: string;
   alias: string;
   source: MessageSource;
-}): Promise<string | WebNodeRoot | ClientViewRoot> {
+}): Promise<WebHandlerResult> {
   const normalizedArgs = params.args.length === 0 ? ['help'] : params.args;
   const subcommand = normalizedArgs[0]?.toLowerCase();
 

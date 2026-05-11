@@ -1,4 +1,8 @@
-import type { ClientViewRoot, WebNode, WebNodeRoot } from '@src/web/ui-schema';
+import type {
+  TimelineEventOutput,
+  WebNode,
+  WebNodeRoot,
+} from '@src/web/ui-schema';
 import { row, stack, textBlock } from '@src/web/widgets';
 
 import {
@@ -143,10 +147,10 @@ export function renderFileDiffWeb(props: RenderFileDiffWebProps): WebNodeRoot {
   };
 }
 
-export function renderTimelineDiffClientView(props: {
+export function renderTimelineDiffOutput(props: {
   commandAlias: string;
   result: TimelineDiffResult;
-}): ClientViewRoot | WebNodeRoot {
+}): TimelineEventOutput | WebNodeRoot {
   if (props.result.type === 'error') {
     return {
       kind: 'ui',
@@ -157,14 +161,14 @@ export function renderTimelineDiffClientView(props: {
   }
 
   return {
-    kind: 'client_view',
+    kind: 'timeline_event',
     version: 1,
-    view: 'timeline-diff',
-    meta: { command: props.commandAlias, subcommand: 'diff' },
-    payload: {
-      relativePath: props.result.relativePath,
+    event: {
+      type: 'diff',
       files: props.result.files,
-      truncated: props.result.truncated,
+      title: props.result.commit?.subject ?? props.result.relativePath,
+      subtitle: props.result.commit?.relativeTime ?? 'working tree',
+      origin: props.result.commit ? 'git_commit' : 'workspace_diff',
     },
   };
 }

@@ -5,6 +5,7 @@ import { bottomupDefinition } from './commands/bottomup/definition';
 import { bottomupContextDefinition } from './commands/bottomup_context/definition';
 import { diffDefinition } from './commands/diff/definition';
 import { downloadDefinition } from './commands/download/definition';
+import { historyDefinition } from './commands/history/definition';
 import { searchDefinition } from './commands/search/definition';
 import { summarizeDefinition } from './commands/summarize/definition';
 import { topdownDefinition } from './commands/topdown/definition';
@@ -18,12 +19,12 @@ export const commandDefinition = (
 ): CommandDefinition => ({
   name: alias,
   summary:
-    'Browse the workspace tree, diff and preview files, upload files encrypted for another bot (NIP-17), and download by naddr.',
+    'Browse the workspace tree, inspect git history, diff and preview files, upload files encrypted for another AppWeaver bot (NIP-17), and download by naddr.',
   aliases: [],
   subcommands: [
     createHelpSubcommandDefinition(prefix, alias, {
       topicArgSummary:
-        'Optional subcommand name: upload, download, tree, search, view, diff, bottomup, bottomup_context, summarize, or topdown.',
+        'Optional subcommand name: upload, download, tree, search, view, diff, history, bottomup, bottomup_context, summarize, or topdown.',
       exampleTopics: [
         'upload',
         'download',
@@ -31,6 +32,7 @@ export const commandDefinition = (
         'search',
         'view',
         'diff',
+        'history',
         'bottomup',
         'bottomup_context',
         'summarize',
@@ -43,6 +45,7 @@ export const commandDefinition = (
     searchDefinition(prefix, alias),
     viewDefinition(prefix, alias),
     diffDefinition(prefix, alias),
+    historyDefinition(prefix, alias),
     bottomupDefinition(prefix, alias),
     bottomupContextDefinition(prefix, alias),
     summarizeDefinition(prefix, alias),

@@ -1,4 +1,4 @@
-import type { ClientViewRoot, WebNodeRoot } from '@src/web/ui-schema';
+import type { WebHandlerResult } from '@src/web/ui-schema';
 
 import type { FileCommandAdapterParams } from '../../types/adapter-params';
 
@@ -6,14 +6,12 @@ import { resolveFileWorkspaceRoot } from '../shared/workspace-root';
 
 import {
   defaultDiffMaxBytes,
+  handleCommitTimelineDiffCommand,
   handleDiffCommand,
   handleTimelineDiffCommand,
   type FileDiffResult,
 } from './handler';
-import {
-  renderFileDiffWeb,
-  renderTimelineDiffClientView,
-} from './renderers/web';
+import { renderFileDiffWeb, renderTimelineDiffOutput } from './renderers/web';
 
 function fileDiffResultToCliText(result: FileDiffResult): string {
   if (result.type === 'error') {
@@ -37,7 +35,7 @@ function fileDiffResultToCliText(result: FileDiffResult): string {
 
 export function adaptDiffCommand(
   params: FileCommandAdapterParams,
-): string | WebNodeRoot | ClientViewRoot {
+): WebHandlerResult {
   const pathRaw = params.parsed.arguments.path;
 
   const path =
@@ -64,6 +62,12 @@ export function adaptDiffCommand(
 
   const timelineRaw = params.parsed.options.timeline;
   const timeline = timelineRaw === true || timelineRaw === 'true';
+  const commitRaw = params.parsed.options.commit;
+
+  const commitHash =
+    typeof commitRaw === 'string' && commitRaw.trim().length > 0
+      ? commitRaw.trim()
+      : null;
 
   let workspaceRoot: string;
 
@@ -82,17 +86,25 @@ export function adaptDiffCommand(
   }
 
   if (params.source === 'web' && timeline) {
-    const result = handleTimelineDiffCommand({
-      workspaceRoot,
-      relativePath: path,
-      maxBytes: defaultDiffMaxBytes(),
-    });
+    const result =
+      commitHash === null
+        ? handleTimelineDiffCommand({
+            workspaceRoot,
+            relativePath: path,
+            maxBytes: defaultDiffMaxBytes(),
+          })
+        : handleCommitTimelineDiffCommand({
+            workspaceRoot,
+            relativePath: path,
+            maxBytes: defaultDiffMaxBytes(),
+            commitHash,
+          });
 
     if (result.type === 'error') {
       return result.text;
     }
 
-    return renderTimelineDiffClientView({
+    return renderTimelineDiffOutput({
       commandAlias: params.alias,
       result,
     });

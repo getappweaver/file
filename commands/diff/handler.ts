@@ -42,12 +42,17 @@ type HandleDiffCommandProps = {
   maxBytes: number;
 };
 
+type HandleCommitTimelineDiffCommandProps = HandleDiffCommandProps & {
+  commitHash: string;
+};
+
 export type TimelineDiffResult =
   | {
       type: 'ok';
       relativePath: string;
       files: AgentFileDiff[];
       truncated: boolean;
+      commit: { subject: string; relativeTime: string } | null;
     }
   | FileDiffErr;
 
@@ -315,6 +320,42 @@ function untrackedDiffToTimelineFile(
   };
 }
 
+function readCommitMetadata(props: {
+  workspaceRoot: string;
+  commitHash: string;
+}): { subject: string; relativeTime: string } | null {
+  const result = spawnSync(
+    [
+      'git',
+      '--no-pager',
+      'show',
+      '-s',
+      '--date=relative',
+      '--pretty=format:%s%x09%ar',
+      props.commitHash,
+    ],
+    {
+      cwd: props.workspaceRoot,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    },
+  );
+
+  if (result.exitCode !== 0) {
+    return null;
+  }
+
+  const [subject = '', relativeTime = ''] = Buffer.from(result.stdout)
+    .toString('utf8')
+    .split('\t');
+
+  if (subject.trim().length === 0 || relativeTime.trim().length === 0) {
+    return null;
+  }
+
+  return { subject: subject.trim(), relativeTime: relativeTime.trim() };
+}
+
 function listUntrackedFiles(props: {
   workspaceRoot: string;
   relPosix: string;
@@ -502,6 +543,78 @@ export function handleTimelineDiffCommand(
     relativePath: relPosix,
     files,
     truncated: truncatedPatch.truncated,
+    commit: null,
+  };
+}
+
+export function handleCommitTimelineDiffCommand(
+  props: HandleCommitTimelineDiffCommandProps,
+): TimelineDiffResult {
+  if (!/^[0-9a-f]{7,40}$/i.test(props.commitHash)) {
+    return { type: 'error', text: 'Invalid commit hash.' };
+  }
+
+  const resolved = resolveWorkspaceFilePath({
+    workspaceRoot: props.workspaceRoot,
+    relativePath: props.relativePath,
+  });
+
+  if ('type' in resolved) {
+    return resolved;
+  }
+
+  const result = spawnSync(
+    [
+      'git',
+      '--no-pager',
+      'show',
+      '--format=',
+      '--no-ext-diff',
+      '--no-color',
+      '--find-renames',
+      props.commitHash,
+      '--',
+      resolved.relPosix,
+    ],
+    {
+      cwd: props.workspaceRoot,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    },
+  );
+
+  if (result.exitCode !== 0) {
+    const stderr = Buffer.from(result.stderr).toString('utf8').trim();
+
+    return {
+      type: 'error',
+      text: stderr.length > 0 ? stderr : 'Could not read commit diff.',
+    };
+  }
+
+  const truncatedPatch = truncateUtf8Text(
+    Buffer.from(result.stdout).toString('utf8'),
+    props.maxBytes,
+  );
+
+  const files = parseGitPatchFiles(truncatedPatch.text);
+
+  if (files.length === 0) {
+    return {
+      type: 'error',
+      text: `No changes found for ${resolved.relPosix} in ${props.commitHash}.`,
+    };
+  }
+
+  return {
+    type: 'ok',
+    relativePath: resolved.relPosix,
+    files,
+    truncated: truncatedPatch.truncated,
+    commit: readCommitMetadata({
+      workspaceRoot: props.workspaceRoot,
+      commitHash: props.commitHash,
+    }),
   };
 }
 

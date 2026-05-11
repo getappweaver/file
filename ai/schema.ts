@@ -72,7 +72,7 @@ export type FileToolCall = z.infer<typeof FileToolCallSchema>;
 export { FileToolCallSchema as ToolCallSchema };
 
 export const skillDescription =
-  'Workspace tree, bottom-up documentation, and folder summaries via local dm-bot CLI tools. Use these tools to answer questions about what files and directories do without reading source files directly.';
+  'Workspace tree, bottom-up documentation, and folder summaries via local AppWeaver CLI tools. Use these tools to answer questions about what files and directories do without reading source files directly.';
 
 export const skillRules = [
   'These file tools run immediately. They do not use drafts and do not require `original_prompt`.',

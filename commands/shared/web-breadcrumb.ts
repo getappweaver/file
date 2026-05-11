@@ -240,8 +240,8 @@ export const fileOpenTimelineButtonCss = `
 .web-button.web-file-open-timeline-button::before {
   content: '';
   display: block;
-  width: 0.78rem;
-  height: 0.78rem;
+  width: 1.125rem;
+  height: 1.125rem;
   background: currentColor;
   mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cg transform='translate(85.333333,64)'%3E%3Cpath d='M128 63.999444v42.667l-85.333333.000223V320H256v-85.333556h42.666l.000667 128.000223H0V64l128-.000556ZM362.666667 0v170.666667H320V72.835L143.084945 249.751611l-30.16989-30.169889L289.83 42.666H192V0h170.666667Z'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat;
   -webkit-mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cg transform='translate(85.333333,64)'%3E%3Cpath d='M128 63.999444v42.667l-85.333333.000223V320H256v-85.333556h42.666l.000667 128.000223H0V64l128-.000556ZM362.666667 0v170.666667H320V72.835L143.084945 249.751611l-30.16989-30.169889L289.83 42.666H192V0h170.666667Z'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat;
