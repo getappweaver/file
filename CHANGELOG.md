@@ -4,9 +4,13 @@ All notable changes for each version are listed under the corresponding `v*.*.*`
 Tags and this file are updated by the post-commit hook when you commit with `--patch`, `--minor`, or `--major` (see CONTRIBUTING.md).
 You can also run `bun run release:changelog` to rewrite this file from tags.
 
+## [v2.1.1] - 2026-05-13
+
+- fix: improve file tree output navigation (9dce515)
+
 ## [v2.1.0] - 2026-05-11
 
-- feat: add git history timeline diffs (50ff7df)
+- feat: add git history timeline diffs (40a3fad)
 
 ## [v2.0.5] - 2026-05-09
 

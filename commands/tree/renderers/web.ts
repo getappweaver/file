@@ -76,6 +76,7 @@ function viewFileAction(props: ViewFileActionProps): WebAction {
     options: {
       previousDir: props.previousDir,
     },
+    recordInTimeline: false,
   };
 }
 
@@ -94,6 +95,7 @@ function viewDiffAction(props: ViewDiffActionProps): WebAction {
     options: {
       previousDir: props.previousDir,
     },
+    recordInTimeline: false,
   };
 }
 

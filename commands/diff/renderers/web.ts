@@ -36,10 +36,15 @@ function diffLineClass(line: FileDiffOk['lines'][number]): string {
   }
 }
 
-function diffLineNode(
-  line: FileDiffOk['lines'][number],
-  lineIndex: number,
-): WebNode {
+function diffLineNumber(line: FileDiffOk['lines'][number]): string {
+  if (line.kind === 'remove') {
+    return line.oldLine === null ? '' : String(line.oldLine);
+  }
+
+  return line.newLine === null ? '' : String(line.newLine);
+}
+
+function diffLineNode(line: FileDiffOk['lines'][number]): WebNode {
   return {
     type: 'element',
     tag: 'text',
@@ -51,7 +56,7 @@ function diffLineNode(
         type: 'element',
         tag: 'text',
         props: { className: 'diff-line__number' },
-        children: [{ type: 'text', value: String(lineIndex + 1) }],
+        children: [{ type: 'text', value: diffLineNumber(line) }],
       },
       {
         type: 'element',
@@ -133,7 +138,7 @@ export function renderFileDiffWeb(props: RenderFileDiffWebProps): WebNodeRoot {
           className: 'diff-file__patch web-file-diff-lines',
           gap: 'xs',
         },
-        children: r.lines.map((line, index) => diffLineNode(line, index)),
+        children: r.lines.map((line) => diffLineNode(line)),
       },
     ],
   });
