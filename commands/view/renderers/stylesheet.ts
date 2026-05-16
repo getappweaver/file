@@ -61,6 +61,17 @@ export const filePluginViewStylesheet: WebStyleSheet = {
   -ms-user-select: none;
 }
 
+a.web-file-view-line-number {
+  text-decoration: none;
+  cursor: copy;
+}
+
+a.web-file-view-line-number:hover,
+a.web-file-view-line-number:focus-visible {
+  color: var(--color-link, #8ab4f8);
+  text-decoration: underline;
+}
+
 .web-file-view-code-text.hljs {
   display: table-cell;
   width: auto;

@@ -1,5 +1,6 @@
 import type {
   TimelineEventOutput,
+  WebAction,
   WebNode,
   WebNodeRoot,
 } from '@src/web/ui-schema';
@@ -36,28 +37,67 @@ function diffLineClass(line: FileDiffOk['lines'][number]): string {
   }
 }
 
-function diffLineNumber(line: FileDiffOk['lines'][number]): string {
-  if (line.kind === 'remove') {
-    return line.oldLine === null ? '' : String(line.oldLine);
-  }
+type DiffLineNodeProps = {
+  line: FileDiffOk['lines'][number];
+  relativePath: string;
+};
 
-  return line.newLine === null ? '' : String(line.newLine);
+function lineClipboardAction(text: string): WebAction {
+  return {
+    type: 'clientAction',
+    action: 'clipboard.writeText',
+    payload: { text },
+  };
 }
 
-function diffLineNode(line: FileDiffOk['lines'][number]): WebNode {
+function diffLineOldNumberNode(line: FileDiffOk['lines'][number]): WebNode {
+  return {
+    type: 'element',
+    tag: 'text',
+    props: { className: 'diff-line__number' },
+    children: [
+      {
+        type: 'text',
+        value: line.oldLine === null ? '' : String(line.oldLine),
+      },
+    ],
+  };
+}
+
+function diffLineNewNumberNode(props: DiffLineNodeProps): WebNode {
+  if (props.line.newLine !== null) {
+    return {
+      type: 'element',
+      tag: 'link',
+      props: {
+        className: 'diff-line__number diff-line__number--current',
+        href: '#',
+        action: lineClipboardAction(
+          `${props.relativePath}:${props.line.newLine}`,
+        ),
+      },
+      children: [{ type: 'text', value: String(props.line.newLine) }],
+    };
+  }
+
+  return {
+    type: 'element',
+    tag: 'text',
+    props: { className: 'diff-line__number' },
+    children: [{ type: 'text', value: '' }],
+  };
+}
+
+function diffLineNode(props: DiffLineNodeProps): WebNode {
   return {
     type: 'element',
     tag: 'text',
     props: {
-      className: diffLineClass(line),
+      className: diffLineClass(props.line),
     },
     children: [
-      {
-        type: 'element',
-        tag: 'text',
-        props: { className: 'diff-line__number' },
-        children: [{ type: 'text', value: diffLineNumber(line) }],
-      },
+      diffLineOldNumberNode(props.line),
+      diffLineNewNumberNode(props),
       {
         type: 'element',
         tag: 'text',
@@ -65,7 +105,7 @@ function diffLineNode(line: FileDiffOk['lines'][number]): WebNode {
           className: 'diff-line__text',
           whiteSpace: 'pre-wrap',
         },
-        children: [{ type: 'text', value: line.text || ' ' }],
+        children: [{ type: 'text', value: props.line.text || ' ' }],
       },
     ],
   };
@@ -138,7 +178,9 @@ export function renderFileDiffWeb(props: RenderFileDiffWebProps): WebNodeRoot {
           className: 'diff-file__patch web-file-diff-lines',
           gap: 'xs',
         },
-        children: r.lines.map((line) => diffLineNode(line)),
+        children: r.lines.map((line) =>
+          diffLineNode({ line, relativePath: r.relativePath }),
+        ),
       },
     ],
   });

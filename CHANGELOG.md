@@ -4,9 +4,13 @@ All notable changes for each version are listed under the corresponding `v*.*.*`
 Tags and this file are updated by the post-commit hook when you commit with `--patch`, `--minor`, or `--major` (see CONTRIBUTING.md).
 You can also run `bun run release:changelog` to rewrite this file from tags.
 
+## [v2.2.0] - 2026-05-16
+
+- feat: copy file line references (cfb397f)
+
 ## [v2.1.1] - 2026-05-13
 
-- fix: improve file tree output navigation (9dce515)
+- fix: improve file tree output navigation (d8dd182)
 
 ## [v2.1.0] - 2026-05-11
 

@@ -1,4 +1,4 @@
-import type { WebNode, WebNodeRoot } from '@src/web/ui-schema';
+import type { WebAction, WebNode, WebNodeRoot } from '@src/web/ui-schema';
 import { row, stack, textBlock } from '@src/web/widgets';
 
 import {
@@ -61,12 +61,23 @@ type RenderFileViewWebProps = {
   highlightLine: number | null;
 };
 
-function codeLineNode(params: {
+type CodeLineNodeProps = {
+  relativePath: string;
   line: string;
   lineNumber: number;
   language: string | null;
   highlighted: boolean;
-}): WebNode {
+};
+
+function lineClipboardAction(text: string): WebAction {
+  return {
+    type: 'clientAction',
+    action: 'clipboard.writeText',
+    payload: { text },
+  };
+}
+
+function codeLineNode(params: CodeLineNodeProps): WebNode {
   const ui =
     params.language !== null ? `hljs-code:${params.language}` : 'hljs-code';
 
@@ -82,8 +93,14 @@ function codeLineNode(params: {
     children: [
       {
         type: 'element',
-        tag: 'text',
-        props: { className: 'web-file-view-line-number' },
+        tag: 'link',
+        props: {
+          className: 'web-file-view-line-number',
+          href: '#',
+          action: lineClipboardAction(
+            `${params.relativePath}:${params.lineNumber}`,
+          ),
+        },
         children: [{ type: 'text', value: String(params.lineNumber) }],
       },
       {
@@ -172,6 +189,7 @@ export function renderFileViewWeb(props: RenderFileViewWebProps): WebNodeRoot {
           props: { gap: 'xs', className: 'web-file-view-code-lines' },
           children: lines.map((line, index) =>
             codeLineNode({
+              relativePath: r.relativePath,
               line,
               lineNumber: index + 1,
               language: lang,

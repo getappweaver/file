@@ -1,8 +1,8 @@
 {
   "name": "dm-bot-file-plugin",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "dmBot": {
-    "coreApiVersion": "^9.0.0",
+    "coreApiVersion": "^9.16.0",
     "description": "File upload, download, and workspace tree for dm-bot"
   },
   "description": "File upload, download, and workspace tree for dm-bot",
