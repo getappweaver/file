@@ -1,7 +1,8 @@
 {
   "name": "appweaver-file-plugin",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "dmBot": {
+    "title": "File manager",
     "coreApiVersion": "^9.16.0",
     "description": "Official AppWeaver File manager. Adds focused AI-powered file management tools, commands, and data models to an AppWeaver workspace."
   },
