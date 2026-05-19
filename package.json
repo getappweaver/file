@@ -1,11 +1,11 @@
 {
-  "name": "dm-bot-file-plugin",
-  "version": "2.2.0",
+  "name": "appweaver-file-plugin",
+  "version": "2.2.1",
   "dmBot": {
     "coreApiVersion": "^9.16.0",
-    "description": "File upload, download, and workspace tree for dm-bot"
+    "description": "Official AppWeaver File manager. Adds focused AI-powered file management tools, commands, and data models to an AppWeaver workspace."
   },
-  "description": "File upload, download, and workspace tree for dm-bot",
+  "description": "Official AppWeaver File manager. Adds focused AI-powered file management tools, commands, and data models to an AppWeaver workspace.",
   "type": "module",
   "scripts": {
     "contrib:setup": "chmod +x ../../scripts/commit-msg ../../scripts/post-commit ../../scripts/ngit-helper.sh && git config core.hooksPath ../../scripts"

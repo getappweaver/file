@@ -4,9 +4,13 @@ All notable changes for each version are listed under the corresponding `v*.*.*`
 Tags and this file are updated by the post-commit hook when you commit with `--patch`, `--minor`, or `--major` (see CONTRIBUTING.md).
 You can also run `bun run release:changelog` to rewrite this file from tags.
 
+## [v2.2.1] - 2026-05-20
+
+- chore: update appweaver plugin metadata (81e2f1a)
+
 ## [v2.2.0] - 2026-05-16
 
-- feat: copy file line references (cfb397f)
+- feat: copy file line references (3a5d6cc)
 
 ## [v2.1.1] - 2026-05-13
 
