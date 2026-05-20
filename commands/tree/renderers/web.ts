@@ -596,6 +596,30 @@ export function renderFileTreeBrowserWeb(
     kind: 'ui',
     version: 1,
     meta: { command: props.commandAlias, subcommand: 'tree' },
+    widgetHelp: {
+      title: 'File manager',
+      body: [
+        'Browse project files, open markdown or code, inspect history, and jump into diffs without leaving the app.',
+      ],
+      stories: [
+        {
+          id: 'file-tree-read-markdown',
+          title: 'Read markdown from the file tree',
+          description:
+            'Use the File widget tree to open a markdown document in the built-in reader.',
+          pluginAlias: props.commandAlias,
+          iconUrl: '/plugin-icons/file/commands__tree__renderers__tree.svg',
+        },
+        {
+          id: 'file-tree-git-diff',
+          title: 'Open a git diff from the tree',
+          description:
+            'Use git status in the file tree to open a workspace diff view.',
+          pluginAlias: props.commandAlias,
+          iconUrl: '/plugin-icons/file/commands__tree__renderers__tree.svg',
+        },
+      ],
+    },
     tree: treeLayout,
     stylesheets: [filePluginTreeStylesheet],
     shadowMountOverflow: 'hidden',
