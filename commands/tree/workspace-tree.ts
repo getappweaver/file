@@ -2,7 +2,13 @@
 // plugins/file/workspace-tree.ts — text tree of workspace (no DB)
 // ---------------------------------------------------------------------------
 
-import { existsSync, readFileSync, readdirSync, statSync } from 'fs';
+import {
+  existsSync,
+  readFileSync,
+  readdirSync,
+  statSync,
+  type Stats,
+} from 'fs';
 import { join, relative, resolve } from 'path';
 
 import {
@@ -23,6 +29,22 @@ const IGNORE = new Set([
 ]);
 
 const IGNORE_EXT = new Set(['.sqlite', '.sqlite-wal', '.sqlite-shm']);
+
+function statIfExists(path: string): Stats | null {
+  try {
+    return statSync(path);
+  } catch (err) {
+    if (
+      err instanceof Error &&
+      'code' in err &&
+      (err as { code: unknown }).code === 'ENOENT'
+    ) {
+      return null;
+    }
+
+    throw err;
+  }
+}
 
 type IgnoreRule = {
   baseDirAbs: string;
@@ -224,7 +246,13 @@ function collectTreeLines(props: {
       }
 
       const fullPath = join(dir, e);
-      const isDir = statSync(fullPath).isDirectory();
+      const stat = statIfExists(fullPath);
+
+      if (!stat) {
+        return false;
+      }
+
+      const isDir = stat.isDirectory();
 
       if (
         isIgnoredByGitignoreRules({
@@ -245,8 +273,8 @@ function collectTreeLines(props: {
       return true;
     })
     .sort((a, b) => {
-      const aIsDir = statSync(join(dir, a)).isDirectory();
-      const bIsDir = statSync(join(dir, b)).isDirectory();
+      const aIsDir = statIfExists(join(dir, a))?.isDirectory() ?? false;
+      const bIsDir = statIfExists(join(dir, b))?.isDirectory() ?? false;
 
       if (aIsDir && !bIsDir) {
         return -1;
@@ -264,7 +292,13 @@ function collectTreeLines(props: {
     const connector = isLast ? '└── ' : '├── ';
     const childPrefix = isLast ? '    ' : '│   ';
     const fullPath = join(dir, entry);
-    const isDir = statSync(fullPath).isDirectory();
+    const stat = statIfExists(fullPath);
+
+    if (!stat) {
+      return;
+    }
+
+    const isDir = stat.isDirectory();
 
     lines.push(`${prefix}${connector}${entry}${isDir ? '/' : ''}`);
 
@@ -361,7 +395,13 @@ function listVisibleTreeEntryNames(
       }
 
       const fullPath = join(dirAbs, e);
-      const isDir = statSync(fullPath).isDirectory();
+      const stat = statIfExists(fullPath);
+
+      if (!stat) {
+        return false;
+      }
+
+      const isDir = stat.isDirectory();
 
       if (
         isIgnoredByGitignoreRules({
@@ -384,8 +424,8 @@ function listVisibleTreeEntryNames(
     .sort((a, b) => {
       const pa = join(dirAbs, a);
       const pb = join(dirAbs, b);
-      const da = statSync(pa).isDirectory();
-      const db = statSync(pb).isDirectory();
+      const da = statIfExists(pa)?.isDirectory() ?? false;
+      const db = statIfExists(pb)?.isDirectory() ?? false;
 
       if (da !== db) {
         return da ? -1 : 1;
@@ -421,7 +461,12 @@ function collectWorkspaceTreeRows(props: CollectTreeRowsProps): void {
 
   names.forEach((name, i) => {
     const full = join(dirAbs, name);
-    const st = statSync(full);
+    const st = statIfExists(full);
+
+    if (!st) {
+      return;
+    }
+
     const isDir = st.isDirectory();
     const relPosix = relative(workspaceRoot, full).replace(/\\/g, '/');
 

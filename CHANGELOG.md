@@ -4,9 +4,13 @@ All notable changes for each version are listed under the corresponding `v*.*.*`
 Tags and this file are updated by the post-commit hook when you commit with `--patch`, `--minor`, or `--major` (see CONTRIBUTING.md).
 You can also run `bun run release:changelog` to rewrite this file from tags.
 
+## [v2.2.4] - 2026-05-20
+
+- fix: tolerate missing file tree entries (b2c5e78)
+
 ## [v2.2.3] - 2026-05-20
 
-- chore: add appweaver plugin metadata (e9b71b4)
+- chore: add appweaver plugin metadata (4136247)
 
 ## [v2.2.2] - 2026-05-20
 
