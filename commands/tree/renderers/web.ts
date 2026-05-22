@@ -414,7 +414,7 @@ function buildFileTreeItemsFromRows(params: {
         filterText: `${row.name}\n${row.relativePosix}${row.git ? `\n${row.git.label}\n${row.git.kind}\n${row.git.scope}` : ''}`,
         filterName: row.name,
         filterPath: row.relativePosix,
-        defaultExpanded: false,
+        defaultExpanded: expandedPaths.has(row.relativePosix),
         lazyLoaded: row.loaded,
         ...(row.isDirectory && row.hasChildren && !row.loaded
           ? {
