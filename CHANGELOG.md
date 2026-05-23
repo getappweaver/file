@@ -4,9 +4,13 @@ All notable changes for each version are listed under the corresponding `v*.*.*`
 Tags and this file are updated by the post-commit hook when you commit with `--patch`, `--minor`, or `--major` (see CONTRIBUTING.md).
 You can also run `bun run release:changelog` to rewrite this file from tags.
 
+## [v2.2.7] - 2026-05-23
+
+- docs: add demo links (c381a64)
+
 ## [v2.2.6] - 2026-05-23
 
-- fix: respect expanded file story paths (84bd379)
+- fix: respect expanded file story paths (c49aa51)
 
 ## [v2.2.5] - 2026-05-21
 
