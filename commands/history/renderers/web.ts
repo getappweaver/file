@@ -1,11 +1,26 @@
 import type { WebAction, WebNode, WebNodeRoot } from '@src/web/ui-schema';
 import { stack, textBlock, textNode } from '@src/web/widgets';
 
+import {
+  fileBreadcrumbCss,
+  renderFileBreadcrumb,
+} from '../../shared/web-breadcrumb';
+
 import type { FileHistoryCommit, FileHistoryResult } from '../handler';
 
 const fileHistoryStylesheet = {
   id: 'file-plugin-history',
   cssText: `
+${fileBreadcrumbCss}
+
+.web-file-history-header.web-row {
+  flex-wrap: wrap;
+}
+
+.web-file-history-breadcrumb {
+  flex: 1;
+}
+
 .web-link.web-file-history-link {
   display: inline;
   padding: 0;
@@ -170,7 +185,24 @@ export function renderFileHistoryWeb(props: {
   const result = props.result;
 
   const children: WebNode[] = [
-    textBlock(`History: ${result.relativePath}`),
+    {
+      type: 'element',
+      tag: 'row',
+      props: {
+        gap: 'sm',
+        align: 'between',
+        itemAlign: 'baseline',
+        className: 'web-file-history-header',
+      },
+      children: [
+        renderFileBreadcrumb({
+          commandAlias: props.commandAlias,
+          path: result.relativePath,
+          className: 'web-file-history-breadcrumb',
+          extOption: null,
+        }),
+      ],
+    },
     ...(result.commits.length === 0
       ? [textBlock('No commits found for this path.', 'muted')]
       : result.commits.map((commit) =>

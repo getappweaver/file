@@ -38,6 +38,7 @@ export const FilePlugin: BotPlugin = {
       prefix: context.prefix,
       alias,
       source: context.source,
+      jsonPayload: context.jsonPayload,
     }),
   onInit: () => {},
   helpText: (a: string, prefix: string) => [

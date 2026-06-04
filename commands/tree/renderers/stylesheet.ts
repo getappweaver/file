@@ -51,6 +51,33 @@ export const filePluginTreeStylesheet: WebStyleSheet = {
   min-width: 0;
 }
 
+.web-file-tree-item-leaf > .web-tree-item-summary > .web-tree-toggle {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.web-file-tree-line .web-overflow-trigger.web-file-tree-row-menu {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.web-file-tree-line:hover .web-overflow-trigger.web-file-tree-row-menu,
+.web-file-tree-line:focus-within .web-overflow-trigger.web-file-tree-row-menu,
+.web-overflow-menu.is-open .web-overflow-trigger.web-file-tree-row-menu {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.web-file-tree-inline-form.web-form {
+  margin: 0.16rem 0 0.2rem 1.6rem;
+  padding: 0.35rem 0.45rem;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.web-file-tree-inline-form .web-textField__input {
+  min-width: min(18rem, 100%);
+}
+
 .web-file-tree-glyph-line {
   white-space: pre;
   user-select: none;

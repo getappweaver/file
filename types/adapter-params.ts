@@ -9,4 +9,5 @@ export type FileCommandAdapterParams = {
   source: MessageSource;
   parsed: ParsedCliInvocation;
   command: ReturnType<typeof getFileCommandDefinition>;
+  jsonPayload: unknown;
 };

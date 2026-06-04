@@ -20,6 +20,7 @@ type TreeRefreshActionProps = {
   rest: string[];
   extOption: string | null;
   expandedPaths: Set<string>;
+  revealPath: string | null;
 };
 
 function encodedExpandedPaths(expandedPaths: Set<string>): string | null {
@@ -43,6 +44,10 @@ function treeRefreshAction(props: TreeRefreshActionProps): WebAction {
     options.expanded = expanded;
   }
 
+  if (props.revealPath !== null) {
+    options.reveal = props.revealPath;
+  }
+
   return {
     type: 'command',
     command: props.commandAlias,
@@ -57,6 +62,14 @@ function treeRefreshAction(props: TreeRefreshActionProps): WebAction {
       options,
     },
   };
+}
+
+function revealInlineFormAction(targetId: string): WebAction {
+  return { type: 'reveal', targetId };
+}
+
+function hideInlineFormAction(targetId: string): WebAction {
+  return { type: 'hideReveal', targetId };
 }
 
 type ViewFileActionProps = {
@@ -267,6 +280,13 @@ function fileTreeItemId(relativePosix: string): string {
   return `file-tree-item-${relativePosix.replace(/[^a-zA-Z0-9_-]+/g, '_')}`;
 }
 
+function fileTreeRevealId(
+  kind: 'create' | 'rename',
+  relativePosix: string,
+): string {
+  return `file-tree-${kind}-${relativePosix.replace(/[^a-zA-Z0-9_-]+/g, '_')}`;
+}
+
 function fileTreeStoryTargetId(
   kind: 'open' | 'diff',
   relativePosix: string,
@@ -274,13 +294,294 @@ function fileTreeStoryTargetId(
   return `file-tree-${kind}-${relativePosix.replace(/[^a-zA-Z0-9_-]+/g, '_')}`;
 }
 
-function fileTreeSummaryLine(params: {
+function parentDir(relativePosix: string): string {
+  const index = relativePosix.lastIndexOf('/');
+
+  return index === -1 ? '.' : relativePosix.slice(0, index);
+}
+
+function expandedPathsForReveal(props: {
+  current: Set<string>;
+  revealPath: string;
+}): Set<string> {
+  const next = new Set(props.current);
+  const parts = props.revealPath.split('/').filter((part) => part.length > 0);
+
+  for (let index = 1; index < parts.length; index++) {
+    next.add(parts.slice(0, index).join('/'));
+  }
+
+  return next;
+}
+
+function treeMutationOptions(props: {
+  displayPath: string;
+  extOption: string | null;
+  expandedPaths: Set<string>;
+}): Record<string, string> {
+  const options: Record<string, string> = {
+    treeDir: props.displayPath,
+  };
+
+  const expanded = encodedExpandedPaths(props.expandedPaths);
+
+  if (props.extOption !== null) {
+    options.ext = props.extOption;
+  }
+
+  if (expanded !== null) {
+    options.expanded = expanded;
+  }
+
+  return options;
+}
+
+function buildInlineCreateFileForm(props: {
+  row: WorkspaceTreeListRow;
+  commandAlias: string;
+  displayPath: string;
+  extOption: string | null;
+  expandedPaths: Set<string>;
+}): WebNode {
+  const revealId = fileTreeRevealId('create', props.row.relativePosix);
+
+  return {
+    type: 'element',
+    tag: 'form',
+    props: {
+      className: 'web-form web-form--stacked web-file-tree-inline-form',
+      revealId,
+      hiddenUntilRevealed: true,
+      action: {
+        type: 'command',
+        command: props.commandAlias,
+        subcommand: 'create',
+        arguments: { dir: props.row.relativePosix },
+        options: treeMutationOptions({
+          displayPath: props.displayPath,
+          extOption: props.extOption,
+          expandedPaths: expandedPathsForReveal({
+            current: props.expandedPaths,
+            revealPath: props.row.relativePosix,
+          }),
+        }),
+        recordInTimeline: false,
+      },
+    },
+    children: [
+      {
+        type: 'element',
+        tag: 'text',
+        props: { tone: 'muted', size: 'sm' },
+        children: [textNode(`Create file in ${props.row.relativePosix}/`)],
+      },
+      {
+        type: 'element',
+        tag: 'textField',
+        props: {
+          formFieldName: 'name',
+          inputPlaceholder: 'filename.ext',
+          autoFocus: true,
+        },
+      },
+      {
+        type: 'element',
+        tag: 'row',
+        props: { className: 'web-form__actions', gap: 'sm' },
+        children: [
+          {
+            type: 'element',
+            tag: 'button',
+            props: { label: 'Create', htmlType: 'submit' },
+          },
+          {
+            type: 'element',
+            tag: 'button',
+            props: {
+              label: 'Close',
+              className: 'web-button',
+              action: hideInlineFormAction(revealId),
+            },
+          },
+        ],
+      },
+    ],
+  };
+}
+
+function buildInlineRenameForm(props: {
+  row: WorkspaceTreeListRow;
+  commandAlias: string;
+  displayPath: string;
+  extOption: string | null;
+  expandedPaths: Set<string>;
+}): WebNode {
+  const revealId = fileTreeRevealId('rename', props.row.relativePosix);
+
+  return {
+    type: 'element',
+    tag: 'form',
+    props: {
+      className: 'web-form web-form--stacked web-file-tree-inline-form',
+      revealId,
+      hiddenUntilRevealed: true,
+      action: {
+        type: 'command',
+        command: props.commandAlias,
+        subcommand: 'rename',
+        arguments: { path: props.row.relativePosix },
+        options: treeMutationOptions({
+          displayPath: props.displayPath,
+          extOption: props.extOption,
+          expandedPaths: expandedPathsForReveal({
+            current: props.expandedPaths,
+            revealPath: parentDir(props.row.relativePosix),
+          }),
+        }),
+        recordInTimeline: false,
+      },
+    },
+    children: [
+      {
+        type: 'element',
+        tag: 'text',
+        props: { tone: 'muted', size: 'sm' },
+        children: [textNode(`Rename ${props.row.relativePosix}`)],
+      },
+      {
+        type: 'element',
+        tag: 'textField',
+        props: {
+          formFieldName: 'name',
+          inputPlaceholder: props.row.name,
+          value: props.row.name,
+          autoFocus: true,
+        },
+      },
+      {
+        type: 'element',
+        tag: 'row',
+        props: { className: 'web-form__actions', gap: 'sm' },
+        children: [
+          {
+            type: 'element',
+            tag: 'button',
+            props: { label: 'Rename', htmlType: 'submit' },
+          },
+          {
+            type: 'element',
+            tag: 'button',
+            props: {
+              label: 'Close',
+              className: 'web-button',
+              action: hideInlineFormAction(revealId),
+            },
+          },
+        ],
+      },
+    ],
+  };
+}
+
+function fileTreeRowActionsMenu(props: {
   row: WorkspaceTreeListRow;
   commandAlias: string;
   displayPath: string;
   extOption: string | null;
 }): WebNode {
-  const { row, commandAlias, displayPath, extOption } = params;
+  const { row, commandAlias, displayPath, extOption } = props;
+
+  return {
+    type: 'element',
+    tag: 'overflowMenu',
+    props: {
+      label: '⋮',
+      buttonVariant: 'icon',
+      className: 'web-file-tree-row-menu',
+      storyTargetId: `file-tree-row-actions-${row.relativePosix}`,
+    },
+    children: [
+      ...(row.isDirectory
+        ? [
+            {
+              type: 'element' as const,
+              tag: 'menuItem' as const,
+              props: {
+                label: 'Create file here…',
+                action: revealInlineFormAction(
+                  fileTreeRevealId('create', row.relativePosix),
+                ),
+              },
+            },
+          ]
+        : []),
+      {
+        type: 'element',
+        tag: 'menuItem',
+        props: {
+          label: 'Rename…',
+          action: revealInlineFormAction(
+            fileTreeRevealId('rename', row.relativePosix),
+          ),
+        },
+      },
+      ...(row.isDirectory
+        ? [
+            {
+              type: 'element' as const,
+              tag: 'menuItem' as const,
+              props: {
+                label: 'Search here…',
+                action: searchFormAction({
+                  commandAlias,
+                  displayPath: row.relativePosix,
+                  extOption,
+                }),
+              },
+            },
+          ]
+        : []),
+      {
+        type: 'element',
+        tag: 'menuItem',
+        props: {
+          label: 'Check diff',
+          action: row.isDirectory
+            ? viewTimelineDiffAction({
+                commandAlias,
+                relativePosix: row.relativePosix,
+                previousDir: displayPath,
+              })
+            : viewDiffAction({
+                commandAlias,
+                relativePosix: row.relativePosix,
+                previousDir: displayPath,
+              }),
+        },
+      },
+      {
+        type: 'element',
+        tag: 'menuItem',
+        props: {
+          label: 'Check history',
+          action: viewHistoryAction({
+            commandAlias,
+            relativePosix: row.relativePosix,
+          }),
+        },
+      },
+    ],
+  };
+}
+
+function fileTreeSummaryLine(params: {
+  row: WorkspaceTreeListRow;
+  commandAlias: string;
+  displayPath: string;
+  extOption: string | null;
+  revealPath: string | null;
+}): WebNode {
+  const { row, commandAlias, displayPath, extOption, revealPath } = params;
 
   const action = row.isDirectory
     ? treeRefreshAction({
@@ -288,6 +589,7 @@ function fileTreeSummaryLine(params: {
         rest: [row.relativePosix],
         extOption,
         expandedPaths: new Set(),
+        revealPath: null,
       })
     : viewFileAction({
         commandAlias,
@@ -317,6 +619,9 @@ function fileTreeSummaryLine(params: {
       align: 'start',
       itemAlign: 'center',
       className: `web-file-tree-line${row.git ? ` web-file-tree-line-git web-file-tree-line-git-${row.git.kind}` : ''}`,
+      ...(row.relativePosix === revealPath
+        ? { scrollIntoViewOnMount: true }
+        : {}),
     },
     children: [
       {
@@ -348,6 +653,7 @@ function fileTreeSummaryLine(params: {
             }),
           ]
         : []),
+      fileTreeRowActionsMenu({ row, commandAlias, displayPath, extOption }),
     ],
   };
 }
@@ -362,6 +668,7 @@ function buildFileTreeItemsFromRows(params: {
   displayPath: string;
   extOption: string | null;
   expandedPaths: Set<string>;
+  revealPath: string | null;
   startIndex: number;
   levelDepth: number;
 }): { nodes: WebNode[]; nextIndex: number } {
@@ -371,6 +678,7 @@ function buildFileTreeItemsFromRows(params: {
     displayPath,
     extOption,
     expandedPaths,
+    revealPath,
     startIndex,
     levelDepth,
   } = params;
@@ -394,6 +702,7 @@ function buildFileTreeItemsFromRows(params: {
         displayPath,
         extOption,
         expandedPaths,
+        revealPath,
         startIndex: i,
         levelDepth: levelDepth + 1,
       });
@@ -411,6 +720,7 @@ function buildFileTreeItemsFromRows(params: {
       props: {
         id: fileTreeItemId(row.relativePosix),
         ui: 'file-tree-item',
+        ...(!row.isDirectory ? { className: 'web-file-tree-item-leaf' } : {}),
         filterText: `${row.name}\n${row.relativePosix}${row.git ? `\n${row.git.label}\n${row.git.kind}\n${row.git.scope}` : ''}`,
         filterName: row.name,
         filterPath: row.relativePosix,
@@ -423,13 +733,38 @@ function buildFileTreeItemsFromRows(params: {
                 rest: displayPath === '.' ? [] : [displayPath],
                 extOption,
                 expandedPaths: lazyExpandedPaths,
+                revealPath: null,
               }),
               lazyLoadingLabel: 'Loading folder…',
             }
           : {}),
       },
       children: [
-        fileTreeSummaryLine({ row, commandAlias, displayPath, extOption }),
+        fileTreeSummaryLine({
+          row,
+          commandAlias,
+          displayPath,
+          extOption,
+          revealPath,
+        }),
+        ...(row.isDirectory
+          ? [
+              buildInlineCreateFileForm({
+                row,
+                commandAlias,
+                displayPath,
+                extOption,
+                expandedPaths,
+              }),
+            ]
+          : []),
+        buildInlineRenameForm({
+          row,
+          commandAlias,
+          displayPath,
+          extOption,
+          expandedPaths,
+        }),
         ...(childNodes.length > 0
           ? [
               {
@@ -455,6 +790,7 @@ type RenderFileTreeBrowserWebProps = {
   list: ListWorkspaceDirectoryResult;
   extOption: string | null;
   expandedPaths: Set<string>;
+  revealPath: string | null;
 };
 
 export function renderFileTreeBrowserWeb(
@@ -556,6 +892,7 @@ export function renderFileTreeBrowserWeb(
           displayPath,
           extOption: props.extOption,
           expandedPaths: props.expandedPaths,
+          revealPath: props.revealPath,
           startIndex: 0,
           levelDepth: 0,
         }).nodes;

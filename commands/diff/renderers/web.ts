@@ -216,6 +216,8 @@ export function renderTimelineDiffOutput(props: {
       title: props.result.commit?.subject ?? props.result.relativePath,
       subtitle: props.result.commit?.relativeTime ?? 'working tree',
       origin: props.result.commit ? 'git_commit' : 'workspace_diff',
+      scopePath: props.result.relativePath,
+      stagedFiles: props.result.stagedFiles,
     },
   };
 }

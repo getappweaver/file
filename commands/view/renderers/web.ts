@@ -59,6 +59,7 @@ type RenderFileViewWebProps = {
   result: FileViewOk | FileViewErr;
   previousDir: string | null;
   highlightLine: number | null;
+  lineScrollToken: string | null;
 };
 
 type CodeLineNodeProps = {
@@ -66,7 +67,8 @@ type CodeLineNodeProps = {
   line: string;
   lineNumber: number;
   language: string | null;
-  highlighted: boolean;
+  scrollIntoView: boolean;
+  scrollOnceKey: string | null;
 };
 
 function lineClipboardAction(text: string): WebAction {
@@ -87,8 +89,11 @@ function codeLineNode(params: CodeLineNodeProps): WebNode {
     props: {
       gap: 'xs',
       itemAlign: 'baseline',
-      className: `web-file-view-code-line${params.highlighted ? ' web-file-view-code-line-highlighted' : ''}`,
-      ...(params.highlighted ? { autoFocus: true } : {}),
+      className: 'web-file-view-code-line',
+      ...(params.scrollIntoView ? { scrollIntoViewOnMount: true } : {}),
+      ...(params.scrollOnceKey === null
+        ? {}
+        : { scrollIntoViewOnceKey: params.scrollOnceKey }),
     },
     children: [
       {
@@ -174,12 +179,15 @@ export function renderFileViewWeb(props: RenderFileViewWebProps): WebNodeRoot {
   } else {
     const lang = hljsLanguageFromPath(r.relativePath);
     const lines = r.content.split(/\r?\n/);
+    const editToggleKey = `file-edit:${r.relativePath}`;
+    const editableTextId = `file-edit-text:${r.relativePath}`;
 
     rows.push({
       type: 'element',
       tag: 'box',
       props: {
         className: 'web-file-view-code',
+        hiddenWhenToggleKey: editToggleKey,
         ...(supportsTts(r.relativePath) ? { ttsText: r.content } : {}),
       },
       children: [
@@ -193,19 +201,121 @@ export function renderFileViewWeb(props: RenderFileViewWebProps): WebNodeRoot {
               line,
               lineNumber: index + 1,
               language: lang,
-              highlighted: props.highlightLine === index + 1,
+              scrollIntoView: props.highlightLine === index + 1,
+              scrollOnceKey:
+                props.highlightLine === index + 1
+                  ? props.lineScrollToken
+                  : null,
             }),
           ),
         },
       ],
     });
+
+    rows.push({
+      type: 'element',
+      tag: 'editableText',
+      props: {
+        className: 'web-file-view-code web-file-view-code--edit',
+        visibleWhenToggleKey: editToggleKey,
+        editableTextId,
+        editableTextValue: r.content,
+        showLineNumbers: true,
+      },
+    });
+  }
+
+  const canEdit = !r.binary && !r.truncated;
+  const rootTree = stack(rows, 'sm');
+
+  if (rootTree.type !== 'element') {
+    return {
+      kind: 'ui',
+      version: 1,
+      meta: { command: props.commandAlias, subcommand: 'view' },
+      tree: rootTree,
+      stylesheets: [filePluginViewStylesheet],
+    };
   }
 
   return {
     kind: 'ui',
     version: 1,
     meta: { command: props.commandAlias, subcommand: 'view' },
-    tree: stack(rows, 'sm'),
+    tree: {
+      ...rootTree,
+      props: {
+        ...rootTree.props,
+        ...(canEdit
+          ? {
+              toolbarActions: [
+                {
+                  label: 'Edit file',
+                  icon: 'edit',
+                  activeLabel: 'Save file',
+                  activeIcon: 'save',
+                  toggleKey: `file-edit:${r.relativePath}`,
+                  action: {
+                    type: 'clientAction',
+                    action: 'web.toggle',
+                    payload: { key: `file-edit:${r.relativePath}` },
+                  },
+                  activeAction: {
+                    type: 'clientAction',
+                    action: 'editableText.runCommand',
+                    payload: {
+                      editableTextId: `file-edit-text:${r.relativePath}`,
+                      contentArgument: 'content',
+                      activeLineRefreshOption: 'line',
+                      activeLineScrollTokenOption: 'lineScrollToken',
+                      toggleKey: `file-edit:${r.relativePath}`,
+                      command: {
+                        type: 'command',
+                        command: props.commandAlias,
+                        subcommand: 'edit',
+                        arguments: { path: r.relativePath },
+                        options:
+                          props.previousDir === null
+                            ? {}
+                            : { previousDir: props.previousDir },
+                        recordInTimeline: true,
+                        refresh: {
+                          command: props.commandAlias,
+                          subcommand: 'view',
+                          arguments: { path: r.relativePath },
+                          recordInTimeline: false,
+                          options:
+                            props.previousDir === null
+                              ? {}
+                              : { previousDir: props.previousDir },
+                        },
+                      },
+                    },
+                  },
+                },
+                {
+                  label: 'Open in timeline',
+                  icon: 'openTimeline',
+                  className: 'web-file-open-timeline-button',
+                  visibleOnSurfaces: ['dock'],
+                  action: {
+                    type: 'command',
+                    command: props.commandAlias,
+                    subcommand: 'view',
+                    arguments: { path: r.relativePath },
+                    options:
+                      props.previousDir === null
+                        ? {}
+                        : { previousDir: props.previousDir },
+                    surface: 'timeline',
+                    recordInTimeline: false,
+                  },
+                },
+              ],
+            }
+          : {}),
+      },
+    },
     stylesheets: [filePluginViewStylesheet],
   };
 }

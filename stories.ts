@@ -135,6 +135,7 @@ function buildTreeOutput(params: {
       list: demoTree,
       extOption: null,
       expandedPaths: new Set(['docs']),
+      revealPath: null,
     }),
     clientView: null,
   };
@@ -150,6 +151,7 @@ function buildViewOutput(params: {
       result: demoMarkdownView,
       previousDir: '.',
       highlightLine: null,
+      lineScrollToken: null,
     }),
     clientView: null,
   };

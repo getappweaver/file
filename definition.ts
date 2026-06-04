@@ -3,9 +3,14 @@ import type { CommandDefinition } from '@src/system/command-definition';
 
 import { bottomupDefinition } from './commands/bottomup/definition';
 import { bottomupContextDefinition } from './commands/bottomup_context/definition';
+import { commitDefinition } from './commands/commit/definition';
+import { createDefinition } from './commands/create/definition';
 import { diffDefinition } from './commands/diff/definition';
 import { downloadDefinition } from './commands/download/definition';
+import { editDefinition } from './commands/edit/definition';
 import { historyDefinition } from './commands/history/definition';
+import { renameDefinition } from './commands/rename/definition';
+import { restoreDefinition } from './commands/restore/definition';
 import { searchDefinition } from './commands/search/definition';
 import { summarizeDefinition } from './commands/summarize/definition';
 import { topdownDefinition } from './commands/topdown/definition';
@@ -24,13 +29,18 @@ export const commandDefinition = (
   subcommands: [
     createHelpSubcommandDefinition(prefix, alias, {
       topicArgSummary:
-        'Optional subcommand name: upload, download, tree, search, view, diff, history, bottomup, bottomup_context, summarize, or topdown.',
+        'Optional subcommand name: upload, download, tree, commit, create, search, view, edit, rename, restore, diff, history, bottomup, bottomup_context, summarize, or topdown.',
       exampleTopics: [
         'upload',
         'download',
         'tree',
+        'commit',
+        'create',
         'search',
         'view',
+        'edit',
+        'rename',
+        'restore',
         'diff',
         'history',
         'bottomup',
@@ -42,8 +52,13 @@ export const commandDefinition = (
     uploadDefinition(prefix, alias),
     downloadDefinition(prefix, alias),
     treeDefinition(prefix, alias),
+    commitDefinition(prefix, alias),
+    createDefinition(prefix, alias),
     searchDefinition(prefix, alias),
     viewDefinition(prefix, alias),
+    editDefinition(prefix, alias),
+    renameDefinition(prefix, alias),
+    restoreDefinition(prefix, alias),
     diffDefinition(prefix, alias),
     historyDefinition(prefix, alias),
     bottomupDefinition(prefix, alias),

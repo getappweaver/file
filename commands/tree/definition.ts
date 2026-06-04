@@ -33,6 +33,13 @@ export const treeDefinition = (
       kind: 'string',
       required: false,
     },
+    {
+      name: 'reveal',
+      summary: 'Web UI internal path to scroll into view after refresh.',
+      flag: '--reveal',
+      kind: 'string',
+      required: false,
+    },
   ],
   examples: [
     `${prefix}${alias} tree`,

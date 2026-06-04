@@ -1,11 +1,11 @@
 {
   "name": "appweaver-file-plugin",
-  "version": "2.2.7",
+  "version": "3.0.0",
   "appweaver": {
     "title": "File manager",
     "icon": "./commands/tree/renderers/tree.svg",
     "website": "https://github.com/getappweaver/file",
-    "coreApiVersion": "^9.16.0",
+    "coreApiVersion": "^9.36.0",
     "description": "Official AppWeaver File manager. Adds focused AI-powered file management tools, commands, and data models to an AppWeaver workspace."
   },
   "description": "Official AppWeaver File manager. Adds focused AI-powered file management tools, commands, and data models to an AppWeaver workspace.",

@@ -53,6 +53,7 @@ export type TimelineDiffResult =
       files: AgentFileDiff[];
       truncated: boolean;
       commit: { subject: string; relativeTime: string } | null;
+      stagedFiles: string[];
     }
   | FileDiffErr;
 
@@ -380,6 +381,37 @@ function listUntrackedFiles(props: {
     .filter((line) => line.length > 0);
 }
 
+function splitNulPaths(stdout: Uint8Array): string[] {
+  return Buffer.from(stdout)
+    .toString('utf8')
+    .split('\0')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
+}
+
+export function listStagedFiles(props: {
+  workspaceRoot: string;
+  pathspec: string | null;
+}): string[] {
+  const args = ['git', 'diff', '--name-only', '--cached', '-z', '--'];
+
+  if (props.pathspec !== null) {
+    args.push(props.pathspec);
+  }
+
+  const result = spawnSync(args, {
+    cwd: props.workspaceRoot,
+    stdout: 'pipe',
+    stderr: 'pipe',
+  });
+
+  if (result.exitCode !== 0) {
+    return [];
+  }
+
+  return splitNulPaths(result.stdout);
+}
+
 export function handleDiffCommand(
   props: HandleDiffCommandProps,
 ): FileDiffResult {
@@ -544,6 +576,10 @@ export function handleTimelineDiffCommand(
     files,
     truncated: truncatedPatch.truncated,
     commit: null,
+    stagedFiles: listStagedFiles({
+      workspaceRoot: props.workspaceRoot,
+      pathspec: relPosix,
+    }),
   };
 }
 
@@ -615,6 +651,7 @@ export function handleCommitTimelineDiffCommand(
       workspaceRoot: props.workspaceRoot,
       commitHash: props.commitHash,
     }),
+    stagedFiles: [],
   };
 }
 

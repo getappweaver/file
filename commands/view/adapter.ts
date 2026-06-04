@@ -65,6 +65,7 @@ export function adaptViewCommand(
           result: { type: 'error', text: 'Missing required path argument.' },
           previousDir: null,
           highlightLine: null,
+          lineScrollToken: null,
         })
       : 'Missing required path argument.';
   }
@@ -77,6 +78,13 @@ export function adaptViewCommand(
       : null;
 
   const highlightLine = parsePositiveInteger(params.parsed.options.line);
+  const lineScrollTokenRaw = params.parsed.options.lineScrollToken;
+
+  const lineScrollToken =
+    typeof lineScrollTokenRaw === 'string' &&
+    lineScrollTokenRaw.trim().length > 0
+      ? lineScrollTokenRaw.trim()
+      : null;
 
   let workspaceRoot: string;
 
@@ -91,6 +99,7 @@ export function adaptViewCommand(
           result: { type: 'error', text },
           previousDir,
           highlightLine,
+          lineScrollToken,
         })
       : text;
   }
@@ -107,6 +116,7 @@ export function adaptViewCommand(
       result,
       previousDir,
       highlightLine,
+      lineScrollToken,
     });
   }
 
