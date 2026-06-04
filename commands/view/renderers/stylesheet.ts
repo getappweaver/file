@@ -33,6 +33,7 @@ export const filePluginViewStylesheet: WebStyleSheet = {
 }
 
 .web-file-view-code-lines.web-stack {
+  --web-file-view-line-gap: 0.5rem;
   display: table;
   width: 100%;
   border-collapse: collapse;
@@ -48,7 +49,7 @@ export const filePluginViewStylesheet: WebStyleSheet = {
 .web-file-view-line-number {
   display: table-cell;
   width: 1%;
-  padding: 0 5px 0 0.55rem;
+  padding: 0 var(--web-file-view-line-gap) 0 0.55rem;
   border-right: 1px solid #999;
   color: #ccc;
   user-select: none;
@@ -77,7 +78,7 @@ a.web-file-view-line-number:focus-visible {
 .web-file-view-code-text.hljs {
   display: table-cell;
   width: auto;
-  padding: 0 0.55rem 0 0.65rem;
+  padding: 0 0.55rem 0 var(--web-file-view-line-gap);
   background: transparent;
   overflow-wrap: anywhere;
   vertical-align: top;

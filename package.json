@@ -1,6 +1,6 @@
 {
   "name": "appweaver-file-plugin",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "appweaver": {
     "title": "File manager",
     "icon": "./commands/tree/renderers/tree.svg",
