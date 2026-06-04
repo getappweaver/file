@@ -1,4 +1,4 @@
-import { existsSync, statSync, writeFileSync } from 'fs';
+import { existsSync, mkdirSync, statSync, writeFileSync } from 'fs';
 import { relative, resolve } from 'path';
 
 export type FileCreateResult =
@@ -15,11 +15,12 @@ export type FileCreateResult =
 type HandleCreateCommandProps = {
   workspaceRoot: string;
   relativeDir: string;
-  filename: string;
+  name: string;
+  kind: 'file' | 'folder';
 };
 
-function validateFilename(filename: string): string | null {
-  const name = filename.trim();
+function validateName(value: string): string | null {
+  const name = value.trim();
 
   if (name.length === 0) {
     return null;
@@ -49,12 +50,12 @@ export function handleCreateCommand(
   props: HandleCreateCommandProps,
 ): FileCreateResult {
   const dir = props.relativeDir.trim() || '.';
-  const filename = validateFilename(props.filename);
+  const name = validateName(props.name);
 
-  if (filename === null) {
+  if (name === null) {
     return {
       type: 'error',
-      text: 'Filename must be a single name, not a path.',
+      text: 'Name must be a single file or folder name, not a path.',
     };
   }
 
@@ -77,26 +78,30 @@ export function handleCreateCommand(
     return { type: 'error', text: `Not a directory: ${dir}` };
   }
 
-  const fileAbs = resolve(dirAbs, filename);
+  const targetAbs = resolve(dirAbs, name);
 
   if (
     !isUnderWorkspace({
       workspaceRoot: props.workspaceRoot,
-      absolutePath: fileAbs,
+      absolutePath: targetAbs,
     })
   ) {
     return { type: 'error', text: 'Path escapes workspace.' };
   }
 
-  if (existsSync(fileAbs)) {
-    return { type: 'error', text: `Already exists: ${filename}` };
+  if (existsSync(targetAbs)) {
+    return { type: 'error', text: `Already exists: ${name}` };
   }
 
-  writeFileSync(fileAbs, '', 'utf8');
+  if (props.kind === 'folder') {
+    mkdirSync(targetAbs);
+  } else {
+    writeFileSync(targetAbs, '', 'utf8');
+  }
 
   return {
     type: 'ok',
-    relativePath: relative(props.workspaceRoot, fileAbs).replace(/\\/g, '/'),
+    relativePath: relative(props.workspaceRoot, targetAbs).replace(/\\/g, '/'),
     parentDir: relative(props.workspaceRoot, dirAbs).replace(/\\/g, '/') || '.',
   };
 }

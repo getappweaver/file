@@ -78,6 +78,31 @@ export const filePluginTreeStylesheet: WebStyleSheet = {
   min-width: min(18rem, 100%);
 }
 
+.web-file-tree-delete-form.web-form {
+  border-left: 2px solid var(--color-danger, #f48771);
+}
+
+.web-button.web-file-tree-delete-menu-item {
+  color: #000 !important;
+}
+
+.web-button.web-file-tree-delete-menu-item:hover,
+.web-button.web-file-tree-delete-menu-item:focus-visible {
+  background: var(--color-danger, #f48771) !important;
+  color: #000 !important;
+}
+
+.web-button.web-file-tree-delete-submit {
+  background: color-mix(in srgb, var(--color-danger, #f48771) 86%, transparent) !important;
+  color: #000 !important;
+}
+
+.web-button.web-file-tree-delete-submit:hover,
+.web-button.web-file-tree-delete-submit:focus-visible {
+  background: var(--color-danger, #f48771) !important;
+  color: #000 !important;
+}
+
 .web-file-tree-glyph-line {
   white-space: pre;
   user-select: none;
@@ -109,6 +134,8 @@ export const filePluginTreeStylesheet: WebStyleSheet = {
   user-select: none;
 }
 
+.web-button.web-file-new-file,
+.web-button.web-file-new-folder,
 .web-button.web-file-advanced-search-button,
 .web-button.web-file-timeline-diff-button,
 .web-button.web-file-history-button {
@@ -129,6 +156,8 @@ export const filePluginTreeStylesheet: WebStyleSheet = {
   transform: none;
 }
 
+.web-button.web-file-new-file::before,
+.web-button.web-file-new-folder::before,
 .web-button.web-file-advanced-search-button::before,
 .web-button.web-file-timeline-diff-button::before,
 .web-button.web-file-history-button::before {
@@ -139,14 +168,28 @@ export const filePluginTreeStylesheet: WebStyleSheet = {
   background: currentColor;
 }
 
+.web-button.web-file-new-file::before {
+  mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 14C4.448 14 4 13.552 4 13V3C4 2.448 4.448 2 5 2H8V4.5C8 5.328 8.672 6 9.5 6H12V6.025C12.344 6.056 12.677 6.121 13 6.213V5.414C13 5.016 12.842 4.635 12.561 4.353L9.647 1.439C9.366 1.158 8.984 1 8.586 1H5C3.895 1 3 1.895 3 3V13C3 14.105 3.895 15 5 15H7.261C7.008 14.693 6.791 14.357 6.607 14H5ZM9 2.207L11.793 5H9.5C9.224 5 9 4.776 9 4.5V2.207ZM11.5 7C9.015 7 7 9.015 7 11.5C7 13.985 9.015 16 11.5 16C13.985 16 16 13.985 16 11.5C16 9.015 13.985 7 11.5 7ZM14 12H12V14C12 14.276 11.776 14.5 11.5 14.5C11.224 14.5 11 14.276 11 14V12H9C8.724 12 8.5 11.776 8.5 11.5C8.5 11.224 8.724 11 9 11H11V9C11 8.724 11.224 8.5 11.5 8.5C11.776 8.5 12 8.724 12 9V11H14C14.276 11 14.5 11.224 14.5 11.5C14.5 11.776 14.276 12 14 12Z'/%3E%3C/svg%3E") center / contain no-repeat;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 14C4.448 14 4 13.552 4 13V3C4 2.448 4.448 2 5 2H8V4.5C8 5.328 8.672 6 9.5 6H12V6.025C12.344 6.056 12.677 6.121 13 6.213V5.414C13 5.016 12.842 4.635 12.561 4.353L9.647 1.439C9.366 1.158 8.984 1 8.586 1H5C3.895 1 3 1.895 3 3V13C3 14.105 3.895 15 5 15H7.261C7.008 14.693 6.791 14.357 6.607 14H5ZM9 2.207L11.793 5H9.5C9.224 5 9 4.776 9 4.5V2.207ZM11.5 7C9.015 7 7 9.015 7 11.5C7 13.985 9.015 16 11.5 16C13.985 16 16 13.985 16 11.5C16 9.015 13.985 7 11.5 7ZM14 12H12V14C12 14.276 11.776 14.5 11.5 14.5C11.224 14.5 11 14.276 11 14V12H9C8.724 12 8.5 11.776 8.5 11.5C8.5 11.224 8.724 11 9 11H11V9C11 8.724 11.224 8.5 11.5 8.5C11.776 8.5 12 8.724 12 9V11H14C14.276 11 14.5 11.224 14.5 11.5C14.5 11.776 14.276 12 14 12Z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.web-button.web-file-new-folder::before {
+  mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 4.5V6H5.58579C5.71839 6 5.84557 5.94732 5.93934 5.85355L7.29289 4.5L5.93934 3.14645C5.84557 3.05268 5.71839 3 5.58579 3H3.5C2.67157 3 2 3.67157 2 4.5ZM1 4.5C1 3.11929 2.11929 2 3.5 2H5.58579C5.98361 2 6.36514 2.15804 6.64645 2.43934L8.20711 4H12.5C13.8807 4 15 5.11929 15 6.5V7.25716C14.6929 7.00353 14.3578 6.78261 14 6.59971V6.5C14 5.67157 13.3284 5 12.5 5H8.20711L6.64645 6.56066C6.36514 6.84197 5.98361 7 5.58579 7H2V11.5C2 12.3284 2.67157 13 3.5 13H6.20703C6.30564 13.3486 6.43777 13.6832 6.59971 14H3.5C2.11929 14 1 12.8807 1 11.5V4.5ZM16 11.5C16 13.9853 13.9853 16 11.5 16C9.01472 16 7 13.9853 7 11.5C7 9.01472 9.01472 7 11.5 7C13.9853 7 16 9.01472 16 11.5ZM12 9C12 8.72386 11.7761 8.5 11.5 8.5C11.2239 8.5 11 8.72386 11 9V11H9C8.72386 11 8.5 11.2239 8.5 11.5C8.5 11.7761 8.72386 12 9 12H11V14C11 14.2761 11.2239 14.5 11.5 14.5C11.7761 14.5 12 14.2761 12 14V12H14C14.2761 12 14.5 11.7761 14.5 11.5C14.5 11.2239 14.2761 11 14 11H12V9Z'/%3E%3C/svg%3E") center / contain no-repeat;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 4.5V6H5.58579C5.71839 6 5.84557 5.94732 5.93934 5.85355L7.29289 4.5L5.93934 3.14645C5.84557 3.05268 5.71839 3 5.58579 3H3.5C2.67157 3 2 3.67157 2 4.5ZM1 4.5C1 3.11929 2.11929 2 3.5 2H5.58579C5.98361 2 6.36514 2.15804 6.64645 2.43934L8.20711 4H12.5C13.8807 4 15 5.11929 15 6.5V7.25716C14.6929 7.00353 14.3578 6.78261 14 6.59971V6.5C14 5.67157 13.3284 5 12.5 5H8.20711L6.64645 6.56066C6.36514 6.84197 5.98361 7 5.58579 7H2V11.5C2 12.3284 2.67157 13 3.5 13H6.20703C6.30564 13.3486 6.43777 13.6832 6.59971 14H3.5C2.11929 14 1 12.8807 1 11.5V4.5ZM16 11.5C16 13.9853 13.9853 16 11.5 16C9.01472 16 7 13.9853 7 11.5C7 9.01472 9.01472 7 11.5 7C13.9853 7 16 9.01472 16 11.5ZM12 9C12 8.72386 11.7761 8.5 11.5 8.5C11.2239 8.5 11 8.72386 11 9V11H9C8.72386 11 8.5 11.2239 8.5 11.5C8.5 11.7761 8.72386 12 9 12H11V14C11 14.2761 11.2239 14.5 11.5 14.5C11.7761 14.5 12 14.2761 12 14V12H14C14.2761 12 14.5 11.7761 14.5 11.5C14.5 11.2239 14.2761 11 14 11H12V9Z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
 .web-button.web-file-advanced-search-button::before {
   mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M14,6v6H10.66718a3.66156,3.66156,0,0,0,.24884-1.30225A3.70117,3.70117,0,0,0,7.21973,7,3.65379,3.65379,0,0,0,6,7.22308V2h4V6ZM11,2V5h3ZM9.87445,10.69754a2.69732,2.69732,0,0,1-4.73038,1.77284L2.52149,14l-.47964-.823,2.61261-1.52332a2.69756,2.69756,0,1,1,5.22-.95614Zm-.95195,0a1.74533,1.74533,0,1,0-1.74506,1.74558A1.74723,1.74723,0,0,0,8.9225,10.69754Z'/%3E%3C/svg%3E") center / contain no-repeat;
   -webkit-mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M14,6v6H10.66718a3.66156,3.66156,0,0,0,.24884-1.30225A3.70117,3.70117,0,0,0,7.21973,7,3.65379,3.65379,0,0,0,6,7.22308V2h4V6ZM11,2V5h3ZM9.87445,10.69754a2.69732,2.69732,0,0,1-4.73038,1.77284L2.52149,14l-.47964-.823,2.61261-1.52332a2.69756,2.69756,0,1,1,5.22-.95614Zm-.95195,0a1.74533,1.74533,0,1,0-1.74506,1.74558A1.74723,1.74723,0,0,0,8.9225,10.69754Z'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 
+.web-button.web-file-new-file:hover,
+.web-button.web-file-new-folder:hover,
 .web-button.web-file-advanced-search-button:hover,
 .web-button.web-file-timeline-diff-button:hover,
 .web-button.web-file-history-button:hover,
+.web-button.web-file-new-file:focus-visible,
+.web-button.web-file-new-folder:focus-visible,
 .web-button.web-file-timeline-diff-button:focus-visible,
 .web-button.web-file-history-button:focus-visible,
 .web-button.web-file-advanced-search-button:focus-visible {
@@ -156,6 +199,8 @@ export const filePluginTreeStylesheet: WebStyleSheet = {
   transform: none;
 }
 
+.web-button.web-file-new-file:active,
+.web-button.web-file-new-folder:active,
 .web-button.web-file-advanced-search-button:active,
 .web-button.web-file-timeline-diff-button:active,
 .web-button.web-file-history-button:active {

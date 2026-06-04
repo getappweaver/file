@@ -5,19 +5,16 @@ import type { FileCommandAdapterParams } from '../../types/adapter-params';
 import { resolveFileWorkspaceRoot } from '../shared/workspace-root';
 import { renderTreeForWeb } from '../tree/adapter';
 
-import { handleCreateCommand } from './handler';
+import { handleDeleteCommand } from './handler';
 
-export function adaptCreateCommand(
+export function adaptDeleteCommand(
   params: FileCommandAdapterParams,
 ): WebHandlerResult {
-  const dirRaw = params.parsed.arguments.dir;
-  const nameRaw = params.parsed.arguments.name;
+  const pathRaw = params.parsed.arguments.path;
+  const path = typeof pathRaw === 'string' ? pathRaw.trim() : null;
 
-  const dir = typeof dirRaw === 'string' ? dirRaw.trim() : null;
-  const name = typeof nameRaw === 'string' ? nameRaw.trim() : null;
-
-  if (dir === null || name === null) {
-    return 'Missing required directory or filename argument.';
+  if (path === null) {
+    return 'Missing required path argument.';
   }
 
   let workspaceRoot: string;
@@ -28,11 +25,9 @@ export function adaptCreateCommand(
     return String(err instanceof Error ? err.message : err);
   }
 
-  const result = handleCreateCommand({
+  const result = handleDeleteCommand({
     workspaceRoot,
-    relativeDir: dir,
-    name,
-    kind: params.parsed.options.folder === true ? 'folder' : 'file',
+    relativePath: path,
   });
 
   if (result.type === 'error') {
@@ -40,7 +35,7 @@ export function adaptCreateCommand(
   }
 
   if (params.source !== 'web') {
-    return `Created ${result.relativePath}`;
+    return `Deleted ${result.relativePath}`;
   }
 
   return renderTreeForWeb({
@@ -57,6 +52,6 @@ export function adaptCreateCommand(
       typeof params.parsed.options.expanded === 'string'
         ? params.parsed.options.expanded
         : null,
-    revealPath: result.relativePath,
+    revealPath: result.parentDir,
   });
 }

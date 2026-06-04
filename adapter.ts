@@ -7,6 +7,7 @@ import { adaptBottomupCommand } from './commands/bottomup/adapter';
 import { adaptBottomupContextCommand } from './commands/bottomup_context/adapter';
 import { adaptCommitCommand } from './commands/commit/adapter';
 import { adaptCreateCommand } from './commands/create/adapter';
+import { adaptDeleteCommand } from './commands/delete/adapter';
 import { adaptDiffCommand } from './commands/diff/adapter';
 import { adaptDownloadCommand } from './commands/download/adapter';
 import { adaptEditCommand } from './commands/edit/adapter';
@@ -30,6 +31,7 @@ type FileSubcommand =
   | 'tree'
   | 'commit'
   | 'create'
+  | 'delete'
   | 'search'
   | 'view'
   | 'edit'
@@ -60,6 +62,7 @@ const subcommandAdapters: Record<FileSubcommand, FileCommandAdapter> = {
   tree: adaptTreeCommand,
   commit: adaptCommitCommand,
   create: adaptCreateCommand,
+  delete: adaptDeleteCommand,
   search: adaptSearchCommand,
   view: adaptViewCommand,
   edit: adaptEditCommand,
@@ -100,6 +103,7 @@ function isFileSubcommand(value: string): value is FileSubcommand {
     value === 'tree' ||
     value === 'commit' ||
     value === 'create' ||
+    value === 'delete' ||
     value === 'search' ||
     value === 'view' ||
     value === 'edit' ||

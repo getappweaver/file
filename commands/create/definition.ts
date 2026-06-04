@@ -5,7 +5,7 @@ export const createDefinition = (
   alias: string,
 ): SubcommandDefinition => ({
   name: 'create',
-  summary: 'Create an empty file in a workspace directory.',
+  summary: 'Create an empty file or folder in a workspace directory.',
   aliases: [],
   arguments: [
     {
@@ -17,7 +17,7 @@ export const createDefinition = (
     },
     {
       name: 'name',
-      summary: 'New filename, including extension. Slashes are not allowed.',
+      summary: 'New file or folder name. Slashes are not allowed.',
       kind: 'string',
       required: true,
       variadic: false,
@@ -25,8 +25,15 @@ export const createDefinition = (
   ],
   options: [
     {
+      name: 'folder',
+      summary: 'Create a folder instead of a file.',
+      flag: '--folder',
+      kind: 'boolean',
+      required: false,
+    },
+    {
       name: 'treeDir',
-      summary: 'Web UI tree directory to return to after creating the file.',
+      summary: 'Web UI tree directory to return to after creating the item.',
       flag: '--tree-dir',
       kind: 'string',
       required: false,
@@ -41,7 +48,7 @@ export const createDefinition = (
     {
       name: 'expanded',
       summary:
-        'Web UI expanded folder state to preserve after creating the file.',
+        'Web UI expanded folder state to preserve after creating the item.',
       flag: '--expanded',
       kind: 'string',
       required: false,
