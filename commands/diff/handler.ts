@@ -27,6 +27,7 @@ export type FileDiffOk = {
 export type FileDiffErr = {
   type: 'error';
   text: string;
+  reason?: 'git_unavailable';
 };
 
 export type FileDiffResult = FileDiffOk | FileDiffErr;
@@ -262,6 +263,32 @@ function buildUntrackedDiff(props: {
   };
 }
 
+function gitUnavailableError(): FileDiffErr {
+  return {
+    type: 'error',
+    reason: 'git_unavailable',
+    text: 'Diff unavailable: this workspace is not a Git repository.',
+  };
+}
+
+function isUntrackedStatus(statusText: string): boolean {
+  return statusText
+    .split('\n')
+    .some((line) => line.trimStart().startsWith('?? '));
+}
+
+function fileDiffOkToAgentFileDiff(diff: FileDiffOk): AgentFileDiff {
+  const patch = diff.lines.map((line) => line.text).join('\n');
+
+  return {
+    file: diff.relativePath,
+    patch,
+    additions: diff.lines.filter((line) => line.kind === 'add').length,
+    deletions: diff.lines.filter((line) => line.kind === 'remove').length,
+    status: 'added',
+  };
+}
+
 function parseGitPatchFiles(patchText: string): AgentFileDiff[] {
   return patchText
     .split(/(?=^diff --git )/m)
@@ -445,14 +472,11 @@ export function handleDiffCommand(
   );
 
   if (statusResult.exitCode !== 0) {
-    return {
-      type: 'error',
-      text: 'Git diff is unavailable for this workspace.',
-    };
+    return gitUnavailableError();
   }
 
   const statusText = Buffer.from(statusResult.stdout).toString('utf8').trim();
-  const isUntracked = statusText.startsWith('?? ');
+  const isUntracked = isUntrackedStatus(statusText);
 
   if (isUntracked) {
     if (!exists) {
@@ -519,6 +543,43 @@ export function handleTimelineDiffCommand(
   const { abs, relPosix } = resolved;
   const exists = existsSync(abs);
   const isDirectory = exists ? statSync(abs).isDirectory() : false;
+
+  const statusResult = spawnSync(
+    ['git', 'status', '--porcelain=v1', '--', relPosix],
+    {
+      cwd: props.workspaceRoot,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    },
+  );
+
+  if (statusResult.exitCode !== 0) {
+    return gitUnavailableError();
+  }
+
+  const statusText = Buffer.from(statusResult.stdout).toString('utf8').trim();
+
+  if (isUntrackedStatus(statusText) && exists && !isDirectory) {
+    const untrackedDiff = buildUntrackedDiff({
+      relativePath: relPosix,
+      absPath: abs,
+      maxBytes: props.maxBytes,
+    });
+
+    if (untrackedDiff.type === 'ok') {
+      return {
+        type: 'ok',
+        relativePath: relPosix,
+        files: [fileDiffOkToAgentFileDiff(untrackedDiff)],
+        truncated: untrackedDiff.truncated,
+        commit: null,
+        stagedFiles: listStagedFiles({
+          workspaceRoot: props.workspaceRoot,
+          pathspec: relPosix,
+        }),
+      };
+    }
+  }
 
   const diffResult = spawnSync(
     ['git', 'diff', '--no-ext-diff', '--no-color', 'HEAD', '--', relPosix],

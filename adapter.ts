@@ -14,6 +14,7 @@ import { adaptEditCommand } from './commands/edit/adapter';
 import { adaptHelpCommand } from './commands/help/adapter';
 import { getFileCommandDefinition } from './commands/help/module';
 import { adaptHistoryCommand } from './commands/history/adapter';
+import { adaptInitCommand } from './commands/init/adapter';
 import { adaptRenameCommand } from './commands/rename/adapter';
 import { adaptRestoreCommand } from './commands/restore/adapter';
 import { adaptSearchCommand } from './commands/search/adapter';
@@ -32,6 +33,7 @@ type FileSubcommand =
   | 'commit'
   | 'create'
   | 'delete'
+  | 'init'
   | 'search'
   | 'view'
   | 'edit'
@@ -63,6 +65,7 @@ const subcommandAdapters: Record<FileSubcommand, FileCommandAdapter> = {
   commit: adaptCommitCommand,
   create: adaptCreateCommand,
   delete: adaptDeleteCommand,
+  init: adaptInitCommand,
   search: adaptSearchCommand,
   view: adaptViewCommand,
   edit: adaptEditCommand,
@@ -104,6 +107,7 @@ function isFileSubcommand(value: string): value is FileSubcommand {
     value === 'commit' ||
     value === 'create' ||
     value === 'delete' ||
+    value === 'init' ||
     value === 'search' ||
     value === 'view' ||
     value === 'edit' ||

@@ -64,5 +64,6 @@ export function adaptEditCommand(
   return renderTimelineDiffOutput({
     commandAlias: params.alias,
     result: diffResult,
+    savedPath: editResult.relativePath,
   });
 }

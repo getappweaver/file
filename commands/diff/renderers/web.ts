@@ -50,6 +50,55 @@ function lineClipboardAction(text: string): WebAction {
   };
 }
 
+function initGitAction(commandAlias: string): WebAction {
+  return {
+    type: 'command',
+    command: commandAlias,
+    subcommand: 'init',
+    arguments: {},
+    options: {},
+    clientStatus: {
+      pending: 'Initializing Git repository...',
+      success: 'Initialized Git repository.',
+    },
+  };
+}
+
+function noGitDiffNotice(props: {
+  commandAlias: string;
+  relativePath: string | null;
+  saved: boolean;
+}): WebNodeRoot {
+  const children: WebNode[] = [];
+
+  if (props.saved && props.relativePath !== null) {
+    children.push(textBlock(`Saved ${props.relativePath}`, 'success'));
+  }
+
+  children.push(
+    textBlock(
+      'Diff previews need a Git repository. Initialize Git in this workspace to enable file diff cards.',
+      'muted',
+    ),
+    {
+      type: 'element',
+      tag: 'button',
+      props: {
+        label: 'Initialize Git',
+        tone: 'warning',
+        action: initGitAction(props.commandAlias),
+      },
+    },
+  );
+
+  return {
+    kind: 'ui',
+    version: 1,
+    meta: { command: props.commandAlias, subcommand: 'diff' },
+    tree: stack(children, 'sm'),
+  };
+}
+
 function diffLineOldNumberNode(line: FileDiffOk['lines'][number]): WebNode {
   return {
     type: 'element',
@@ -197,8 +246,17 @@ export function renderFileDiffWeb(props: RenderFileDiffWebProps): WebNodeRoot {
 export function renderTimelineDiffOutput(props: {
   commandAlias: string;
   result: TimelineDiffResult;
+  savedPath?: string;
 }): TimelineEventOutput | WebNodeRoot {
   if (props.result.type === 'error') {
+    if (props.result.reason === 'git_unavailable') {
+      return noGitDiffNotice({
+        commandAlias: props.commandAlias,
+        relativePath: props.savedPath ?? null,
+        saved: props.savedPath !== undefined,
+      });
+    }
+
     return {
       kind: 'ui',
       version: 1,

@@ -10,6 +10,7 @@ import { diffDefinition } from './commands/diff/definition';
 import { downloadDefinition } from './commands/download/definition';
 import { editDefinition } from './commands/edit/definition';
 import { historyDefinition } from './commands/history/definition';
+import { initDefinition } from './commands/init/definition';
 import { renameDefinition } from './commands/rename/definition';
 import { restoreDefinition } from './commands/restore/definition';
 import { searchDefinition } from './commands/search/definition';
@@ -30,7 +31,7 @@ export const commandDefinition = (
   subcommands: [
     createHelpSubcommandDefinition(prefix, alias, {
       topicArgSummary:
-        'Optional subcommand name: upload, download, tree, commit, create, delete, search, view, edit, rename, restore, diff, history, bottomup, bottomup_context, summarize, or topdown.',
+        'Optional subcommand name: upload, download, tree, commit, create, delete, init, search, view, edit, rename, restore, diff, history, bottomup, bottomup_context, summarize, or topdown.',
       exampleTopics: [
         'upload',
         'download',
@@ -38,6 +39,7 @@ export const commandDefinition = (
         'commit',
         'create',
         'delete',
+        'init',
         'search',
         'view',
         'edit',
@@ -57,6 +59,7 @@ export const commandDefinition = (
     commitDefinition(prefix, alias),
     createDefinition(prefix, alias),
     deleteDefinition(prefix, alias),
+    initDefinition(prefix, alias),
     searchDefinition(prefix, alias),
     viewDefinition(prefix, alias),
     editDefinition(prefix, alias),
