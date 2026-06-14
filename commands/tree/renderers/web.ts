@@ -99,6 +99,7 @@ function viewFileAction(props: ViewFileActionProps): WebAction {
       previousDir: props.previousDir,
     },
     recordInTimeline: false,
+    surface: 'timeline',
   };
 }
 
@@ -213,7 +214,10 @@ function newFolderButton(action: WebAction): WebNode {
   };
 }
 
-function timelineDiffButton(action: WebAction): WebNode {
+function timelineDiffButton(
+  action: WebAction,
+  storyTargetId?: string,
+): WebNode {
   return {
     type: 'element',
     tag: 'button',
@@ -222,11 +226,12 @@ function timelineDiffButton(action: WebAction): WebNode {
       action,
       stopPropagation: true,
       className: 'web-file-timeline-diff-button',
+      ...(storyTargetId ? { storyTargetId } : {}),
     },
   };
 }
 
-function historyButton(action: WebAction): WebNode {
+function historyButton(action: WebAction, storyTargetId?: string): WebNode {
   return {
     type: 'element',
     tag: 'button',
@@ -235,6 +240,7 @@ function historyButton(action: WebAction): WebNode {
       action,
       stopPropagation: true,
       className: 'web-file-history-button',
+      ...(storyTargetId ? { storyTargetId } : {}),
     },
   };
 }
@@ -1070,12 +1076,14 @@ export function renderFileTreeBrowserWeb(
           relativePosix: displayPath,
           previousDir: displayPath,
         }),
+        `file-tree-diff-${displayPath}`,
       ),
       historyButton(
         viewHistoryAction({
           commandAlias: props.commandAlias,
           relativePosix: displayPath,
         }),
+        `file-tree-history-${displayPath}`,
       ),
       openTimelineButton(
         openTimelineAction({
@@ -1173,18 +1181,26 @@ export function renderFileTreeBrowserWeb(
       ],
       stories: [
         {
-          id: 'file-tree-read-markdown',
-          title: 'Read markdown from the file tree',
+          id: 'file-tree-edit-diff-markdown',
+          title: 'Edit markdown and check the diff',
           description:
-            'Use the File widget tree to open a markdown document in the built-in reader.',
+            'Open a markdown file from the tree, save an edit, and review the resulting diff.',
           pluginAlias: props.commandAlias,
           iconUrl: '/plugin-icons/file/commands__tree__renderers__tree.svg',
         },
         {
-          id: 'file-tree-git-diff',
-          title: 'Open a git diff from the tree',
+          id: 'file-tree-review-commit-diff',
+          title: 'Review multiple file changes and commit',
           description:
-            'Use git status in the file tree to open a workspace diff view.',
+            'Open a workspace diff card, review multiple changed files, and commit the selected set.',
+          pluginAlias: props.commandAlias,
+          iconUrl: '/plugin-icons/file/commands__tree__renderers__tree.svg',
+        },
+        {
+          id: 'file-tree-history-commit-diff',
+          title: 'Check commit history and inspect a diff',
+          description:
+            'Open workspace history, pick a commit, and review the files changed by that commit.',
           pluginAlias: props.commandAlias,
           iconUrl: '/plugin-icons/file/commands__tree__renderers__tree.svg',
         },

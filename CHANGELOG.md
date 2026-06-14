@@ -4,9 +4,13 @@ All notable changes for each version are listed under the corresponding `v*.*.*`
 Tags and this file are updated by the post-commit hook when you commit with `--patch`, `--minor`, or `--major` (see CONTRIBUTING.md).
 You can also run `bun run release:changelog` to rewrite this file from tags.
 
+## [v3.3.0] - 2026-06-14
+
+- feat: add file story demos (202f1b5)
+
 ## [v3.2.0] - 2026-06-05
 
-- feat: initialize git for file diff previews (2ebcfe3)
+- feat: initialize git for file diff previews (f1e3237)
 
 ## [v3.1.0] - 2026-06-04
 

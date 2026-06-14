@@ -94,7 +94,13 @@ function commitRow(props: {
   commandAlias: string;
   relativePath: string;
   commit: FileHistoryCommit;
+  index: number;
 }): WebNode {
+  const storyTargetId =
+    props.index === 0
+      ? 'file-history-commit-first'
+      : `file-history-commit-${props.commit.hash}`;
+
   return {
     type: 'element',
     tag: 'box',
@@ -121,6 +127,7 @@ function commitRow(props: {
                 commitHash: props.commit.hash,
               }),
               className: 'web-file-history-link',
+              storyTargetId,
             },
             children: [textNode(props.commit.subject)],
           },
@@ -205,11 +212,12 @@ export function renderFileHistoryWeb(props: {
     },
     ...(result.commits.length === 0
       ? [textBlock('No commits found for this path.', 'muted')]
-      : result.commits.map((commit) =>
+      : result.commits.map((commit, index) =>
           commitRow({
             commandAlias: props.commandAlias,
             relativePath: result.relativePath,
             commit,
+            index,
           }),
         )),
   ];

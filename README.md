@@ -6,7 +6,9 @@ File plugin for dm-bot (nostr://_@dhalsim.github.io/nostr-dm-agent)
 
 [Interactive Demo](https://getappweaver.com/file-manager)
 
-![File manager screenshot](https://getappweaver.com/screenshots/file.png)
+![Edit a file and inspect the diff](https://getappweaver.com/gifs/file-edit-diff.gif)
+
+![Edit a file and inspect the diff on mobile](https://getappweaver.com/gifs/file-edit-diff-mobile.gif)
 
 - **Commands** — `/file [help]` to see available commands.
 - `/file upload <file_path> <npub_bot_b>` to upload a file to a bot's workspace.

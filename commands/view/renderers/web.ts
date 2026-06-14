@@ -219,6 +219,7 @@ export function renderFileViewWeb(props: RenderFileViewWebProps): WebNodeRoot {
         className: 'web-file-view-code web-file-view-code--edit',
         visibleWhenToggleKey: editToggleKey,
         editableTextId,
+        storyTargetId: `file-view-edit-text-${r.relativePath}`,
         editableTextValue: r.content,
         showLineNumbers: true,
       },
@@ -255,6 +256,7 @@ export function renderFileViewWeb(props: RenderFileViewWebProps): WebNodeRoot {
                   activeLabel: 'Save file',
                   activeIcon: 'save',
                   toggleKey: `file-edit:${r.relativePath}`,
+                  storyTargetId: `file-view-edit-${r.relativePath}`,
                   action: {
                     type: 'clientAction',
                     action: 'web.toggle',
@@ -294,21 +296,21 @@ export function renderFileViewWeb(props: RenderFileViewWebProps): WebNodeRoot {
                   },
                 },
                 {
-                  label: 'Open in timeline',
-                  icon: 'openTimeline',
-                  className: 'web-file-open-timeline-button',
-                  visibleOnSurfaces: ['dock'],
+                  label: 'Check diff',
+                  icon: 'diff',
+                  className: 'web-file-timeline-diff-button',
+                  storyTargetId: `file-view-diff-${r.relativePath}`,
                   action: {
                     type: 'command',
                     command: props.commandAlias,
-                    subcommand: 'view',
+                    subcommand: 'diff',
                     arguments: { path: r.relativePath },
                     options:
                       props.previousDir === null
                         ? {}
                         : { previousDir: props.previousDir },
+                    recordInTimeline: true,
                     surface: 'timeline',
-                    recordInTimeline: false,
                   },
                 },
               ],

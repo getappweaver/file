@@ -50,7 +50,7 @@ export const treeDefinition = (
   ],
   webWidget: {
     placement: 'header',
-    surface: 'modal',
+    surface: 'timeline_singleton',
     label: 'Tree',
     modalTitle: 'Workspace tree',
     icon: '/plugins/file/commands/tree/renderers/tree.svg',
