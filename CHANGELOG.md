@@ -4,9 +4,13 @@ All notable changes for each version are listed under the corresponding `v*.*.*`
 Tags and this file are updated by the post-commit hook when you commit with `--patch`, `--minor`, or `--major` (see CONTRIBUTING.md).
 You can also run `bun run release:changelog` to rewrite this file from tags.
 
+## [v3.3.1] - 2026-07-15
+
+- docs: update interactive demo link (8d2f499)
+
 ## [v3.3.0] - 2026-06-14
 
-- feat: add file story demos (202f1b5)
+- feat: add file story demos (6918fcb)
 
 ## [v3.2.0] - 2026-06-05
 

@@ -4,7 +4,7 @@ File plugin for dm-bot (nostr://_@dhalsim.github.io/nostr-dm-agent)
 
 ## Demo
 
-[Interactive Demo](https://getappweaver.com/file-manager)
+[Interactive Demo](https://getappweaver.com/apps/file-manager)
 
 ![Edit a file and inspect the diff](https://getappweaver.com/gifs/file-edit-diff.gif)
 
