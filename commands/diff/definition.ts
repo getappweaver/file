@@ -44,6 +44,15 @@ export const diffDefinition = (
       shortFlag: null,
       choices: null,
     },
+    {
+      name: 'repository',
+      summary: 'Nested git repository path relative to workspace root.',
+      flag: '--repository',
+      kind: 'string',
+      required: false,
+      shortFlag: null,
+      choices: null,
+    },
   ],
   examples: [
     `${prefix}${alias} diff README.md`,

@@ -65,5 +65,6 @@ export function adaptEditCommand(
     commandAlias: params.alias,
     result: diffResult,
     savedPath: editResult.relativePath,
+    repositoryPath: null,
   });
 }

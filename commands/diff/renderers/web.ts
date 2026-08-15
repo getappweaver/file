@@ -247,6 +247,7 @@ export function renderTimelineDiffOutput(props: {
   commandAlias: string;
   result: TimelineDiffResult;
   savedPath?: string;
+  repositoryPath: string | null;
 }): TimelineEventOutput | WebNodeRoot {
   if (props.result.type === 'error') {
     if (props.result.reason === 'git_unavailable') {
@@ -271,10 +272,14 @@ export function renderTimelineDiffOutput(props: {
     event: {
       type: 'diff',
       files: props.result.files,
-      title: props.result.commit?.subject ?? props.result.relativePath,
+      title:
+        props.result.commit?.subject ??
+        props.repositoryPath ??
+        props.result.relativePath,
       subtitle: props.result.commit?.relativeTime ?? 'working tree',
       origin: props.result.commit ? 'git_commit' : 'workspace_diff',
       scopePath: props.result.relativePath,
+      repositoryPath: props.repositoryPath,
       stagedFiles: props.result.stagedFiles,
     },
   };

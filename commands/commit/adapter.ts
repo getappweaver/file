@@ -2,7 +2,7 @@ import type { WebHandlerResult } from '@src/web/ui-schema';
 
 import type { FileCommandAdapterParams } from '../../types/adapter-params';
 
-import { resolveFileWorkspaceRoot } from '../shared/workspace-root';
+import { resolveFileRepositoryRoot } from '../shared/workspace-root';
 
 import { commitSelectedFiles, type CommitSelectedFilesResult } from './handler';
 
@@ -38,6 +38,7 @@ export function adaptCommitCommand(
 
   const messageFromPayload = payload?.message;
   const scopePath = payload?.scopePath;
+  const repositoryPath = payload?.repositoryPath;
   const selectedFiles = readStringArray(payload?.selectedFiles);
   const expectedStagedFiles = readStringArray(payload?.expectedStagedFiles);
 
@@ -46,17 +47,19 @@ export function adaptCommitCommand(
       ? messageFromPayload
       : Object.values(params.parsed.arguments).join(' ');
 
-  let workspaceRoot: string;
+  let repository: ReturnType<typeof resolveFileRepositoryRoot>;
 
   try {
-    workspaceRoot = resolveFileWorkspaceRoot();
+    repository = resolveFileRepositoryRoot(
+      typeof repositoryPath === 'string' ? repositoryPath : null,
+    );
   } catch (err) {
     return String(err instanceof Error ? err.message : err);
   }
 
   return resultToText(
     commitSelectedFiles({
-      workspaceRoot,
+      workspaceRoot: repository.workspaceRoot,
       scopePath: typeof scopePath === 'string' ? scopePath : null,
       message,
       selectedFiles,

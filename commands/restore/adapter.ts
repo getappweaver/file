@@ -2,7 +2,7 @@ import type { WebHandlerResult } from '@src/web/ui-schema';
 
 import type { FileCommandAdapterParams } from '../../types/adapter-params';
 
-import { resolveFileWorkspaceRoot } from '../shared/workspace-root';
+import { resolveFileRepositoryRoot } from '../shared/workspace-root';
 
 import { restoreGitFile } from './handler';
 
@@ -15,6 +15,7 @@ export function adaptRestoreCommand(
       : null;
 
   const fileFromPayload = payload?.file;
+  const repositoryPath = payload?.repositoryPath;
   const fileFromArgs = params.parsed.arguments.file;
 
   const file =
@@ -28,13 +29,15 @@ export function adaptRestoreCommand(
     return 'Missing file path.';
   }
 
-  let workspaceRoot: string;
+  let repository: ReturnType<typeof resolveFileRepositoryRoot>;
 
   try {
-    workspaceRoot = resolveFileWorkspaceRoot();
+    repository = resolveFileRepositoryRoot(
+      typeof repositoryPath === 'string' ? repositoryPath : null,
+    );
   } catch (err) {
     return String(err instanceof Error ? err.message : err);
   }
 
-  return restoreGitFile({ workspaceRoot, file }).text;
+  return restoreGitFile({ workspaceRoot: repository.workspaceRoot, file }).text;
 }

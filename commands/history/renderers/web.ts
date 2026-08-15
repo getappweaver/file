@@ -54,6 +54,7 @@ ${fileBreadcrumbCss}
 
 .web-file-history-metrics .diff-card__summary,
 .web-file-history-metrics .diff-card__stat {
+  font: inherit;
   display: inline-flex;
   align-items: center;
   padding: 0.05rem 0.35rem;

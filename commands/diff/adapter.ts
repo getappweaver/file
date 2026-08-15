@@ -2,7 +2,7 @@ import type { WebHandlerResult } from '@src/web/ui-schema';
 
 import type { FileCommandAdapterParams } from '../../types/adapter-params';
 
-import { resolveFileWorkspaceRoot } from '../shared/workspace-root';
+import { resolveFileRepositoryRoot } from '../shared/workspace-root';
 
 import {
   defaultDiffMaxBytes,
@@ -63,16 +63,22 @@ export function adaptDiffCommand(
   const timelineRaw = params.parsed.options.timeline;
   const timeline = timelineRaw === true || timelineRaw === 'true';
   const commitRaw = params.parsed.options.commit;
+  const repositoryRaw = params.parsed.options.repository;
+
+  const repositoryPath =
+    typeof repositoryRaw === 'string' && repositoryRaw.trim().length > 0
+      ? repositoryRaw.trim()
+      : null;
 
   const commitHash =
     typeof commitRaw === 'string' && commitRaw.trim().length > 0
       ? commitRaw.trim()
       : null;
 
-  let workspaceRoot: string;
+  let repository: ReturnType<typeof resolveFileRepositoryRoot>;
 
   try {
-    workspaceRoot = resolveFileWorkspaceRoot();
+    repository = resolveFileRepositoryRoot(repositoryPath);
   } catch (err) {
     const text = String(err instanceof Error ? err.message : err);
 
@@ -89,12 +95,12 @@ export function adaptDiffCommand(
     const result =
       commitHash === null
         ? handleTimelineDiffCommand({
-            workspaceRoot,
+            workspaceRoot: repository.workspaceRoot,
             relativePath: path,
             maxBytes: defaultDiffMaxBytes(),
           })
         : handleCommitTimelineDiffCommand({
-            workspaceRoot,
+            workspaceRoot: repository.workspaceRoot,
             relativePath: path,
             maxBytes: defaultDiffMaxBytes(),
             commitHash,
@@ -107,11 +113,12 @@ export function adaptDiffCommand(
     return renderTimelineDiffOutput({
       commandAlias: params.alias,
       result,
+      repositoryPath: repository.repositoryPath,
     });
   }
 
   const result = handleDiffCommand({
-    workspaceRoot,
+    workspaceRoot: repository.workspaceRoot,
     relativePath: path,
     maxBytes: defaultDiffMaxBytes(),
   });
