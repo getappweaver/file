@@ -4,8 +4,7 @@ import { relative, resolve } from 'path';
 import { spawnSync } from 'bun';
 
 export type RestoreFileResult =
-  | { type: 'ok'; text: string }
-  | { type: 'error'; text: string };
+  { type: 'ok'; text: string } | { type: 'error'; text: string };
 
 function runGit(props: {
   workspaceRoot: string;

@@ -62,8 +62,7 @@ function resolveWorkspaceFilePath({
   workspaceRoot,
   relativePath,
 }: ResolveWorkspaceFilePathProps):
-  | { abs: string; relPosix: string }
-  | FileDiffErr {
+  { abs: string; relPosix: string } | FileDiffErr {
   const rel = relativePath.trim();
 
   if (rel.length === 0) {

@@ -3,12 +3,7 @@ import { posix } from 'path';
 import { spawnSync } from 'bun';
 
 export type WorkspaceGitStatusKind =
-  | 'modified'
-  | 'added'
-  | 'deleted'
-  | 'renamed'
-  | 'untracked'
-  | 'conflicted';
+  'modified' | 'added' | 'deleted' | 'renamed' | 'untracked' | 'conflicted';
 
 export type WorkspaceGitStatusDecoration = {
   kind: WorkspaceGitStatusKind;

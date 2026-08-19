@@ -8,8 +8,7 @@ type HandleTreeCommandProps = {
 };
 
 type TreeCommandResult =
-  | { type: 'success'; text: string }
-  | { type: 'error'; text: string };
+  { type: 'success'; text: string } | { type: 'error'; text: string };
 
 export function handleTreeCommand(
   props: HandleTreeCommandProps,
