@@ -4,9 +4,13 @@ All notable changes for each version are listed under the corresponding `v*.*.*`
 Tags and this file are updated by the post-commit hook when you commit with `--patch`, `--minor`, or `--major` (see CONTRIBUTING.md).
 You can also run `bun run release:changelog` to rewrite this file from tags.
 
+## [v3.5.0] - 2026-08-27
+
+- Using new PluginContext PluginAgentService (8deaf21)
+
 ## [v3.4.1] - 2026-08-19
 
-- fix: lint (fb322f1)
+- fix: lint (b9d554f)
 
 ## [v3.4.0] - 2026-08-15
 

@@ -1,17 +1,8 @@
-import { createBackend } from '@src/backends/factory';
-import { disposeOpencodeSdk } from '@src/backends/opencode-sdk';
 import { getOutputString } from '@src/backends/types';
-import {
-  getAgentBackend,
-  getBackendExecutionProfile,
-  getCurrentOrDefaultMode,
-  getModelOverride,
-  getProviderName,
-  getRoutstrSkKey,
-  openCoreDb,
-} from '@src/db';
+import { createPluginAgentService } from '@src/core/plugin-agent';
+import { openCoreDb } from '@src/db';
 import { log } from '@src/logger';
-import { dmBotRoot } from '@src/paths';
+import { dmBotRoot, getParentWorkspaceRoot } from '@src/paths';
 
 import { normalizeOneLine, serializeNodeForSummary } from './doc';
 import type { DirectoryNode, FileSnippet } from './types';
@@ -86,35 +77,25 @@ export async function runAiPrompt(
 
   const coreDb = openCoreDb();
   try {
-    const backendName = getAgentBackend(coreDb);
-    const executionProfile = getBackendExecutionProfile(coreDb, backendName);
-    const configuredModel = getModelOverride(coreDb, backendName);
-    const effectiveModel = model ?? configuredModel;
-
-    const backend = createBackend({
-      backendName,
+    const agent = createPluginAgentService({
+      db: coreDb,
       dmBotRoot,
-      cursorMode: getCurrentOrDefaultMode(coreDb),
-      opencodeAgentName:
-        executionProfile.kind === 'opencode' ? executionProfile.agent : null,
+      parentOfBotRoot: getParentWorkspaceRoot(),
       attachUrl: null,
-      modelOverride: effectiveModel,
-      providerName: getProviderName(coreDb),
     });
 
-    const sessionId = await backend.createSession(cwd);
-
-    const result = await backend.runMessage({
-      sessionId,
-      content: prompt,
-      cursorMode: getCurrentOrDefaultMode(coreDb),
-      opencodeAgentName:
-        executionProfile.kind === 'opencode' ? executionProfile.agent : null,
+    const result = await agent.run({
+      prompt,
+      sessionId: null,
+      backend: null,
+      provider: null,
+      model,
+      mode: null,
+      workspaceTarget: null,
       cwd,
-      getRoutstrSkKey: () => getRoutstrSkKey(coreDb),
-      modelOverride: effectiveModel,
       onAgentStreamChunk: null,
-      streamAbortSignal: null,
+      abortSignal: null,
+      context: null,
     });
 
     const output = getOutputString(result).trim();
@@ -126,7 +107,6 @@ export async function runAiPrompt(
 
     return output;
   } finally {
-    disposeOpencodeSdk();
     coreDb.close();
   }
 }
