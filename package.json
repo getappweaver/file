@@ -1,11 +1,19 @@
 {
   "name": "appweaver-file-plugin",
-  "version": "3.5.1",
+  "version": "3.6.0",
   "appweaver": {
     "title": "File manager",
     "icon": "./commands/tree/renderers/tree.svg",
     "website": "https://github.com/getappweaver/file",
-    "coreApiVersion": "^12.0.0",
+    "coreApiVersion": "^12.3.0",
+    "capabilities": {
+      "provides": [
+        {
+          "name": "fuzzy-file-search",
+          "version": 1
+        }
+      ]
+    },
     "description": "Official AppWeaver File manager. Adds focused AI-powered file management tools, commands, and data models to an AppWeaver workspace."
   },
   "description": "Official AppWeaver File manager. Adds focused AI-powered file management tools, commands, and data models to an AppWeaver workspace.",

@@ -4,9 +4,13 @@ All notable changes for each version are listed under the corresponding `v*.*.*`
 Tags and this file are updated by the post-commit hook when you commit with `--patch`, `--minor`, or `--major` (see CONTRIBUTING.md).
 You can also run `bun run release:changelog` to rewrite this file from tags.
 
+## [v3.6.0] - 2026-08-30
+
+- feat: new fuzzy file name search provider (0cfa901)
+
 ## [v3.5.1] - 2026-08-30
 
-- fix: open document in the widget unless "open in timeline" is clicked (7f8c992)
+- fix: open document in the widget unless "open in timeline" is clicked (cba60b4)
 
 ## [v3.5.0] - 2026-08-27
 

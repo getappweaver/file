@@ -12,6 +12,7 @@ import {
   getFileCommandDefinition,
   getFileHelpLines,
 } from './commands/help/module';
+import { fuzzyFileSearchProvider } from './fuzzy-file-search-provider';
 import { fileStories } from './stories';
 
 const pluginDir = import.meta.dir;
@@ -51,4 +52,5 @@ export const FilePlugin: BotPlugin = {
   commandDefinition: (prefix: string, pluginAlias: string) =>
     getFileCommandDefinition(prefix, pluginAlias),
   stories: fileStories,
+  capabilityProviders: [fuzzyFileSearchProvider],
 };
