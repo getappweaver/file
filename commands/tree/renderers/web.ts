@@ -99,7 +99,6 @@ function viewFileAction(props: ViewFileActionProps): WebAction {
       previousDir: props.previousDir,
     },
     recordInTimeline: false,
-    surface: 'timeline',
   };
 }
 
@@ -754,6 +753,23 @@ function fileTreeRowActionsMenu(props: {
           }),
         },
       },
+      ...(!row.isDirectory
+        ? [
+            {
+              type: 'element' as const,
+              tag: 'menuItem' as const,
+              props: {
+                label: 'Open in timeline',
+                action: openTimelineAction({
+                  commandAlias,
+                  subcommand: 'view',
+                  arguments_: { path: row.relativePosix },
+                  options: { previousDir: displayPath },
+                }),
+              },
+            },
+          ]
+        : []),
       {
         type: 'element',
         tag: 'menuItem',

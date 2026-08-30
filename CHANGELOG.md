@@ -4,9 +4,13 @@ All notable changes for each version are listed under the corresponding `v*.*.*`
 Tags and this file are updated by the post-commit hook when you commit with `--patch`, `--minor`, or `--major` (see CONTRIBUTING.md).
 You can also run `bun run release:changelog` to rewrite this file from tags.
 
+## [v3.5.1] - 2026-08-30
+
+- fix: open document in the widget unless "open in timeline" is clicked (7f8c992)
+
 ## [v3.5.0] - 2026-08-27
 
-- Using new PluginContext PluginAgentService (8deaf21)
+- Using new PluginContext PluginAgentService (9e03926)
 
 ## [v3.4.1] - 2026-08-19
 
