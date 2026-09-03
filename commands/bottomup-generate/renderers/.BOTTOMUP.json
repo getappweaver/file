@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "path": "plugins/file/commands/bottomup-generate/renderers",
+  "scope": {
+    "root": false
+  },
+  "source": {
+    "version": 1,
+    "inputHash": "11cb127fcc414c7aaab9d879a3ca304bf3a37b3e26e55f9cc945837f7885b44d",
+    "directorySummary": "Renders the bottom-up generate draft web modal with diffPatch preview and Accept/Decline workflow controls.",
+    "files": {
+      "web.test.ts": {
+        "hash": "2be2e1672b24e0b8895d8c003591befeafa9fe51d056b1e3eb97de6a9d2129d4",
+        "sourceSummary": "Verifies that generate, summarize, and enrich draft web renderers return valid WebRenderResult schemas containing the shared diffPatch node.",
+        "provenance": "ai"
+      },
+      "web.ts": {
+        "hash": "9719516865c62a9e1154965606dba6ba1533979245b3b19f26e4fd44546db25c",
+        "sourceSummary": "Renders the bottom-up generate draft web modal with diffPatch preview, revision prompt form, and Accept/Decline actions.",
+        "provenance": "ai"
+      }
+    }
+  },
+  "children": {},
+  "coverage": {
+    "complete": true,
+    "missing": [],
+    "stale": []
+  },
+  "summary": {
+    "version": 1,
+    "inputHash": "d9c328099630daf9bfe235f50a8935d8d7abd31456d03fd6141254f9a5c41f18",
+    "value": "Renders the bottom-up generate draft web modal with diffPatch preview and Accept/Decline workflow controls.",
+    "provenance": "derived"
+  },
+  "context": {
+    "value": "plugins/file — workspace file-manager plugin in AppWeaver system: tree browsing, view/edit/create/delete/rename/restore, git diff/history/commit/restore/init, NIP-44/Blossom encrypted upload/download, and bottom-up docs via centralized dispatcher + plugin registration + AI tooling + fuzzy-file-search; ai complete (Zod-validated bottomup.generate/enrich/summarize/summary contracts, runtime dispatch via workspace root, in-memory DB); commands complete container (20 CLI/web subcommands: bottomup workflows with coverage validation/effective context/hash-cache/recursive/one-level/plan-draft-accept and index validation/projections, filesystem ops with size/binary/IGNORE/.gitignore filtering via ripgrep, git ops, secure transfer with naddr/NIP-44/integrity handling, shared workspace-root validation/filter/renderer/help under containment); types complete (adapter param contracts); no missing/stale coverage.",
+    "origin": "ai",
+    "hash": "1013c03173064158d092fc7d827b7b691052515a54c36344eb769cde6426f8a1"
+  },
+  "enrichment": {
+    "inputHash": "fcfb292dd22369aa4739ffc88a3c964038ccda6ca69068b7044d9c7a3b1bd7ee",
+    "summaryHash": "cfcb682aae7ed6083d666b71161742fe13be63c77d0a6aff6bd618408795699b",
+    "directorySummary": "Leaf presentation layer for the bottomup.generate lifecycle within plugins/file/commands/bottomup-generate. Decouples handler/fs/ai orchestration (inherited context, SHA-256 hash-cache, coverage tracking, stateless draft revise/accept) from web UX, providing the diffPatch-driven human-in-the-loop gate consumed via the centralized file dispatcher. Mirrors sibling summarize/enrich/summary renderers to keep the bottom-up pipeline's draft modal contract consistent.",
+    "files": {
+      "web.test.ts": "Cross-command contract guard for the bottom-up draft modal family; validates that the generate renderer (alongside summarize/enrich peers) conforms to the shared WebRenderResult schema and exposes the expected diffPatch node, preserving dispatcher/web-client interchangeability.",
+      "web.ts": "Web adapter entry invoked by the generate handler after draft creation; surfaces the SHA-256-gated draft as a diffPatch preview and wires the revision prompt form plus Accept/Decline controls that drive the stateless revise/accept loop without owning hashing, persistence, or agent execution."
+    },
+    "provenance": "ai"
+  }
+}

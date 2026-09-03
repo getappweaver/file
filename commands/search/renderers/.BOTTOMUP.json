@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "path": "plugins/file/commands/search/renderers",
+  "scope": {
+    "root": false
+  },
+  "source": {
+    "version": 1,
+    "inputHash": "60c89cdd93de5b0e6e153006b73fa289852992f729546a20a1c2bbda591f80c3",
+    "directorySummary": "Provides web rendering and styling for the file search command, handling grouped match display, breadcrumb navigation, and timeline integration.",
+    "files": {
+      "stylesheet.ts": {
+        "hash": "4469045a2a1a17abc268f049b35092fb39bf7397c1ccd90833ea890cfd3ceaf2",
+        "sourceSummary": "Exports filePluginSearchStylesheet WebStyleSheet defining CSS for search header, results, match items, path button, and line display plus shared breadcrumb and timeline styles.",
+        "provenance": "ai"
+      },
+      "web.ts": {
+        "hash": "7256412e65dabe7111ee83571959007404d27d13dcb3cb03a0b88bf3dccdcaf8",
+        "sourceSummary": "Implements renderFileSearchWeb to render grouped search results by path with breadcrumb header, open-timeline button, and view actions that navigate to match path and line number.",
+        "provenance": "ai"
+      }
+    }
+  },
+  "children": {},
+  "coverage": {
+    "complete": true,
+    "missing": [],
+    "stale": []
+  },
+  "summary": {
+    "version": 1,
+    "inputHash": "9b8f4b50ad7dc64a3217ca2369d35bf0e7876015f34de0d3eab8c5b02c3f13c0",
+    "value": "Provides web rendering and styling for the file search command, handling grouped match display, breadcrumb navigation, and timeline integration.",
+    "provenance": "derived"
+  },
+  "context": {
+    "value": "plugins/file — workspace file-manager plugin in AppWeaver system: tree browsing, view/edit/create/delete/rename/restore, git diff/history/commit/restore/init, NIP-44/Blossom encrypted upload/download, and bottom-up docs via centralized dispatcher + plugin registration + AI tooling + fuzzy-file-search; ai complete (Zod-validated bottomup.generate/enrich/summarize/summary contracts, runtime dispatch via workspace root, in-memory DB); commands complete container (20 CLI/web subcommands: bottomup workflows with coverage validation/effective context/hash-cache/recursive/one-level/plan-draft-accept and index validation/projections, filesystem ops with size/binary/IGNORE/.gitignore filtering via ripgrep, git ops, secure transfer with naddr/NIP-44/integrity handling, shared workspace-root validation/filter/renderer/help under containment); types complete (adapter param contracts); no missing/stale coverage.",
+    "origin": "ai",
+    "hash": "1013c03173064158d092fc7d827b7b691052515a54c36344eb769cde6426f8a1"
+  },
+  "enrichment": {
+    "inputHash": "30ccb1951347020e3bd14308937f98baca1c48b785251c9094b5f87a55ccaaac",
+    "summaryHash": "94e47859f6ef600fb2e6387899528d2fdbaa732898f23189ecb9886f41806023",
+    "directorySummary": "Web-presentation leaf delegated by the parent search command within the file-operations family — isolates DOM/CSS generation from ripgrep execution, filtering and CLI/text adaptation in the parent. Stateless rendering-only layer invoked via the parent's web adapter path (not directly via the file dispatcher), consuming grouped results to produce interactive UI while reusing shared workspace breadcrumb/timeline infrastructure for navigation consistency.",
+    "files": {
+      "stylesheet.ts": "Style-only companion to web.ts in the delegated rendering leaf — isolates declarative CSS from rendering logic, defining search-specific classes consumed solely by renderFileSearchWeb and importing shared breadcrumb/timeline styles to maintain visual consistency across file-plugin web renderers.",
+      "web.ts": "Web renderer entry that consumes the parent command's grouped result model and translates it into interactive navigation — bridges breadcrumb header/open-timeline actions and per-match view buttons to workspace file-view navigation by path and line number, completing the parent's dual-mode (CLI text vs web) contract."
+    },
+    "provenance": "ai"
+  }
+}

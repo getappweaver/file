@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "path": "plugins/file/commands/rename",
+  "scope": {
+    "root": false
+  },
+  "source": {
+    "version": 1,
+    "inputHash": "ff2d017e0ae3677a2dac5e4089c2cc535fb25ee09bd6112ce8ff5e583f46b70a",
+    "directorySummary": "Implements workspace file/folder rename within its current directory via subcommand definition, validated filesystem rename with workspace containment checks, and adapter to handler and web UI tree rendering.",
+    "files": {
+      "adapter.ts": {
+        "hash": "1b6440d65c41b9bd54aecd2251ce6e0373755556ed69f4c86750cc96a327911c",
+        "sourceSummary": "Validates path and name arguments, resolves workspace root, delegates to handleRenameCommand, and returns error text or CLI confirmation or web tree render with reveal path and preserved UI options.",
+        "provenance": "ai"
+      },
+      "definition.ts": {
+        "hash": "a23783cf6cb8b9b6c243416193913f19c6abdab020f8ee649526a1127ecedef6",
+        "sourceSummary": "Defines rename subcommand with required path and name string arguments and optional treeDir, ext, and expanded web UI options.",
+        "provenance": "ai"
+      },
+      "handler.ts": {
+        "hash": "b40ec95fb142941b9146fa512f24c7f1e0319c9c8fea90d429f4043feda691c2",
+        "sourceSummary": "Validates new name as single segment without slashes, checks workspace containment and existence, and performs renameSync returning ok/error with relative paths.",
+        "provenance": "ai"
+      }
+    }
+  },
+  "children": {},
+  "coverage": {
+    "complete": true,
+    "missing": [],
+    "stale": []
+  },
+  "summary": {
+    "version": 1,
+    "inputHash": "8a0c7c0141ebecf36ff669b173f84d0f466a2c5a30a60094e264a6f6133061e1",
+    "value": "Implements workspace file/folder rename within its current directory via subcommand definition, validated filesystem rename with workspace containment checks, and adapter to handler and web UI tree rendering.",
+    "provenance": "derived"
+  },
+  "context": {
+    "value": "plugins/file — workspace file-manager plugin in AppWeaver system: tree browsing, view/edit/create/delete/rename/restore, git diff/history/commit/restore/init, NIP-44/Blossom encrypted upload/download, and bottom-up docs via centralized dispatcher + plugin registration + AI tooling + fuzzy-file-search; ai complete (Zod-validated bottomup.generate/enrich/summarize/summary contracts, runtime dispatch via workspace root, in-memory DB); commands complete container (20 CLI/web subcommands: bottomup workflows with coverage validation/effective context/hash-cache/recursive/one-level/plan-draft-accept and index validation/projections, filesystem ops with size/binary/IGNORE/.gitignore filtering via ripgrep, git ops, secure transfer with naddr/NIP-44/integrity handling, shared workspace-root validation/filter/renderer/help under containment); types complete (adapter param contracts); no missing/stale coverage.",
+    "origin": "ai",
+    "hash": "1013c03173064158d092fc7d827b7b691052515a54c36344eb769cde6426f8a1"
+  },
+  "enrichment": {
+    "inputHash": "9d807c254c9b3a621b91c93219210aba74dd93dde1d10f07ac5dae747480065f",
+    "summaryHash": "acd9c2a7b17c6804fda7c72ea819468301c3fa73af0c66277aabc36b53d32598",
+    "directorySummary": "Leaf mutation member of the workspace file-operations family (create/delete/edit/view/tree/search) within the 20-subcommand commands aggregation. Provides the constrained same-directory rename variant — distinct from general move — and plugs into the parent's validate-containment → execute → adapt lifecycle via the centralized dispatcher fan-out (adapter.ts/handleFile), reusing shared workspace-root resolution, containment/IGNORE filtering and CLI-vs-web rendering without owning shared logic itself. No child directories.",
+    "files": {
+      "adapter.ts": "Boundary adapter between centralized dispatcher and handler — resolves workspace root, validates path/name args, delegates to handleRenameCommand, then branches to error text, CLI confirmation, or web tree render with reveal path and preserved treeDir/ext/expanded UI state, following the standard file-command adapt pattern.",
+      "definition.ts": "Declarative registration contract for the rename subcommand within the file plugin command surface — exposes required path + single-segment name and optional web projection options (treeDir, ext, expanded) to keep CLI/web shape consistent with sibling file commands.",
+      "handler.ts": "Core execution guard enforcing same-directory invariant (single segment, no slashes), workspace containment and existence checks, then renameSync with normalized relative-path ok/error results — isolates filesystem mutation from adapter presentation logic."
+    },
+    "provenance": "ai"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "path": "plugins/file/types",
+  "scope": {
+    "root": false
+  },
+  "source": {
+    "version": 1,
+    "inputHash": "cb940638bdfd843b164c27e4afbc84987f5618c0e65e9b68b5e1ed2ffd3a199a",
+    "directorySummary": "Houses TypeScript type definitions for the file plugin, establishing the adapter parameter contract for file command invocations.",
+    "files": {
+      "adapter-params.ts": {
+        "hash": "11ee90fcab934c4d48a4659a560eb99774ab54df0340b527d51d9ac9bb923736",
+        "sourceSummary": "Defines FileCommandAdapterParams type aggregating prefix, alias, MessageSource, ParsedCliInvocation, file command definition return type, and unknown jsonPayload.",
+        "provenance": "ai"
+      }
+    }
+  },
+  "children": {},
+  "coverage": {
+    "complete": true,
+    "missing": [],
+    "stale": []
+  },
+  "summary": {
+    "version": 1,
+    "inputHash": "1760f37a0f3eafe950b2caba17e48d345e0781246e323c36ec693c2d8e298163",
+    "value": "Houses TypeScript type definitions for the file plugin, establishing the adapter parameter contract for file command invocations.",
+    "provenance": "derived"
+  },
+  "context": {
+    "value": "plugins/file — workspace file-manager plugin in AppWeaver system: tree browsing, view/edit/create/delete/rename/restore, git diff/history/commit/restore/init, NIP-44/Blossom encrypted upload/download, and bottom-up docs via centralized dispatcher + plugin registration + AI tooling + fuzzy-file-search; ai complete (Zod-validated bottomup.generate/enrich/summarize/summary contracts, runtime dispatch via workspace root, in-memory DB); commands complete container (20 CLI/web subcommands: bottomup workflows with coverage validation/effective context/hash-cache/recursive/one-level/plan-draft-accept and index validation/projections, filesystem ops with size/binary/IGNORE/.gitignore filtering via ripgrep, git ops, secure transfer with naddr/NIP-44/integrity handling, shared workspace-root validation/filter/renderer/help under containment); types complete (adapter param contracts); no missing/stale coverage.",
+    "origin": "ai",
+    "hash": "1013c03173064158d092fc7d827b7b691052515a54c36344eb769cde6426f8a1"
+  },
+  "enrichment": {
+    "inputHash": "0a74ad99d33d5f60e503b5d777b9a4c479c8f32d424787917163885efbfe58cc",
+    "summaryHash": "0490fcd49d131ed41f71f751726da084c5ff020891cdfad7965c9ca08452ce30",
+    "directorySummary": "Type-contract boundary for the file plugin facade. Normalizes the invocation envelope between the centralized dispatcher (adapter.ts/handleFile) and the commands/ container so CLI, web-tree, and AI JSON entry points share a single typed shape, preserving decoupling and workspace-containment guarantees without embedding runtime logic.",
+    "files": {
+      "adapter-params.ts": "Canonical envelope type consumed by the plugin dispatcher to invoke any file/git/bottomup/transfer subcommand. Unifies prefix/alias routing, MessageSource transport, ParsedCliInvocation, and jsonPayload so downstream commands can remain agnostic to CLI-text vs web-tree adaptation while respecting the facade's containment boundary."
+    },
+    "provenance": "ai"
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "path": "plugins/file/commands/restore",
+  "scope": {
+    "root": false
+  },
+  "source": {
+    "version": 1,
+    "inputHash": "df8050d828c02085d5327b73fa3422dac4c109e493ca3c1d84d1038c4f922841",
+    "directorySummary": "Implements the file restore command that restores a single workspace-relative git file to HEAD via git restore, deleting untracked/newly-added files and re-checking tracked files.",
+    "files": {
+      "adapter.ts": {
+        "hash": "7a5c11ab4ebc4bd60f5d2605a0b4404aed1e408e8b2973d444223dec1fa7e4ce",
+        "sourceSummary": "Adapter extracts file from jsonPayload or parsed arguments and repositoryPath, resolves workspace root, and returns restoreGitFile result text or a validation error string.",
+        "provenance": "ai"
+      },
+      "definition.ts": {
+        "hash": "a774ccfa0709f0bc84a6f5aad122ff3681f851912438b3eaaffff44946032517",
+        "sourceSummary": "Defines restore subcommand metadata with name restore, summary about restoring one changed file to HEAD or deleting if untracked, and a required workspace-relative file string argument.",
+        "provenance": "ai"
+      },
+      "handler.ts": {
+        "hash": "9a58a0d5a8009ac3ad06a02ee9483911b11848c8d0591f521fbeed7a62ff8085",
+        "sourceSummary": "Implements workspace-contained restore via path validation, HEAD tracking check with git cat-file, staged unstage with git restore --staged, and deletion or git restore to HEAD.",
+        "provenance": "ai"
+      }
+    }
+  },
+  "children": {},
+  "coverage": {
+    "complete": true,
+    "missing": [],
+    "stale": []
+  },
+  "summary": {
+    "version": 1,
+    "inputHash": "3da27e872a16d306eb2d38935f79982bef94537162464325d681b3a89004937b",
+    "value": "Implements the file restore command that restores a single workspace-relative git file to HEAD via git restore, deleting untracked/newly-added files and re-checking tracked files.",
+    "provenance": "derived"
+  },
+  "context": {
+    "value": "plugins/file — workspace file-manager plugin in AppWeaver system: tree browsing, view/edit/create/delete/rename/restore, git diff/history/commit/restore/init, NIP-44/Blossom encrypted upload/download, and bottom-up docs via centralized dispatcher + plugin registration + AI tooling + fuzzy-file-search; ai complete (Zod-validated bottomup.generate/enrich/summarize/summary contracts, runtime dispatch via workspace root, in-memory DB); commands complete container (20 CLI/web subcommands: bottomup workflows with coverage validation/effective context/hash-cache/recursive/one-level/plan-draft-accept and index validation/projections, filesystem ops with size/binary/IGNORE/.gitignore filtering via ripgrep, git ops, secure transfer with naddr/NIP-44/integrity handling, shared workspace-root validation/filter/renderer/help under containment); types complete (adapter param contracts); no missing/stale coverage.",
+    "origin": "ai",
+    "hash": "1013c03173064158d092fc7d827b7b691052515a54c36344eb769cde6426f8a1"
+  },
+  "enrichment": {
+    "inputHash": "706f6d1a9376ea724760eaeeea8d5a83525757eafb93dcf889bf8487d3d8c7fc",
+    "summaryHash": "886c3f92585666ec7f7795063bff6568a9b855ab932343851267be8a2ffc31b0",
+    "directorySummary": "Git-undo leaf within the plugins/file/commands git-operations family alongside diff/history/commit/init, fanned out from the centralized file plugin dispatcher (adapter.ts/handleFile) and init registration. Complements observational git commands by providing targeted single-file HEAD revert for both CLI and web tree/file views, following the file/git shared pipeline of validate workspace containment → execute git CLI → adapt to text rendering, without participating in the bottom-up hash-cache/plan-draft-accept modal lifecycle.",
+    "files": {
+      "adapter.ts": "CLI/web adaptation shim for the restore subcommand — extracts the workspace-relative file target from jsonPayload or parsed args with repositoryPath fallback, resolves workspace root via shared helper, delegates to handler's restoreGitFile, and normalizes success/error to text for the dispatcher/bot response. Thin bridging layer consistent with other file/git command adapters.",
+      "definition.ts": "Declarative registration contract that exposes restore to the file plugin's command parser, dispatcher, and help renderer. Defines the single required workspace-relative file argument and summary string, establishing the invocation shape validated by adapter/handler and surfaced in help without containing execution logic.",
+      "handler.ts": "Core execution engine owning containment and mutation logic — validates workspace boundary, probes HEAD tracking via git cat-file -e to branch between delete-if-untracked and unstage-via-restore---staged plus restore-to-HEAD, encapsulating all git CLI side effects and path-safety guarantees isolated from adapter rendering."
+    },
+    "provenance": "ai"
+  }
+}

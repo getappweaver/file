@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "path": "plugins/file/commands/shared",
+  "scope": {
+    "root": false
+  },
+  "source": {
+    "version": 1,
+    "inputHash": "f73929c31b8174297a0a089baf2e1fa53ff4ae94181eeea60a8321a5750f9ff9",
+    "directorySummary": "Shared support layer for file commands providing CLI option normalization, ignore filtering with git integration, workspace root resolution and path validation, Blossom/Nostr file transfer, unified diff generation, and file-path breadcrumb rendering.",
+    "files": {
+      "cli-option-parsing.ts": {
+        "hash": "3f01d5b5bf27c5f641d293874efabaa4dace119f55396126da9aab064f5cb8b4",
+        "sourceSummary": "Provides stringOrNull, intOrNull, boolToOverride, and csvToArrayOrNull helpers that normalize raw CLI option values to trimmed strings, numbers, boolean overrides, or CSV arrays with null fallbacks.",
+        "provenance": "ai"
+      },
+      "ignore-filter.ts": {
+        "hash": "8b62832e20c916c94aee41b7f88049e3f66c8b0992faa195f34b70eb02aecedb",
+        "sourceSummary": "Implements IgnoreFilter that evaluates .git, hidden-file allowlist, compiled extra-ignore globs, forced-include prefix, and cached git check-ignore/ls-files checks via Bun.spawnSync to decide if a workspace entry should be ignored.",
+        "provenance": "ai"
+      },
+      "nostr-file.ts": {
+        "hash": "78c55109ab4c4aa4921233dcf5c393eef3ce61f1eb8af03260bcc4bbace44960",
+        "sourceSummary": "Implements Blossom auth, upload, and download against https://blossom-01.uid.ovh/ using kind 24242 events and builds naddr identifiers for FILE_KIND 34343.",
+        "provenance": "ai"
+      },
+      "unified-diff.test.ts": {
+        "hash": "42e0adbcb69309ab9b2fafd513a783632a012f8cf0cc9bdcacfb9de8e2823c13",
+        "sourceSummary": "Tests createUnifiedDiff for minimal JSON-block insertion diffs, separate contextual hunks for distant changes with context 2, and empty output for identical content.",
+        "provenance": "ai"
+      },
+      "unified-diff.ts": {
+        "hash": "b0e23da6957d2442621d50d1d968d0f3248279cc0eefea4502e83d2549a6f1c9",
+        "sourceSummary": "Implements createUnifiedDiff that computes LCS-based line diff operations with line-number tracking and emits unified diff headers and contextual hunks with configurable context, handling null existing as /dev/null.",
+        "provenance": "ai"
+      },
+      "web-breadcrumb.ts": {
+        "hash": "d9f0f7f444e8e2e5340ed374a1cf757697829d82940ba44a28fe02e0878327bf",
+        "sourceSummary": "Renders a file-path breadcrumb WebNode with tree command actions per segment plus open-in-timeline action/button helpers and their CSS.",
+        "provenance": "ai"
+      },
+      "workspace-root.ts": {
+        "hash": "64ce59a17a6aa5a554aa950c8775fe3dcd976f5d44a8951e12c64913b7cf7b69",
+        "sourceSummary": "Resolves workspace root from core DB and dmBotRoot and validates repository paths for workspace containment, directory existence, and git top-level containment.",
+        "provenance": "ai"
+      }
+    }
+  },
+  "children": {},
+  "coverage": {
+    "complete": true,
+    "missing": [],
+    "stale": []
+  },
+  "summary": {
+    "version": 1,
+    "inputHash": "dfc88a3ee078b997fb9aa38e4a2f7cd38f8f3c9e676f6bf79694fcea46919614",
+    "value": "Shared support layer for file commands providing CLI option normalization, ignore filtering with git integration, workspace root resolution and path validation, Blossom/Nostr file transfer, unified diff generation, and file-path breadcrumb rendering.",
+    "provenance": "derived"
+  },
+  "context": {
+    "value": "plugins/file — workspace file-manager plugin in AppWeaver system: tree browsing, view/edit/create/delete/rename/restore, git diff/history/commit/restore/init, NIP-44/Blossom encrypted upload/download, and bottom-up docs via centralized dispatcher + plugin registration + AI tooling + fuzzy-file-search; ai complete (Zod-validated bottomup.generate/enrich/summarize/summary contracts, runtime dispatch via workspace root, in-memory DB); commands complete container (20 CLI/web subcommands: bottomup workflows with coverage validation/effective context/hash-cache/recursive/one-level/plan-draft-accept and index validation/projections, filesystem ops with size/binary/IGNORE/.gitignore filtering via ripgrep, git ops, secure transfer with naddr/NIP-44/integrity handling, shared workspace-root validation/filter/renderer/help under containment); types complete (adapter param contracts); no missing/stale coverage.",
+    "origin": "ai",
+    "hash": "1013c03173064158d092fc7d827b7b691052515a54c36344eb769cde6426f8a1"
+  },
+  "enrichment": {
+    "inputHash": "2fddfe19fb8316ea6d4355dce3cc7a1db3efdb63a4d5f2e8b39e46ac0a6e35b2",
+    "summaryHash": "50bd23d7a60d4a955898103e94f714755334e51eed7fe3237b3f6f2d431098ce",
+    "directorySummary": "Cross-cutting foundation beneath the plugins/file/commands 20-command aggregation — supplies the reusable primitives that let both the validate-containment → execute → adapt file/git family and the inherited-context/hash-cache/plan-draft-accept bottomup family share enforcement and presentation. Decouples workspace containment, ignore/git filtering, CLI coercion, Blossom/NIP-44 transfer, diff generation, and breadcrumb rendering from per-command handlers so adapter.ts/handleFile dispatch and registration stay thin and subcommands remain focused on domain execution.",
+    "files": {
+      "cli-option-parsing.ts": "CLI-boundary coercion seam for the 20 subcommands' CLI adapters — normalizes raw flag strings into typed nullable overrides before Zod bottomup contracts and filesystem op validation, enabling consistent option handling across generate/enrich/summarize and file operation commands.",
+      "ignore-filter.ts": "Traversal-guard used by tree/search/generate and bottomup coverage flows to enforce .git/.gitignore/IGNORE/hidden-file policy via ripgrep-compatible globs and cached Bun.spawnSync git check-ignore/ls-files, centralizing filtering so commands share a single containment-aware ignore decision.",
+      "nostr-file.ts": "Secure-transfer primitive for the encrypted file-sharing pair (upload/download) — encapsulates Blossom https://blossom-01.uid.ovh/ auth/upload/download with kind 24242 events and naddr construction for FILE_KIND 34343/NIP-44, isolating Nostr/Blossom/integrity handling from command orchestration.",
+      "unified-diff.test.ts": "Contract test for the shared diff primitive — locks LCS-based hunk/context behavior that bottomup plan/draft renderers and file edit previews rely on for stable modal diff/accept-UI output.",
+      "unified-diff.ts": "Presentation primitive for preview/accept lifecycle — generates LCS-based unified diffs with configurable context for plan/draft/accept modals and file change previews, shared by bottomup and file commands to render workspace changes without per-command diff logic.",
+      "web-breadcrumb.ts": "Shared web rendering primitive for tree/file navigation — builds file-path breadcrumb WebNodes with per-segment tree command actions and open-in-timeline helpers/CSS, reused by file operation web adapters to provide consistent containment-aware navigation.",
+      "workspace-root.ts": "Entry guard for all file/git/bottomup execution — resolves workspace root from core DB/dmBotRoot and enforces workspace containment, directory existence, and git top-level checks before any filesystem/git/Blossom operation, anchoring the shared validate-containment step."
+    },
+    "provenance": "ai"
+  }
+}

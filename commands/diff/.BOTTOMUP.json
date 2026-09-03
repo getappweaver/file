@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "path": "plugins/file/commands/diff",
+  "scope": {
+    "root": false
+  },
+  "source": {
+    "version": 1,
+    "inputHash": "c3dbb5d04b1ad629099b69a01990495cd5ad64b50c3586f1a6636de1944cc0cf",
+    "directorySummary": "Implements the file `diff` command for previewing workspace-relative git diffs, handling single-file and timeline/commit variants with repository resolution, truncation limits, and CLI/web rendering.",
+    "files": {
+      "adapter.ts": {
+        "hash": "31c475a426cde84aa4ee136aac216c2bd1ce98c28071686de8d72c0b4efe4ce2",
+        "sourceSummary": "Implements adaptDiffCommand that validates path/repository/timeline/commit options, resolves the file repository root, delegates to handleDiff/handleTimeline/handleCommit handlers, and renders web or CLI output.",
+        "provenance": "ai"
+      },
+      "definition.ts": {
+        "hash": "9baed34751b2752fe01669eab55b160a6bfb85a3153bc317493d08754dd56f3c",
+        "sourceSummary": "Defines diffDefinition factory for the `diff` subcommand with required path argument and optional previousDir, timeline, commit, and repository options.",
+        "provenance": "ai"
+      },
+      "handler.ts": {
+        "hash": "819dba3e7d0a7641ec12ff831260ceb123742272066d3a89905846d2078bfba7",
+        "sourceSummary": "Implements handleDiffCommand, handleTimelineDiffCommand, and handleCommitTimelineDiffCommand that resolve workspace paths, run git diff/status via spawnSync, handle untracked/binary/truncation (256KB limit), and parse patches into structured results.",
+        "provenance": "ai"
+      }
+    }
+  },
+  "children": {
+    "renderers": {
+      "path": "commands/diff/renderers",
+      "status": "current",
+      "sourceInputHash": "6acea7cf603e887dbeba209c2dcc331d8e0f139ba4d76f96a5e03f921edcb971"
+    }
+  },
+  "coverage": {
+    "complete": true,
+    "missing": [],
+    "stale": []
+  },
+  "summary": {
+    "version": 1,
+    "inputHash": "ae02e110bbeb2c7987a77ab0efb579602425710daccff9c5b36c655140693fd6",
+    "value": "plugins/file/commands/diff implements the `file diff` command for previewing workspace-relative git diffs, supporting single-file and timeline/commit variants with repository resolution, truncation limits, and CLI/web rendering. Web UI is delegated to renderers, which builds styled diff cards/timeline output with breadcrumb, line-numbered patches, and git-state notices.",
+    "provenance": "ai"
+  },
+  "context": {
+    "value": "plugins/file — workspace file-manager plugin in AppWeaver system: tree browsing, view/edit/create/delete/rename/restore, git diff/history/commit/restore/init, NIP-44/Blossom encrypted upload/download, and bottom-up docs via centralized dispatcher + plugin registration + AI tooling + fuzzy-file-search; ai complete (Zod-validated bottomup.generate/enrich/summarize/summary contracts, runtime dispatch via workspace root, in-memory DB); commands complete container (20 CLI/web subcommands: bottomup workflows with coverage validation/effective context/hash-cache/recursive/one-level/plan-draft-accept and index validation/projections, filesystem ops with size/binary/IGNORE/.gitignore filtering via ripgrep, git ops, secure transfer with naddr/NIP-44/integrity handling, shared workspace-root validation/filter/renderer/help under containment); types complete (adapter param contracts); no missing/stale coverage.",
+    "origin": "ai",
+    "hash": "1013c03173064158d092fc7d827b7b691052515a54c36344eb769cde6426f8a1"
+  },
+  "enrichment": {
+    "inputHash": "31d8a5ebc9216150d7586980e5a814e99ffd1c86c0a59d94cf271c5e55000706",
+    "summaryHash": "da0752882e4140623c23692456358a88c7ebf284beca954cdda9eb4ab6e46f5c",
+    "directorySummary": "Read-only inspection leaf within the git-operations family of the plugins/file/commands aggregation. Positioned beneath the centralized file dispatcher (plugins/file/adapter.ts/handleFile) and registration (init.ts) seam alongside commit/history/restore/init, it provides non-mutating preview complementary to those mutating peers. Follows the shared validate-containment/repository-resolution → execute → adapt pattern via shared/ helpers, fans out internally across single-file/timeline/commit variants, and delegates all web presentation to renderers/ while keeping CLI output in the adapter layer.",
+    "files": {
+      "adapter.ts": "Orchestration/selection layer for the diff subcommand — validates mutually exclusive path/repository/timeline/commit options, resolves the file's repository root via shared workspace utilities, fans out to the three handle* handlers, and adapts structured results to CLI text or web UI via renderers/. Depends on definition.ts contract upstream and isolates rendering from git execution in handler.ts.",
+      "definition.ts": "Declarative CLI contract that registers the diff subcommand within the 20-command file plugin registry. Defines the required path argument and optional previousDir/timeline/commit/repository surface consumed by the central dispatcher for parsing, help generation, and pre-validation before adapter.ts is invoked; contains no runtime git or rendering logic.",
+      "handler.ts": "Stateless git execution core called by adapter.ts — resolves workspace-relative paths, invokes git diff/status via spawnSync, handles untracked/binary/truncation (256KB) edge cases, and parses patches into structured results for timeline, commit-timeline, and single-file variants. Supplies renderer-agnostic data consumed by adapter/renderers without owning CLI/web formatting."
+    },
+    "provenance": "ai"
+  }
+}

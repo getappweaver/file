@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "path": "plugins/file/commands/help",
+  "scope": {
+    "root": false
+  },
+  "source": {
+    "version": 1,
+    "inputHash": "b77d1eedd33a9e11fbf36d9cf9d9b1d157975af2b77aa2f507fb44431b6952c7",
+    "directorySummary": "Handles file plugin help output by adapting parsed help requests to rendered text and providing formatted file subcommand usage and command definition.",
+    "files": {
+      "adapter.ts": {
+        "hash": "cd4eba3ab35ed1c4b81291525f6b5dd745b41afd1c7e82d79dcb2471366a786c",
+        "sourceSummary": "Adapts the file help command by building a help subcommand representation from adapter params and returning rendered help text or the error message.",
+        "provenance": "ai"
+      },
+      "module.ts": {
+        "hash": "4289984e5cfdec74b9c6495436f044a4203395f1c5c1a9b844bf3e4c9c0167a2",
+        "sourceSummary": "Exposes file help lines and command definition via commandDefinition, formatting subcommand usage strings from arguments, options, and summaries.",
+        "provenance": "ai"
+      }
+    }
+  },
+  "children": {},
+  "coverage": {
+    "complete": true,
+    "missing": [],
+    "stale": []
+  },
+  "summary": {
+    "version": 1,
+    "inputHash": "53053a84f6b589c0c82b52f20fdd3114be8aef63ea6d8b6db3b4bf6365ff47b4",
+    "value": "Handles file plugin help output by adapting parsed help requests to rendered text and providing formatted file subcommand usage and command definition.",
+    "provenance": "derived"
+  },
+  "context": {
+    "value": "plugins/file — workspace file-manager plugin in AppWeaver system: tree browsing, view/edit/create/delete/rename/restore, git diff/history/commit/restore/init, NIP-44/Blossom encrypted upload/download, and bottom-up docs via centralized dispatcher + plugin registration + AI tooling + fuzzy-file-search; ai complete (Zod-validated bottomup.generate/enrich/summarize/summary contracts, runtime dispatch via workspace root, in-memory DB); commands complete container (20 CLI/web subcommands: bottomup workflows with coverage validation/effective context/hash-cache/recursive/one-level/plan-draft-accept and index validation/projections, filesystem ops with size/binary/IGNORE/.gitignore filtering via ripgrep, git ops, secure transfer with naddr/NIP-44/integrity handling, shared workspace-root validation/filter/renderer/help under containment); types complete (adapter param contracts); no missing/stale coverage.",
+    "origin": "ai",
+    "hash": "1013c03173064158d092fc7d827b7b691052515a54c36344eb769cde6426f8a1"
+  },
+  "enrichment": {
+    "inputHash": "b4a37b708b199ce31e6418eee1f12f1f9672cbea3e6e732f1c79dd23df01774c",
+    "summaryHash": "4817f8e6d5bc46ae3dd1ddcac6e9f96c3543aef4294b5b8f8e8a926349353cd1",
+    "directorySummary": "Introspection leaf of the 20-command file-plugin aggregation beneath the centralized dispatcher (adapter.ts/handleFile) and registration (init.ts) seam. Unlike file/git siblings (validate-containment → execute → adapt) and bottom-up siblings (inherited context, SHA-256 hash-cache, coverage validation, plan/draft/accept modal lifecycle), it performs no filesystem, git, ripgrep, or Blossom I/O — it terminates the dispatch fan-out as a purely presentational endpoint that surfaces the sibling catalog for CLI/web discoverability.",
+    "files": {
+      "adapter.ts": "Dispatch-facing adapter implementing the shared CLI/web file-command contract for this aggregation. Entry point invoked via the parent handleFile fan-out; builds the help subcommand representation from adapter params and delegates content to module.ts, isolating rendering/error handling from definition — mirroring sibling adapters but bypassing workspace-containment validation and side effects.",
+      "module.ts": "Canonical content owner for file-plugin help within the aggregation. Centralizes commandDefinition and usage-line formatting (arguments/options/summaries → strings) as the single source of truth consumed by both adapter.ts for rendering and the plugin registration layer, keeping help synchronized with the 20-subcommand catalog without duplicating metadata."
+    },
+    "provenance": "ai"
+  }
+}

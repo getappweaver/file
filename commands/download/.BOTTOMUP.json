@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "path": "plugins/file/commands/download",
+  "scope": {
+    "root": false
+  },
+  "source": {
+    "version": 1,
+    "inputHash": "0f5df30221da0a05d5455b22614220ceb2959ff07f1a2d99a845e89d33399084",
+    "directorySummary": "Directory implements the file download subcommand — adapter parsing, command definition, request handling, and Nostr/Blossom sync that decodes naddr, fetches and validates the file-share event, integrity-checks, decrypts, and writes the file to the workspace with up-to-date and conflict handling.",
+    "files": {
+      "adapter.ts": {
+        "hash": "7adb97a646ca3cac68f1a58105371405e944c9c37dd364829b7c0cf34380f197",
+        "sourceSummary": "Adapter extracts optional naddr string from FileCommandAdapterParams and delegates to handleDownloadCommand, returning its text result.",
+        "provenance": "ai"
+      },
+      "definition.ts": {
+        "hash": "29005d59a4bca632610ab7f8227a5aa39c29cecd4f403e7af415faebedfb8232",
+        "sourceSummary": "Defines download SubcommandDefinition with name download, summary to download and decrypt by naddr, optional naddr string argument, and usage examples.",
+        "provenance": "ai"
+      },
+      "handler.ts": {
+        "hash": "29f6a798406c3081c3a685b85c01c1caa782c05d3cce6a6c1656bfc63a73f270",
+        "sourceSummary": "Handler validates naddr presence for usage guidance, resolves workspace root and Nostr config, calls fileDownload, and maps skipped, success, and error outcomes to text results.",
+        "provenance": "ai"
+      },
+      "sync.ts": {
+        "hash": "58a9cf4523b00cc43940b23ae4df8a5831baa13e8cda1689996c03bfbc03b4b2",
+        "sourceSummary": "Implements fileDownload that decodes and validates naddr kind, fetches the file event via SimplePool, validates url/x/hash tags, checks local hash against plaintext/prev for skip or conflict handling, downloads and hash-verifies the Blossom blob, decrypts via NIP-44 conversation key and AES-GCM, and writes to the resolved workspace path.",
+        "provenance": "ai"
+      }
+    }
+  },
+  "children": {},
+  "coverage": {
+    "complete": true,
+    "missing": [],
+    "stale": []
+  },
+  "summary": {
+    "version": 1,
+    "inputHash": "2bde74b5d1cf4606904addfe2599bd64666d901b907479e4f639b6e66d239f8f",
+    "value": "Directory implements the file download subcommand — adapter parsing, command definition, request handling, and Nostr/Blossom sync that decodes naddr, fetches and validates the file-share event, integrity-checks, decrypts, and writes the file to the workspace with up-to-date and conflict handling.",
+    "provenance": "derived"
+  },
+  "context": {
+    "value": "plugins/file — workspace file-manager plugin in AppWeaver system: tree browsing, view/edit/create/delete/rename/restore, git diff/history/commit/restore/init, NIP-44/Blossom encrypted upload/download, and bottom-up docs via centralized dispatcher + plugin registration + AI tooling + fuzzy-file-search; ai complete (Zod-validated bottomup.generate/enrich/summarize/summary contracts, runtime dispatch via workspace root, in-memory DB); commands complete container (20 CLI/web subcommands: bottomup workflows with coverage validation/effective context/hash-cache/recursive/one-level/plan-draft-accept and index validation/projections, filesystem ops with size/binary/IGNORE/.gitignore filtering via ripgrep, git ops, secure transfer with naddr/NIP-44/integrity handling, shared workspace-root validation/filter/renderer/help under containment); types complete (adapter param contracts); no missing/stale coverage.",
+    "origin": "ai",
+    "hash": "1013c03173064158d092fc7d827b7b691052515a54c36344eb769cde6426f8a1"
+  },
+  "enrichment": {
+    "inputHash": "1b380e2fb4d89940fc95ea69b7533b58b5494afe8da5838d64df79728dbe8c47",
+    "summaryHash": "2c8da3edf2fe59369a173a9eda9151fc3111fed6f4bfbdcca4d6fd95a4c0d8ae",
+    "directorySummary": "Leaf secure-transfer subcommand that forms the consumer side of the file plugin's upload/download pair within the 20-command commands aggregation. Sits below the centralized handleFile dispatcher and init registration boundary and is invoked via the standard adapter → handler → sync fan-out; isolates the external-content trust boundary (Nostr event authenticity, Blossom blob integrity, NIP-44 decryption, workspace containment and idempotency/conflict policy) from the plugin's browsing/edit/git and bottom-up families, exposing only a minimal naddr entry point to CLI/web callers.",
+    "files": {
+      "adapter.ts": "Thin CLI/web adaptation shim in the file plugin's validate → execute → adapt pattern; extracts the optional naddr from FileCommandAdapterParams and delegates to the domain handler, keeping transport/parsing concerns out of sync logic consistent with sibling command adapters under the central dispatcher.",
+      "definition.ts": "Declarative SubcommandDefinition contract registered via the plugin init subcommand table; provides the name, summary, optional naddr argument and usage examples that the central dispatcher uses for routing, help generation, and validation before adapter/handler execution.",
+      "handler.ts": "Orchestration and presentation boundary for the download flow; enforces preconditions (naddr presence for usage guidance, workspace-root and Nostr config resolution) and normalizes fileDownload domain outcomes (skipped/up-to-date, success, conflict, error) into text results for CLI and web renderer consumption.",
+      "sync.ts": "Encapsulated domain core owning the end-to-end Nostr/Blossom trust pipeline — naddr decode/kind validation, SimplePool event fetch, url/x/hash tag checks, local hash comparison for skip/conflict decisions, Blossom blob download with hash verification, NIP-44 conversation-key and AES-GCM decryption, and contained workspace write — isolating network/crypto/I/O and idempotency policy from adapter/handler layers."
+    },
+    "provenance": "ai"
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "path": "plugins/file/commands/view",
+  "scope": {
+    "root": false
+  },
+  "source": {
+    "version": 1,
+    "inputHash": "a13af4630c9b445c5299b4f881b517abca0f1a6d58eda62da094bff61d8a2a19",
+    "directorySummary": "Provides the file view command that previews workspace-relative files with path validation, size-bounded reading, binary detection, and dual CLI/web output handling.",
+    "files": {
+      "adapter.ts": {
+        "hash": "b1805ad777b43b3db9be53f4c424ef41e4bb298ab33e052d6d04cbb72e89b556",
+        "sourceSummary": "Adapts parsed view arguments to handleViewCommand and renders results as CLI text or web nodes, parsing path, previousDir, line and lineScrollToken with workspace-root resolution.",
+        "provenance": "ai"
+      },
+      "definition.ts": {
+        "hash": "47c66e349df8bc5848cb59f57e2bd32f61aa4283a29f79719739021cf86c28c5",
+        "sourceSummary": "Defines the view subcommand metadata requiring a workspace-relative path argument with optional previousDir and line options.",
+        "provenance": "ai"
+      },
+      "handler.ts": {
+        "hash": "cb41645bd637701fe9aa2c9a41928a096a8fe3ebd3279bf307c4c154433c9e01",
+        "sourceSummary": "Implements workspace-bounded file viewing with escape, not-found and directory checks, null-byte binary detection, and 256KB truncation returning a structured FileViewResult.",
+        "provenance": "ai"
+      }
+    }
+  },
+  "children": {
+    "renderers": {
+      "path": "commands/view/renderers",
+      "status": "current",
+      "sourceInputHash": "b3eb2838da8170f7f696f1b604461ad7298f02dc87a6764c8b65a2396b068d4c"
+    }
+  },
+  "coverage": {
+    "complete": true,
+    "missing": [],
+    "stale": []
+  },
+  "summary": {
+    "version": 1,
+    "inputHash": "da992f77aa12f0d9a953e7795cca88b15f64b5302970a2c1a50d3ed91d80d74b",
+    "value": "Provides the file view command for previewing workspace-relative files with path validation, size-bounded reading, binary detection, and dual CLI/web output handling. Web presentation is delegated to renderers, which constructs code-view stylesheet and WebNodeRoot displays for highlighting, copying, and inline-editing with breadcrumb and timeline integration.",
+    "provenance": "ai"
+  },
+  "context": {
+    "value": "plugins/file — workspace file-manager plugin in AppWeaver system: tree browsing, view/edit/create/delete/rename/restore, git diff/history/commit/restore/init, NIP-44/Blossom encrypted upload/download, and bottom-up docs via centralized dispatcher + plugin registration + AI tooling + fuzzy-file-search; ai complete (Zod-validated bottomup.generate/enrich/summarize/summary contracts, runtime dispatch via workspace root, in-memory DB); commands complete container (20 CLI/web subcommands: bottomup workflows with coverage validation/effective context/hash-cache/recursive/one-level/plan-draft-accept and index validation/projections, filesystem ops with size/binary/IGNORE/.gitignore filtering via ripgrep, git ops, secure transfer with naddr/NIP-44/integrity handling, shared workspace-root validation/filter/renderer/help under containment); types complete (adapter param contracts); no missing/stale coverage.",
+    "origin": "ai",
+    "hash": "1013c03173064158d092fc7d827b7b691052515a54c36344eb769cde6426f8a1"
+  },
+  "enrichment": {
+    "inputHash": "d0a3122a9d673a6337b93f1a795e0575598332664c345f92424712a13f02b48b",
+    "summaryHash": "b95869c741ecb610b264d2803eb03998b9b80caab98a13268ed5cb3c85faae95",
+    "directorySummary": "Leaf command implementation under the plugins/file/commands 20-command aggregation, dispatched via the file plugin's centralized adapter.ts/handleFile routing. Holds the read-only preview role within the filesystem-ops family (complementing create/edit/delete/rename/tree/search and distinct from git/bottomup/transfer families), isolating safe reads from mutations. Owns validation and bounded-read execution in handler.ts while delegating web code-view, highlighting, copy, inline-edit, breadcrumb and timeline presentation to its renderers child, following the shared validate-containment → execute → CLI/web-adapt lifecycle.",
+    "files": {
+      "adapter.ts": "Adapter seam between the centralized file dispatcher and this command's handler/renderers. Resolves workspace root and parses path/previousDir/line/lineScrollToken before calling handleViewCommand, then branches to CLI text or WebNodeRoot rendering via renderers - the dual CLI/web adaptation pattern shared across file/git commands.",
+      "definition.ts": "Declarative registration contract that exposes view in the 20-command surface aggregated by plugins/file/commands. Defines required workspace-relative path with optional previousDir and line for history/line-highlighting, consumed by init.ts plugin registration and help aggregation.",
+      "handler.ts": "Core execution logic called by the adapter, encapsulating workspace containment guards (escape/not-found/directory), null-byte binary detection and 256KB truncation into a structured FileViewResult. Provides the safe, side-effect-free read counterpart to mutating file commands, leaving CLI/web presentation to adapter/renderers."
+    },
+    "provenance": "ai"
+  }
+}

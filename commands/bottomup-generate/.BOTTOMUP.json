@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "path": "plugins/file/commands/bottomup-generate",
+  "scope": {
+    "root": false
+  },
+  "source": {
+    "version": 1,
+    "inputHash": "9c9d521caf771cb2c6ec30c0abcc0dea943a6d92f3d7bfb6bc94020dd13866d3",
+    "directorySummary": "Implements bottomup.generate for one-directory structured knowledge via command definition, CLI/web adaptation and stateless draft revision/acceptance, coding-agent session orchestration, and handler-driven option normalization, planning, hash-based cache reuse, inherited context resolution and recursive coverage tracking, supported by workspace-safe filesystem utilities for path resolution, generate-root lookup, filtered listing, SHA-256 hashing, index parsing/serialization with atomic writes, truncated source reading, and shared constants/schemas/types, with tests for snippet and handler behavior.",
+    "files": {
+      "adapter.ts": {
+        "hash": "b972b32f861923a29e9414dd564878e73b6431a338bfaeb90aa5364d5ddcf9cc",
+        "sourceSummary": "Adapts CLI and web options into bottomup.generate calls and renders web drafts or formatted text results.",
+        "provenance": "ai"
+      },
+      "ai.ts": {
+        "hash": "382c3e1e049988980e5a8f8af3850b1406731ce4d62342e49b97808ee74b1ac2",
+        "sourceSummary": "Runs fresh or continued plugin coding-agent sessions to produce and validate structured one-directory JSON knowledge.",
+        "provenance": "ai"
+      },
+      "definition.ts": {
+        "hash": "ec9240a33df9b438c5f714b1a38d87f59506056f889c083244180c1e10217588",
+        "sourceSummary": "Defines the public bottomup.generate command and hidden stateless draft revise and accept subcommands.",
+        "provenance": "ai"
+      },
+      "draft-adapter.ts": {
+        "hash": "a75646bfd21d3f99c8ba74f9207c86899ac67e9baab3efd560603b09b0728a01",
+        "sourceSummary": "Handles web-only stateless draft revision and acceptance via encoded state validation.",
+        "provenance": "ai"
+      },
+      "fs.test.ts": {
+        "hash": "f1a7b9df50e67fe237c81f656b3c3be40b0b2cd11ae08f359c4bb4df0f1aea25",
+        "sourceSummary": "Tests readSourceSnippet for within-budget pass-through, middle truncation preserving head and tail with marker under 24 KB, and null-byte detection returning null.",
+        "provenance": "ai"
+      },
+      "fs.ts": {
+        "hash": "e6c951a48f9376e3a42f6aabee4438af38d7211e924ce5b43d260005e32094e2",
+        "sourceSummary": "Provides workspace-safe path and generate-root resolution with symlink checks, filtered entry listing, SHA-256 hashing, index parsing/serialization with atomic writes, and source snippet reading with 24 KB middle truncation and null-byte handling plus direct file hashing.",
+        "provenance": "ai"
+      },
+      "handler.test.ts": {
+        "hash": "e327ee4ade153b5da69f65714a9d5d7840b75806d2e8930911f6333d70f4cbe2",
+        "sourceSummary": "Tests registration, planning, generation, cache reuse, recursive enrichment, drafts, handoff, and path safety.",
+        "provenance": "ai"
+      },
+      "handler.ts": {
+        "hash": "b6aa568a5fb7e3c584830185a748489c2730090db3950cb84b90ab622de065c0",
+        "sourceSummary": "Orchestrates option normalization/validation, plan building, hash-based cache reuse, inherited context resolution, one-level and recursive generation with child coverage tracking, and base64url-encoded stateless draft revise/accept validation.",
+        "provenance": "ai"
+      },
+      "types.ts": {
+        "hash": "410bee77ff6d2fa8fb82d52d55a5638500e782880394796f116745e21a5ef3b7",
+        "sourceSummary": "Defines BOTTOMUP index constants and Zod schemas for file, child, context, enrichment, summary and index records, AI response validation, and types for resolved options, plans, results, and encoded draft state.",
+        "provenance": "ai"
+      }
+    }
+  },
+  "children": {
+    "renderers": {
+      "path": "commands/bottomup-generate/renderers",
+      "status": "current",
+      "sourceInputHash": "11cb127fcc414c7aaab9d879a3ca304bf3a37b3e26e55f9cc945837f7885b44d"
+    }
+  },
+  "coverage": {
+    "complete": true,
+    "missing": [],
+    "stale": []
+  },
+  "summary": {
+    "version": 1,
+    "inputHash": "0bcd5825278543df0897baf689fc3163f499e1fa3b075513f01b1b5308963174",
+    "value": "plugins/file/commands/bottomup-generate implements `bottomup.generate` for one-directory structured knowledge via command definition with CLI/web adaptation, stateless draft revision/acceptance, and coding-agent session orchestration. Handler layer normalizes options, plans execution, resolves inherited context, reuses cache via SHA-256 hashing, and tracks recursive coverage; supported by workspace-safe filesystem utilities for path resolution, generate-root lookup, filtered listing, hashing, index parsing/serialization with atomic writes, and truncated source reading, plus shared constants/schemas/types and snippet/handler tests. Child `renderers/` (complete) renders the draft web modal with diffPatch preview and Accept/Decline workflow controls. Coverage is complete for this directory and its immediate child with no missing or stale generated summaries.",
+    "provenance": "ai"
+  },
+  "context": {
+    "value": "plugins/file — workspace file-manager plugin in AppWeaver system: tree browsing, view/edit/create/delete/rename/restore, git diff/history/commit/restore/init, NIP-44/Blossom encrypted upload/download, and bottom-up docs via centralized dispatcher + plugin registration + AI tooling + fuzzy-file-search; ai complete (Zod-validated bottomup.generate/enrich/summarize/summary contracts, runtime dispatch via workspace root, in-memory DB); commands complete container (20 CLI/web subcommands: bottomup workflows with coverage validation/effective context/hash-cache/recursive/one-level/plan-draft-accept and index validation/projections, filesystem ops with size/binary/IGNORE/.gitignore filtering via ripgrep, git ops, secure transfer with naddr/NIP-44/integrity handling, shared workspace-root validation/filter/renderer/help under containment); types complete (adapter param contracts); no missing/stale coverage.",
+    "origin": "ai",
+    "hash": "1013c03173064158d092fc7d827b7b691052515a54c36344eb769cde6426f8a1"
+  },
+  "enrichment": {
+    "inputHash": "f4b8f819d4df45c10e9ef6ab153eca6fc8dd4b05aa0f34b3ab97cf41bbea6041",
+    "summaryHash": "5d53abffcb8ef722bd2075128929330af75893001969a30bf782fb97433c2530",
+    "directorySummary": "Leaf generation engine within the bottom-up knowledge pipeline family under plugins/file/commands. Owns the single-directory structured-knowledge lifecycle (vs. sibling summarize/enrich/summary commands) and concretizes the shared bottom-up pattern — inherited-context resolution, SHA-256 hash-cache reuse, one-level/recursive coverage tracking, and stateless draft revise/accept — behind the centralized file dispatcher (adapter.ts/handleFile). Handler orchestrates the flow while delegating coding-agent execution to ai.ts, workspace-safe I/O to fs.ts, contract validation to types.ts, and modal diff/accept UI to child renderers/.",
+    "files": {
+      "adapter.ts": "Public boundary for this subcommand — normalizes CLI vs web option shapes into handler contracts and selects output branch (formatted CLI text vs. draft modal via renderers/), completing the validate → execute → adapt flow for bottomup.generate.",
+      "ai.ts": "Isolated coding-agent execution layer invoked by handler — decouples fresh/continued plugin coding-agent session management and structured JSON validation from planning, caching, and persistence logic.",
+      "definition.ts": "Declarative registration surface consumed by the file plugin init/dispatcher — exposes public bottomup.generate and hidden stateless revise/accept subcommands and binds their schemas to adapter/handler without owning execution.",
+      "draft-adapter.ts": "Web-only stateless continuation controller — validates base64url-encoded draft state handed off from handler/renderers modal and re-enters the ai/handler revise or accept path without server-side session persistence.",
+      "fs.ts": "Workspace-safe filesystem substrate for the generation flow — encapsulates symlink-checked path/generate-root resolution, filtered listing, SHA-256 hashing, atomic index parse/serialize, and 24KB-truncated snippet reading used by handler and ai.ts.",
+      "handler.ts": "Central orchestrator for the directory — normalizes/validates options, builds plans, resolves inherited context, decides hash-based cache reuse, drives one-level/recursive generation with child coverage tracking, and encodes/validates stateless draft handoff for revise/accept.",
+      "types.ts": "Single contract hub for the directory — defines BOTTOMUP constants, Zod schemas (file/child/context/enrichment/summary/index + AI response), and resolved-option/plan/result/draft-state types shared by definition, handler, ai, fs, and renderers."
+    },
+    "provenance": "ai"
+  }
+}

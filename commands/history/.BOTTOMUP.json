@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "path": "plugins/file/commands/history",
+  "scope": {
+    "root": false
+  },
+  "source": {
+    "version": 1,
+    "inputHash": "0c45b1270cbbca14bcbecd50d196bc62c54df0d890dcbc8e5a6fcbbdff138326",
+    "directorySummary": "Implements the file `history` subcommand that shows recent git commits for a workspace-relative path, handling path resolution, git log execution, and CLI/web result rendering.",
+    "files": {
+      "adapter.ts": {
+        "hash": "0643b019a1b78d02131e6847f426445a005d23e4b50fa58376c147585a5a8f12",
+        "sourceSummary": "Adapts parsed history command params to `handleHistoryCommand` (maxCount 20) and renders the result as CLI text or web node via `renderFileHistoryWeb`.",
+        "provenance": "ai"
+      },
+      "definition.ts": {
+        "hash": "dc75fe7f5a4177c0bc439464d6e536d4fe8f521ec6602ecac3172aea99cfaada",
+        "sourceSummary": "Defines the `history` subcommand with optional workspace-relative `path` argument and example invocations.",
+        "provenance": "ai"
+      },
+      "handler.ts": {
+        "hash": "2cd191864373e5bc4747385f431e09134ee5cf484b304de654bfdbae0a025054",
+        "sourceSummary": "Resolves and validates the workspace path, verifies git repository, runs `git log` with relative dates and parses `git show --numstat` stats into `FileHistoryResult`.",
+        "provenance": "ai"
+      }
+    }
+  },
+  "children": {
+    "renderers": {
+      "path": "commands/history/renderers",
+      "status": "current",
+      "sourceInputHash": "8619e817ef13f4e558ded85ab48c1e0217765f3c57ac5a863a44631a80f1c7ef"
+    }
+  },
+  "coverage": {
+    "complete": true,
+    "missing": [],
+    "stale": []
+  },
+  "summary": {
+    "version": 1,
+    "inputHash": "7b02504605985cbb6c7b239794e1e8756470fd400379c5af4716aa86366541fc",
+    "value": "plugins/file/commands/history implements the `file history` subcommand that displays recent git commits for a workspace-relative path via path resolution and git log execution with CLI/web rendering. Its child `renderers` provides the web presentation, converting FileHistoryResult into a styled tree with file breadcrumb, clickable commit subjects that dispatch diff actions, and per-commit file/addition/deletion metrics.",
+    "provenance": "ai"
+  },
+  "context": {
+    "value": "plugins/file — workspace file-manager plugin in AppWeaver system: tree browsing, view/edit/create/delete/rename/restore, git diff/history/commit/restore/init, NIP-44/Blossom encrypted upload/download, and bottom-up docs via centralized dispatcher + plugin registration + AI tooling + fuzzy-file-search; ai complete (Zod-validated bottomup.generate/enrich/summarize/summary contracts, runtime dispatch via workspace root, in-memory DB); commands complete container (20 CLI/web subcommands: bottomup workflows with coverage validation/effective context/hash-cache/recursive/one-level/plan-draft-accept and index validation/projections, filesystem ops with size/binary/IGNORE/.gitignore filtering via ripgrep, git ops, secure transfer with naddr/NIP-44/integrity handling, shared workspace-root validation/filter/renderer/help under containment); types complete (adapter param contracts); no missing/stale coverage.",
+    "origin": "ai",
+    "hash": "1013c03173064158d092fc7d827b7b691052515a54c36344eb769cde6426f8a1"
+  },
+  "enrichment": {
+    "inputHash": "0d4a54c03cc0aa9488fe8af46e0bf65ac470d2d7830067a7e59734200b345220",
+    "summaryHash": "0cadb2bdccb2dc844901bbdc0b2152e2b7ae46bb0a861af6e0e464a70d270470",
+    "directorySummary": "Read-only git-introspection member of the file plugin's git-operations family (alongside diff/commit/restore/init) under the commands aggregation boundary. Provides the audit-trail surface dispatched from the centralized adapter.ts/handleFile dispatcher, complementing diff's single-commit inspection and commit/restore's mutating operations with a non-mutating, path-scoped log view. Follows the shared validate-containment → verify-repo → execute-git pattern but does not participate in bottomup hash-cache/coverage lifecycle; isolates execution in handler.ts and delegates all styled presentation and diff-action dispatch to the renderers child.",
+    "files": {
+      "adapter.ts": "Dispatch and presentation fork for this subcommand — invoked from the central file dispatcher, hardcodes maxCount 20 for handleHistoryCommand, and branches results into CLI text vs web tree via renderFileHistoryWeb; sole bridge between parsed params, handler execution, and renderers output.",
+      "definition.ts": "Declarative contract for the history subcommand registered via the file plugin init flow; exposes the optional workspace-relative path argument and example invocations that drive help generation and param validation for the adapter/handler chain.",
+      "handler.ts": "Execution core for the subcommand implementing the shared workspace-resolution → git-repo verification → git log (relative dates) + git show --numstat parsing pipeline; produces the typed FileHistoryResult with per-commit file/addition/deletion metrics consumed by adapter and web renderers."
+    },
+    "provenance": "ai"
+  }
+}

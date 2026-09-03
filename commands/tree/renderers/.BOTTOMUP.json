@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "path": "plugins/file/commands/tree/renderers",
+  "scope": {
+    "root": false
+  },
+  "source": {
+    "version": 1,
+    "inputHash": "004da75722825b5783714c6a9c24ee0016e015193bff06267f2b6395e7ff5771",
+    "directorySummary": "Provides web rendering for the file tree command including stylesheet, icon, and interactive WebNode tree with navigation, expand/collapse, and file operations.",
+    "files": {
+      "stylesheet.ts": {
+        "hash": "a3ca8ef11a38b2da0abd965cd9bf2ef65a9ce33b77495dd97995536861540ee2",
+        "sourceSummary": "Exports filePluginTreeStylesheet WebStyleSheet with id 'file-plugin-tree' and cssText styling the file tree modal layout, tree blocks, rows, inline forms, breadcrumbs and control buttons.",
+        "provenance": "ai"
+      },
+      "tree.svg": {
+        "hash": "2bc1abf5f81f74b0836b7a0db8fe8cedd732b27cc0c2886cb5dfec57c950b7d0",
+        "sourceSummary": "SVG icon with a folder and indented tree lines filled with currentColor.",
+        "provenance": "ai"
+      },
+      "web.ts": {
+        "hash": "8e750362f4a75989552021643286d6058b55808307ddab2f496a193265fe9f61",
+        "sourceSummary": "Renders the workspace file tree as WebNodes/WebActions handling refresh, reveal, navigation, expand state, create/rename/delete forms, diff/history, search and bottom-up actions with breadcrumb and stylesheet integration.",
+        "provenance": "ai"
+      }
+    }
+  },
+  "children": {},
+  "coverage": {
+    "complete": true,
+    "missing": [],
+    "stale": []
+  },
+  "summary": {
+    "version": 1,
+    "inputHash": "f90367575aa9782a36a7f10c8baf0b59f5a03b23e09d89af99d2083f291e7673",
+    "value": "Provides web rendering for the file tree command including stylesheet, icon, and interactive WebNode tree with navigation, expand/collapse, and file operations.",
+    "provenance": "derived"
+  },
+  "context": {
+    "value": "plugins/file — workspace file-manager plugin in AppWeaver system: tree browsing, view/edit/create/delete/rename/restore, git diff/history/commit/restore/init, NIP-44/Blossom encrypted upload/download, and bottom-up docs via centralized dispatcher + plugin registration + AI tooling + fuzzy-file-search; ai complete (Zod-validated bottomup.generate/enrich/summarize/summary contracts, runtime dispatch via workspace root, in-memory DB); commands complete container (20 CLI/web subcommands: bottomup workflows with coverage validation/effective context/hash-cache/recursive/one-level/plan-draft-accept and index validation/projections, filesystem ops with size/binary/IGNORE/.gitignore filtering via ripgrep, git ops, secure transfer with naddr/NIP-44/integrity handling, shared workspace-root validation/filter/renderer/help under containment); types complete (adapter param contracts); no missing/stale coverage.",
+    "origin": "ai",
+    "hash": "1013c03173064158d092fc7d827b7b691052515a54c36344eb769cde6426f8a1"
+  },
+  "enrichment": {
+    "inputHash": "5cf012cf1fe86d05480b85b58e6ac9588d1109f791155e35418809b2059df117",
+    "summaryHash": "b8b8a1cef41041095fe9065e17dc6a64f27f68ab768d8a1101646482220b5109",
+    "directorySummary": "Terminal web-presentation leaf delegated by plugins/file/commands/tree to isolate browser-specific interactive rendering from parent's depth/target parsing, workspace containment/IGNORE/.gitignore filtering, and git-status bubbling. Completes the dual CLI/web execution split for the read-only discovery surface — parent owns data-building for both paths, this directory owns lazy expansion/navigation/file-ops UI for web consumers routed through the centralized adapter/handleFile dispatch — with no further children or filesystem mutation ownership.",
+    "files": {
+      "stylesheet.ts": "Decoupled presentation asset for the web execution path; provides scoped 'file-plugin-tree' WebStyleSheet consumed by web.ts to style modal, tree blocks/rows, inline forms, breadcrumbs and controls without coupling styling to WebNode construction or action logic.",
+      "tree.svg": "Static plugin-registered command icon for the tree subcommand; theme-adaptive via currentColor folder/tree-lines glyph used in command palettes and web UI chrome, independent of dynamic tree rendering in web.ts.",
+      "web.ts": "Web execution implementation of the tree subcommand; transforms parent-validated and filtered directory data into stateful WebNodes/WebActions with breadcrumb, stylesheet integration, lazy expand/collapse, reveal/refresh, navigation, inline create/rename/delete forms, and delegation to diff/history/search/bottom-up actions — bridging to sibling file/git commands rather than implementing mutations itself."
+    },
+    "provenance": "ai"
+  }
+}

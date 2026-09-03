@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 1,
+  "path": "plugins/file/commands",
+  "scope": {
+    "root": false
+  },
+  "source": {
+    "version": 1,
+    "inputHash": "2c456ac66a6d5d46dcee43ad4cda7ffc3cf3852e925005ce17afbc8cbe1c6432",
+    "directorySummary": "Contains no direct source files.",
+    "files": {}
+  },
+  "children": {
+    "bottomup-enrich": {
+      "path": "commands/bottomup-enrich",
+      "status": "current",
+      "sourceInputHash": "1afd87c3960775cc588a1d38f2fae6f7aeebea84390d327837714bd7a24141a7"
+    },
+    "bottomup-generate": {
+      "path": "commands/bottomup-generate",
+      "status": "current",
+      "sourceInputHash": "9c9d521caf771cb2c6ec30c0abcc0dea943a6d92f3d7bfb6bc94020dd13866d3"
+    },
+    "bottomup-summarize": {
+      "path": "commands/bottomup-summarize",
+      "status": "current",
+      "sourceInputHash": "644b78bac7bd77f5a966c2bd8ee780f6e227531ee0bde912cab3d69163fe00db"
+    },
+    "bottomup-summary": {
+      "path": "commands/bottomup-summary",
+      "status": "current",
+      "sourceInputHash": "4d0f0142e7bb93221cc95fca8d42e6e4a9ff964bbc7241e4018b076bd09306e4"
+    },
+    "commit": {
+      "path": "commands/commit",
+      "status": "current",
+      "sourceInputHash": "bc00090174b2ce9b373de05303a293792fe106699c28e9def4198398a7d32bdb"
+    },
+    "create": {
+      "path": "commands/create",
+      "status": "current",
+      "sourceInputHash": "ea2091683c51cfecea872bf96b4c623b8cbc3e042c108fdbcaa34887364ed621"
+    },
+    "delete": {
+      "path": "commands/delete",
+      "status": "current",
+      "sourceInputHash": "46e14c1df3765b8a1b7287b3468ded9e02089ba74bd203f9b5dfd1e30f3e7a53"
+    },
+    "diff": {
+      "path": "commands/diff",
+      "status": "current",
+      "sourceInputHash": "c3dbb5d04b1ad629099b69a01990495cd5ad64b50c3586f1a6636de1944cc0cf"
+    },
+    "download": {
+      "path": "commands/download",
+      "status": "current",
+      "sourceInputHash": "0f5df30221da0a05d5455b22614220ceb2959ff07f1a2d99a845e89d33399084"
+    },
+    "edit": {
+      "path": "commands/edit",
+      "status": "current",
+      "sourceInputHash": "29b91c4769a934cb07cee56aceeca2a1b0e695b67097389b759991523752f0f6"
+    },
+    "help": {
+      "path": "commands/help",
+      "status": "current",
+      "sourceInputHash": "b77d1eedd33a9e11fbf36d9cf9d9b1d157975af2b77aa2f507fb44431b6952c7"
+    },
+    "history": {
+      "path": "commands/history",
+      "status": "current",
+      "sourceInputHash": "0c45b1270cbbca14bcbecd50d196bc62c54df0d890dcbc8e5a6fcbbdff138326"
+    },
+    "init": {
+      "path": "commands/init",
+      "status": "current",
+      "sourceInputHash": "863943919834065158f7019b6bfae46b8059066ba38166c2c308111eb6bb202a"
+    },
+    "rename": {
+      "path": "commands/rename",
+      "status": "current",
+      "sourceInputHash": "ff2d017e0ae3677a2dac5e4089c2cc535fb25ee09bd6112ce8ff5e583f46b70a"
+    },
+    "restore": {
+      "path": "commands/restore",
+      "status": "current",
+      "sourceInputHash": "df8050d828c02085d5327b73fa3422dac4c109e493ca3c1d84d1038c4f922841"
+    },
+    "search": {
+      "path": "commands/search",
+      "status": "current",
+      "sourceInputHash": "8fa30bf95c4195b9756c7ecac18e40ca2b42ce3b4dc3663206f1d25f8763a5aa"
+    },
+    "shared": {
+      "path": "commands/shared",
+      "status": "current",
+      "sourceInputHash": "f73929c31b8174297a0a089baf2e1fa53ff4ae94181eeea60a8321a5750f9ff9"
+    },
+    "tree": {
+      "path": "commands/tree",
+      "status": "current",
+      "sourceInputHash": "209fd4659dcb9506597d8b370a3c369507d5ffbdc12a26f76f39e45ce79965c9"
+    },
+    "upload": {
+      "path": "commands/upload",
+      "status": "current",
+      "sourceInputHash": "7cb90a0021fe040e1b756c8557b14d5bb089606067483e86e5a5be656ed499e6"
+    },
+    "view": {
+      "path": "commands/view",
+      "status": "current",
+      "sourceInputHash": "a13af4630c9b445c5299b4f881b517abca0f1a6d58eda62da094bff61d8a2a19"
+    }
+  },
+  "coverage": {
+    "complete": true,
+    "missing": [],
+    "stale": []
+  },
+  "summary": {
+    "version": 1,
+    "inputHash": "5c26ae842aede1726c4f065322cf4dbb3ccb52bfd6784af21b78dc12e58a3cd8",
+    "value": "plugins/file/commands is a container with no direct source files that aggregates 20 complete file-plugin subcommands. Responsibilities split into workspace file operations (create/delete/edit/rename/view/tree/search), git operations (init/commit/diff/history/restore), bottom-up knowledge pipeline (bottomup.generate/summarize/enrich/summary), encrypted file sharing (upload/download via Nostr/Blossom NIP-44/naddr), and help. Bottomup commands share CLI/web adaptation, inherited context, SHA-256 hash caching, validated coverage/compact-summary checks, and plan/draft/revise/accept lifecycle with renderers modal UI for diff/preview and accept/decline; file/git commands follow validate workspace containment -> execute filesystem/git/ripgrep -> adapt to CLI text or web tree rendering. Cross-cutting support via shared for workspace-root resolution, path validation, git/IGNORE filtering, unified diff generation, Blossom transfer, and breadcrumb rendering. Coverage is complete for this directory and all listed children with no missing or stale summaries.",
+    "provenance": "ai"
+  },
+  "context": {
+    "value": "plugins/file — workspace file-manager plugin in AppWeaver system: tree browsing, view/edit/create/delete/rename/restore, git diff/history/commit/restore/init, NIP-44/Blossom encrypted upload/download, and bottom-up docs via centralized dispatcher + plugin registration + AI tooling + fuzzy-file-search; ai complete (Zod-validated bottomup.generate/enrich/summarize/summary contracts, runtime dispatch via workspace root, in-memory DB); commands complete container (20 CLI/web subcommands: bottomup workflows with coverage validation/effective context/hash-cache/recursive/one-level/plan-draft-accept and index validation/projections, filesystem ops with size/binary/IGNORE/.gitignore filtering via ripgrep, git ops, secure transfer with naddr/NIP-44/integrity handling, shared workspace-root validation/filter/renderer/help under containment); types complete (adapter param contracts); no missing/stale coverage.",
+    "origin": "ai",
+    "hash": "1013c03173064158d092fc7d827b7b691052515a54c36344eb769cde6426f8a1"
+  },
+  "enrichment": {
+    "inputHash": "64047eb9bd0839e4359d42a4d66f3b8333c8f363db6ccab9f3b4f762d2fa2352",
+    "summaryHash": "8cbb320f52b58c7c791ad0bb494baecd677c92463512ea0cd5f3c1d75bd63b56",
+    "directorySummary": "Aggregation boundary beneath the file plugin's centralized dispatcher (adapter.ts/handleFile) and registration (init.ts) — groups the 20 file/git/bottom-up/transfer/help subcommands into cohesive families without owning logic itself. Provides the structural seam where adapter dispatch fans out to child implementations, while file/git commands share validate-containment → execute → adapt and bottomup commands share inherited context, hash-cache, coverage validation, and plan/draft/accept modal lifecycle via shared/ and per-command renderers.",
+    "files": {},
+    "provenance": "ai"
+  }
+}

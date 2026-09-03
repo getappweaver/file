@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "path": "plugins/file/commands/diff/renderers",
+  "scope": {
+    "root": false
+  },
+  "source": {
+    "version": 1,
+    "inputHash": "6acea7cf603e887dbeba209c2dcc331d8e0f139ba4d76f96a5e03f921edcb971",
+    "directorySummary": "Renders file diff web UI: stylesheet defines diff block and line styles, renderer builds diff card and timeline output with breadcrumb, line-numbered patch, and git-state notices.",
+    "files": {
+      "stylesheet.ts": {
+        "hash": "9b59fd9d32a9a415486aa8810069093f450153ee4c0ad43ec69ae2938d46aa3c",
+        "sourceSummary": "Exports filePluginDiffStylesheet WebStyleSheet id 'file-plugin-diff' defining CSS for web-file-diff-block, diff-file__patch table, diff-line variants (add/del/hunk/meta/number/text) and injected breadcrumb/timeline button styles.",
+        "provenance": "ai"
+      },
+      "web.ts": {
+        "hash": "ca967e8c8d14826ba63b9caf968e97a49beda6fb528c68ca39ae4ede8b5cc222",
+        "sourceSummary": "Exports renderFileDiffWeb and renderTimelineDiffOutput to build diff WebNodeRoot/timeline_event UIs with breadcrumb header, truncated/binary meta, table-styled patch rows with old/new line numbers and clipboard links, and git_unavailable/init and error handling.",
+        "provenance": "ai"
+      }
+    }
+  },
+  "children": {},
+  "coverage": {
+    "complete": true,
+    "missing": [],
+    "stale": []
+  },
+  "summary": {
+    "version": 1,
+    "inputHash": "403da97acc684af1ebde5f492151622650701f2b3a536c93b45446d620c3ab5d",
+    "value": "Renders file diff web UI: stylesheet defines diff block and line styles, renderer builds diff card and timeline output with breadcrumb, line-numbered patch, and git-state notices.",
+    "provenance": "derived"
+  },
+  "context": {
+    "value": "plugins/file — workspace file-manager plugin in AppWeaver system: tree browsing, view/edit/create/delete/rename/restore, git diff/history/commit/restore/init, NIP-44/Blossom encrypted upload/download, and bottom-up docs via centralized dispatcher + plugin registration + AI tooling + fuzzy-file-search; ai complete (Zod-validated bottomup.generate/enrich/summarize/summary contracts, runtime dispatch via workspace root, in-memory DB); commands complete container (20 CLI/web subcommands: bottomup workflows with coverage validation/effective context/hash-cache/recursive/one-level/plan-draft-accept and index validation/projections, filesystem ops with size/binary/IGNORE/.gitignore filtering via ripgrep, git ops, secure transfer with naddr/NIP-44/integrity handling, shared workspace-root validation/filter/renderer/help under containment); types complete (adapter param contracts); no missing/stale coverage.",
+    "origin": "ai",
+    "hash": "1013c03173064158d092fc7d827b7b691052515a54c36344eb769cde6426f8a1"
+  },
+  "enrichment": {
+    "inputHash": "774b4c592208cd4bdcf749d0f7e523a2de153a29f9fda54ebc749ce1eaaa2557",
+    "summaryHash": "be93430254be7115b75f61a128fa1cc7ec0e0a3d2ed7d46299a66e08b2aec62c",
+    "directorySummary": "Stateless web-presentation leaf beneath plugins/file/commands/diff, invoked only on the web path to materialize already-resolved diff results. Completes the parent read-only inspection leaf's validate-containment/repository-resolution → execute → adapt pattern by owning all web-channel rendering while CLI formatting stays in the parent adapter, and follows the plugin-wide stylesheet + renderer split as a terminal, logic-free view layer with no children or git/filesystem dependencies.",
+    "files": {
+      "stylesheet.ts": "Declarative style contract for the diff presentation leaf; registers WebStyleSheet id 'file-plugin-diff' for consumption by web.ts and the AppWeaver shell. Provides no runtime logic, decoupling visual semantics for patch/table/line-variant and breadcrumb/timeline elements from truncation, binary, and repository-resolution handling in the parent command.",
+      "web.ts": "Imperative web-channel builder that translates diff execution outputs into WebNodeRoot/timeline_event trees for the shell. Counterpart to CLI rendering in the parent adapter, depends on stylesheet.ts for styling, and branches across single-file vs timeline/commit variants to handle truncated/binary metadata, breadcrumb headers, line-numbered patch tables with clipboard links, and git_unavailable/init error states."
+    },
+    "provenance": "ai"
+  }
+}

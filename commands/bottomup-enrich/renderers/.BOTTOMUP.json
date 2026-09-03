@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "path": "plugins/file/commands/bottomup-enrich/renderers",
+  "scope": {
+    "root": false
+  },
+  "source": {
+    "version": 1,
+    "inputHash": "6a3dd07608e9e05a02cbe043dd1a3a4857b38431ce0e0d96a99648bf51f3e786",
+    "directorySummary": "Renders the bottom-up enrichment draft as a modal web UI presenting the proposed diff patch with revision and accept/decline actions.",
+    "files": {
+      "web.ts": {
+        "hash": "012f1f1bdbeef8da3c49ac3c573fcda07dd499b306f46074bee61de4264b0109",
+        "sourceSummary": "Exports renderBottomupEnrichDraft to build a modal WebNodeRoot showing the draft change count, diffPatch, revision prompt form, and Accept/Decline actions.",
+        "provenance": "ai"
+      }
+    }
+  },
+  "children": {},
+  "coverage": {
+    "complete": true,
+    "missing": [],
+    "stale": []
+  },
+  "summary": {
+    "version": 1,
+    "inputHash": "0a7a636cd88e2c729a7786fda3c4953b71cd3d00483f3753f9b827998a066578",
+    "value": "Renders the bottom-up enrichment draft as a modal web UI presenting the proposed diff patch with revision and accept/decline actions.",
+    "provenance": "derived"
+  },
+  "context": {
+    "value": "plugins/file — workspace file-manager plugin in AppWeaver system: tree browsing, view/edit/create/delete/rename/restore, git diff/history/commit/restore/init, NIP-44/Blossom encrypted upload/download, and bottom-up docs via centralized dispatcher + plugin registration + AI tooling + fuzzy-file-search; ai complete (Zod-validated bottomup.generate/enrich/summarize/summary contracts, runtime dispatch via workspace root, in-memory DB); commands complete container (20 CLI/web subcommands: bottomup workflows with coverage validation/effective context/hash-cache/recursive/one-level/plan-draft-accept and index validation/projections, filesystem ops with size/binary/IGNORE/.gitignore filtering via ripgrep, git ops, secure transfer with naddr/NIP-44/integrity handling, shared workspace-root validation/filter/renderer/help under containment); types complete (adapter param contracts); no missing/stale coverage.",
+    "origin": "ai",
+    "hash": "1013c03173064158d092fc7d827b7b691052515a54c36344eb769cde6426f8a1"
+  },
+  "enrichment": {
+    "inputHash": "8d96e052a7d7824a8fb05de79c8447a56887e3015cb7cf0b010347ad003e6694",
+    "summaryHash": "922cd7c2eacb8d66f79b8c5eb72b91280e2a29f48a591ab3a1b44a4884fe4790",
+    "directorySummary": "Leaf presentation boundary isolated from the parent bottomup.enrich orchestration. While the parent handler owns coverage/compact-summary validation, input-hash caching, and plan/draft/revise/accept lifecycle over already-persisted source-grounded summaries, this directory owns only the human-in-the-loop review surface — translating a staged enrichment patch into an interactive modal. It carries no filesystem, git, AI dispatch, or persistence logic, keeping WebNodeRoot construction decoupled from effective-context propagation and aligning with the generate/summarize/summary renderer pattern but scoped exclusively to enrichment diffs.",
+    "files": {
+      "web.ts": "Web-adapter renderer for the enrich draft review loop. Materializes the handler-produced draft state into the plugin's WebNodeRoot modal contract, exposing change count and diffPatch for inspection while wiring the revision prompt form and Accept/Decline actions back to the bottomup.enrich web adapter. Consumed only after parent validation/caching, with no direct filesystem or summarization dependencies."
+    },
+    "provenance": "ai"
+  }
+}

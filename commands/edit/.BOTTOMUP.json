@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "path": "plugins/file/commands/edit",
+  "scope": {
+    "root": false
+  },
+  "source": {
+    "version": 1,
+    "inputHash": "29b91c4769a934cb07cee56aceeca2a1b0e695b67097389b759991523752f0f6",
+    "directorySummary": "Implements the `edit` workspace file command that validates a relative path, overwrites an existing file with new content, and adapts output to a timeline diff for web or a confirmation message otherwise.",
+    "files": {
+      "adapter.ts": {
+        "hash": "05057883a74cf7403f81ae0ead2842290c8a4e3095a05281a11515c10270eedc",
+        "sourceSummary": "Adapter parses `path`/`content` arguments, resolves the workspace root, invokes the edit handler, and returns a timeline diff rendering for web or an `Updated <path>` message otherwise.",
+        "provenance": "ai"
+      },
+      "definition.ts": {
+        "hash": "23666dc00cb9c2b64a86a82e04273d0e502aef086e667a491365d46c41e617a8",
+        "sourceSummary": "Defines the `edit` subcommand schema with required `path` and variadic `content` arguments, optional `--previous-dir` option, and usage example.",
+        "provenance": "ai"
+      },
+      "handler.ts": {
+        "hash": "fa82b7fa9d203f87658b9e4e8bb63d27adf7d8043dd3b367b651ee02b0d7542e",
+        "sourceSummary": "Validates the relative path against workspace escape, existence, and file type, then overwrites the file with `writeFileSync` and returns the normalized relative path.",
+        "provenance": "ai"
+      }
+    }
+  },
+  "children": {},
+  "coverage": {
+    "complete": true,
+    "missing": [],
+    "stale": []
+  },
+  "summary": {
+    "version": 1,
+    "inputHash": "204aa6f17d8967119bd1c779735faf17dfd07fd4e118d7646a64b28997dcfc70",
+    "value": "Implements the `edit` workspace file command that validates a relative path, overwrites an existing file with new content, and adapts output to a timeline diff for web or a confirmation message otherwise.",
+    "provenance": "derived"
+  },
+  "context": {
+    "value": "plugins/file — workspace file-manager plugin in AppWeaver system: tree browsing, view/edit/create/delete/rename/restore, git diff/history/commit/restore/init, NIP-44/Blossom encrypted upload/download, and bottom-up docs via centralized dispatcher + plugin registration + AI tooling + fuzzy-file-search; ai complete (Zod-validated bottomup.generate/enrich/summarize/summary contracts, runtime dispatch via workspace root, in-memory DB); commands complete container (20 CLI/web subcommands: bottomup workflows with coverage validation/effective context/hash-cache/recursive/one-level/plan-draft-accept and index validation/projections, filesystem ops with size/binary/IGNORE/.gitignore filtering via ripgrep, git ops, secure transfer with naddr/NIP-44/integrity handling, shared workspace-root validation/filter/renderer/help under containment); types complete (adapter param contracts); no missing/stale coverage.",
+    "origin": "ai",
+    "hash": "1013c03173064158d092fc7d827b7b691052515a54c36344eb769cde6426f8a1"
+  },
+  "enrichment": {
+    "inputHash": "47eb5f6850bb540d53d8ac017164e126b0f850efbbde2835c8903170e9c66f7a",
+    "summaryHash": "7d10443054ae0f4a386fa67b7873a2892f1ead0fc1d9080d2e930166d96e9ced",
+    "directorySummary": "Leaf overwrite-mutation command within the workspace-file-operations family of the 20-command file plugin container. Delegated to by the parent aggregation boundary and centralized dispatcher (adapter.ts/handleFile + init.ts registration), it implements the shared validate-containment → execute-filesystem → adapt-to-CLI/web pipeline specialized to in-place replacement of an existing file, complementing create (new file) and rename/delete/view. Acts as the primitive for manual content updates and for bottom-up draft/revise flows that require overwriting before timeline diff rendering, relying on shared workspace-root resolution and path validation without owning aggregation logic itself.",
+    "files": {
+      "adapter.ts": "Adaptation layer that bridges the dispatcher-registered definition to the handler. Parses path/content/previous-dir, resolves workspace root via shared helper, invokes the validation/write handler, and branches output to timeline diff rendering for web vs Updated <path> confirmation for CLI, fulfilling the adapt phase of the family's pipeline.",
+      "definition.ts": "Declarative CLI contract consumed by the file plugin's registration and help system. Defines required path and variadic content arguments plus optional --previous-dir navigation context with usage example; provides schema for adapter parsing but contains no validation or filesystem logic.",
+      "handler.ts": "Core filesystem mutation enforcing containment and preconditions. Validates normalized relative path against workspace escape, existence, and file-type, then performs synchronous overwrite via writeFileSync and returns the normalized path for adapter diff rendering; isolates side-effecting write from CLI/web adaptation."
+    },
+    "provenance": "ai"
+  }
+}

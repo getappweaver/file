@@ -3,8 +3,25 @@ import type { ParsedCliInvocation } from '@src/system/parser-cli';
 import { parseCliInput } from '@src/system/parser-cli';
 import type { WebHandlerResult } from '@src/web/ui-schema';
 
-import { adaptBottomupCommand } from './commands/bottomup/adapter';
-import { adaptBottomupContextCommand } from './commands/bottomup_context/adapter';
+import {
+  adaptBottomupEnrichAcceptCommand,
+  adaptBottomupEnrichCommand,
+  adaptBottomupEnrichReviseCommand,
+} from './commands/bottomup-enrich/adapter';
+import { adaptBottomupGenerateCommand } from './commands/bottomup-generate/adapter';
+import {
+  adaptBottomupGenerateAcceptCommand,
+  adaptBottomupGenerateReviseCommand,
+} from './commands/bottomup-generate/draft-adapter';
+import {
+  adaptBottomupSummarizeAcceptCommand,
+  adaptBottomupSummarizeCommand,
+  adaptBottomupSummarizeReviseCommand,
+} from './commands/bottomup-summarize/adapter';
+import {
+  adaptBottomupSummaryCommand,
+  adaptBottomupSummarySaveCommand,
+} from './commands/bottomup-summary/adapter';
 import { adaptCommitCommand } from './commands/commit/adapter';
 import { adaptCreateCommand } from './commands/create/adapter';
 import { adaptDeleteCommand } from './commands/delete/adapter';
@@ -18,8 +35,6 @@ import { adaptInitCommand } from './commands/init/adapter';
 import { adaptRenameCommand } from './commands/rename/adapter';
 import { adaptRestoreCommand } from './commands/restore/adapter';
 import { adaptSearchCommand } from './commands/search/adapter';
-import { adaptSummarizeCommand } from './commands/summarize/adapter';
-import { adaptTopdownCommand } from './commands/topdown/adapter';
 import { adaptTreeCommand } from './commands/tree/adapter';
 import { adaptUploadCommand } from './commands/upload/adapter';
 import { adaptViewCommand } from './commands/view/adapter';
@@ -41,10 +56,17 @@ type FileSubcommand =
   | 'restore'
   | 'diff'
   | 'history'
-  | 'bottomup'
-  | 'bottomup_context'
-  | 'summarize'
-  | 'topdown';
+  | 'bottomup.generate'
+  | 'bottomup.generate.revise'
+  | 'bottomup.generate.accept'
+  | 'bottomup.summarize'
+  | 'bottomup.summarize.revise'
+  | 'bottomup.summarize.accept'
+  | 'bottomup.summary'
+  | 'bottomup.summary.save'
+  | 'bottomup.enrich'
+  | 'bottomup.enrich.revise'
+  | 'bottomup.enrich.accept';
 
 type MaybePromise<T> = T | Promise<T>;
 
@@ -73,10 +95,17 @@ const subcommandAdapters: Record<FileSubcommand, FileCommandAdapter> = {
   restore: adaptRestoreCommand,
   diff: adaptDiffCommand,
   history: adaptHistoryCommand,
-  bottomup: adaptBottomupCommand,
-  bottomup_context: adaptBottomupContextCommand,
-  summarize: adaptSummarizeCommand,
-  topdown: adaptTopdownCommand,
+  'bottomup.generate': adaptBottomupGenerateCommand,
+  'bottomup.generate.revise': adaptBottomupGenerateReviseCommand,
+  'bottomup.generate.accept': adaptBottomupGenerateAcceptCommand,
+  'bottomup.summarize': adaptBottomupSummarizeCommand,
+  'bottomup.summarize.revise': adaptBottomupSummarizeReviseCommand,
+  'bottomup.summarize.accept': adaptBottomupSummarizeAcceptCommand,
+  'bottomup.summary': adaptBottomupSummaryCommand,
+  'bottomup.summary.save': adaptBottomupSummarySaveCommand,
+  'bottomup.enrich': adaptBottomupEnrichCommand,
+  'bottomup.enrich.revise': adaptBottomupEnrichReviseCommand,
+  'bottomup.enrich.accept': adaptBottomupEnrichAcceptCommand,
 };
 
 function getDefinitionKey(prefix: string, alias: string): string {
@@ -115,10 +144,17 @@ function isFileSubcommand(value: string): value is FileSubcommand {
     value === 'restore' ||
     value === 'diff' ||
     value === 'history' ||
-    value === 'bottomup' ||
-    value === 'bottomup_context' ||
-    value === 'summarize' ||
-    value === 'topdown'
+    value === 'bottomup.generate' ||
+    value === 'bottomup.generate.revise' ||
+    value === 'bottomup.generate.accept' ||
+    value === 'bottomup.summarize' ||
+    value === 'bottomup.summarize.revise' ||
+    value === 'bottomup.summarize.accept' ||
+    value === 'bottomup.summary' ||
+    value === 'bottomup.summary.save' ||
+    value === 'bottomup.enrich' ||
+    value === 'bottomup.enrich.revise' ||
+    value === 'bottomup.enrich.accept'
   );
 }
 
@@ -139,7 +175,7 @@ export async function handleFile(params: {
   try {
     const command = getNormalizedDefinition(params.prefix, params.alias);
 
-    const jsonParsed = parsedInvocationFromJsonPayload({
+    const jsonParsed = parseFileInvocationFromJsonPayload({
       alias: params.alias,
       jsonPayload: params.jsonPayload,
       prefix: params.prefix,
@@ -272,7 +308,7 @@ function parsedJsonRecordFrom(value: unknown): ParsedJsonRecord {
   return record;
 }
 
-function parsedInvocationFromJsonPayload(props: {
+export function parseFileInvocationFromJsonPayload(props: {
   alias: string;
   jsonPayload: unknown;
   prefix: string;
@@ -290,12 +326,14 @@ function parsedInvocationFromJsonPayload(props: {
       : payload;
 
   const parsedArguments = parsedJsonRecordFrom(argsSource);
+  const parsedOptions = parsedJsonRecordFrom(payload.options);
 
-  if (Object.keys(parsedArguments).length === 0) {
+  if (
+    Object.keys(parsedArguments).length === 0 &&
+    Object.keys(parsedOptions).length === 0
+  ) {
     return null;
   }
-
-  const parsedOptions = parsedJsonRecordFrom(payload.options);
 
   return {
     command: props.alias,

@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "path": "plugins/file/commands/tree",
+  "scope": {
+    "root": false
+  },
+  "source": {
+    "version": 1,
+    "inputHash": "209fd4659dcb9506597d8b370a3c369507d5ffbdc12a26f76f39e45ce79965c9",
+    "directorySummary": "Manages the file tree subcommand: parsing depth/target/ext/expanded/reveal arguments, resolving and validating the workspace target, building filtered text trees and lazily-expandable web directory listings with IGNORE/.gitignore filtering, and decorating rows with aggregated git status for CLI and web surfaces.",
+    "files": {
+      "adapter.ts": {
+        "hash": "e001418596f35f64f77c514b602cb0ca0bc34d6086b066dfa7696b417abea3db",
+        "sourceSummary": "Bridges parsed CLI invocations to web or text execution via parseTreeTokensFromParsed, renderTreeForWeb (parseTreeCliArgs + listWorkspaceDirectoryEntries + renderFileTreeBrowserWeb) and adaptTreeCommand dispatch to handleTreeCommand.",
+        "provenance": "ai"
+      },
+      "cli.ts": {
+        "hash": "b46cda9b50b29604bb3c9bd6df0d13b28d4c2cbe3643c0d10a84b30014cf2bb0",
+        "sourceSummary": "Standalone CLI entry that strips --appweaver-workspace flag, shows help, parses maxDepth/target/ext via parseTreeCliArgs, and prints buildWorkspaceTree from cwd or AppWeaver workspace root.",
+        "provenance": "ai"
+      },
+      "definition.ts": {
+        "hash": "698b29559d0b4d25a2fc0380e4b85a1f6b86f4aeed9d38c1cc9de6423330f4a2",
+        "sourceSummary": "Declares the tree SubcommandDefinition with variadic rest argument, ext/expanded/reveal options, examples, and header webWidget singleton configuration.",
+        "provenance": "ai"
+      },
+      "git-status.ts": {
+        "hash": "0b89d17198191a9322cd6fb52e635f5e74d53d6b13cec3e6586cf1780d5d8bcd",
+        "sourceSummary": "Collects git decorations via git status --porcelain -z, parses nul-delimited entries into kind/priority, and bubbles file statuses to ancestor directories except deleted/renamed.",
+        "provenance": "ai"
+      },
+      "handler.ts": {
+        "hash": "767133e9dbe4710ad52d13f3895ccd68e76072ffeeeaea2b438b359510d50da1",
+        "sourceSummary": "Handles non-web tree requests by merging restTokens/extOption through parseTreeCliArgs and returning buildWorkspaceTree text or a formatted error.",
+        "provenance": "ai"
+      },
+      "workspace-tree.ts": {
+        "hash": "63a9d2e6f9ab55accb1ee69f0a2f27c309598b201a8770d5492320053f533547",
+        "sourceSummary": "Core tree utilities that parse CLI args, enforce workspace-contained resolution, filter by IGNORE/IGNORE_EXT/.gitignore, and build text trees or expandable web rows with git decorations.",
+        "provenance": "ai"
+      }
+    }
+  },
+  "children": {
+    "renderers": {
+      "path": "commands/tree/renderers",
+      "status": "current",
+      "sourceInputHash": "004da75722825b5783714c6a9c24ee0016e015193bff06267f2b6395e7ff5771"
+    }
+  },
+  "coverage": {
+    "complete": true,
+    "missing": [],
+    "stale": []
+  },
+  "summary": {
+    "version": 1,
+    "inputHash": "d76f05e509e8e479c7dd7fb36d01635ff7ccfe9155a63ebe935e271da491f010",
+    "value": "plugins/file/commands/tree implements the file `tree` subcommand — parsing depth/target/ext/expanded/reveal args, resolving/validating the workspace target, and building IGNORE/.gitignore-filtered text trees and lazily-expandable web directory listings decorated with aggregated git status for CLI and web. Child renderers/ (complete) provides web rendering via stylesheet, icons, and interactive WebNode tree with navigation, expand/collapse, and file operations.",
+    "provenance": "ai"
+  },
+  "context": {
+    "value": "plugins/file — workspace file-manager plugin in AppWeaver system: tree browsing, view/edit/create/delete/rename/restore, git diff/history/commit/restore/init, NIP-44/Blossom encrypted upload/download, and bottom-up docs via centralized dispatcher + plugin registration + AI tooling + fuzzy-file-search; ai complete (Zod-validated bottomup.generate/enrich/summarize/summary contracts, runtime dispatch via workspace root, in-memory DB); commands complete container (20 CLI/web subcommands: bottomup workflows with coverage validation/effective context/hash-cache/recursive/one-level/plan-draft-accept and index validation/projections, filesystem ops with size/binary/IGNORE/.gitignore filtering via ripgrep, git ops, secure transfer with naddr/NIP-44/integrity handling, shared workspace-root validation/filter/renderer/help under containment); types complete (adapter param contracts); no missing/stale coverage.",
+    "origin": "ai",
+    "hash": "1013c03173064158d092fc7d827b7b691052515a54c36344eb769cde6426f8a1"
+  },
+  "enrichment": {
+    "inputHash": "54ddfc6211e685c3ad3e22967dc799a8f4994e1d312da97f9a42f57e917623c0",
+    "summaryHash": "b8219919b528e3dbe2fddc7f2d27dd93db309508157b702ae940f9685690e4a5",
+    "directorySummary": "Read-only discovery surface within the plugins/file/commands aggregation — the browsing counterpart to mutating file/git commands. Provides the foundational navigation layer that view/edit/create/delete/rename operate inside, bridging the centralized adapter/handleFile dispatch to both CLI and lazy web execution paths. Owns its own git-status bubbling and delegates interactive expansion/navigation/file-ops UI to the renderers/ child, while reusing shared/ workspace containment and IGNORE/.gitignore filtering shared with sibling file commands.",
+    "files": {
+      "adapter.ts": "Dual-surface dispatch bridge for this subcommand — routes already-parsed invocations from the file plugin's centralized dispatcher to either web rendering (parseTreeCliArgs + listWorkspaceDirectoryEntries + renderFileTreeBrowserWeb) or text execution (adaptTreeCommand/handleTreeCommand); owns no tree-building logic itself.",
+      "cli.ts": "Standalone out-of-process entry point that bypasses plugin registration — strips --appweaver-workspace, parses args from cwd/workspace root, and directly prints buildWorkspaceTree text; provides direct CLI invocation path reusing the same core engine as the plugin-embedded flow.",
+      "definition.ts": "Contract declaration for the tree subcommand within the 20-command registry — defines variadic rest arg, ext/expanded/reveal options, examples, and header webWidget singleton that signals the dispatcher to instantiate the interactive web tree surface.",
+      "git-status.ts": "Isolated decoration provider for the tree — parses git status --porcelain -z into prioritized kinds and bubbles child statuses to ancestors (excluding deleted/renamed); consumed by workspace-tree to annotate both text and web rows without coupling core filtering/tree logic to git.",
+      "handler.ts": "Text-surface counterpart to adapter's web path — thin orchestration that merges restTokens/extOption via parseTreeCliArgs and returns buildWorkspaceTree text or formatted error for CLI/non-web callers.",
+      "workspace-tree.ts": "Central engine of the subcommand — owns CLI arg parsing, workspace-contained resolution, IGNORE/IGNORE_EXT/.gitignore filtering, and construction of both text trees and expandable web rows with git decorations; depended on by adapter, cli, and handler as the single source of tree semantics."
+    },
+    "provenance": "ai"
+  }
+}

@@ -9,10 +9,11 @@ import {
 import { agentInstructions, executeTool, openDb } from './ai/tooling';
 
 export type {
-  BottomupCall,
-  BottomupContextCall,
+  BottomupEnrichCall,
+  BottomupGenerateCall,
+  BottomupSummarizeCall,
+  BottomupSummaryCall,
   FileToolCall,
-  SummarizeCall,
 } from './ai/schema';
 export { ToolCallSchema, skillDescription, skillRules } from './ai/schema';
 

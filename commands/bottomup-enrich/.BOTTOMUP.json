@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "path": "plugins/file/commands/bottomup-enrich",
+  "scope": {
+    "root": false
+  },
+  "source": {
+    "version": 1,
+    "inputHash": "1afd87c3960775cc588a1d38f2fae6f7aeebea84390d327837714bd7a24141a7",
+    "directorySummary": "Implements the bottomup.enrich pipeline that enriches stored source-grounded directory and file summaries with AI-generated architectural roles via coverage and compact-summary validation, parent context propagation, per-directory prompt invocation with input-hash caching, and plan/draft/revise/accept orchestration exposed through CLI and web adapters.",
+    "files": {
+      "adapter.ts": {
+        "hash": "c2de88c509e9f0be1bf7b2a70e70b9a09db60b7bf645a4a3ba669936578a6888",
+        "sourceSummary": "Provides CLI/web adapters that map parsed options via stringOrNull/boolToOverride parsing into executeBottomupEnrich, reviseBottomupEnrichDraft, and acceptBottomupEnrichDraft calls with web draft rendering.",
+        "provenance": "ai"
+      },
+      "ai.ts": {
+        "hash": "89ad6fe86f6214ff63222c295b1d0715fcfbefbeec0531375f7f521d02c40131",
+        "sourceSummary": "Implements runEnrichAgent to build a JSON-only enrichment prompt from directory source/compact summaries, file summaries, child summaries and effective context and parses the fenced JSON output via EnrichAiResponseSchema using GeneratePrompt.",
+        "provenance": "ai"
+      },
+      "definition.ts": {
+        "hash": "a16614e41ec935a93ce525e531665cd31645a400187deaf48848d78dbb6c0584",
+        "sourceSummary": "Defines SubcommandDefinitions for bottomup.enrich and hidden bottomup.enrich.revise/accept with flags for path, root, context, prompt, model, filtering, draft, plan, and allow-partial.",
+        "provenance": "ai"
+      },
+      "handler.test.ts": {
+        "hash": "d410387e61b8c5177ad6214577a5f872dccd1a360f9d7c6709fffaf218d4616c",
+        "sourceSummary": "Tests bottomup.enrich registration, summary-only prompting without raw source, coverage validation, allow-partial handling, web draft creation/acceptance, planning, and hash-based skip behavior.",
+        "provenance": "ai"
+      },
+      "handler.ts": {
+        "hash": "9003943785314ea8bd2d89847a5561c73bd84014fa6269b0ee5fc038215b0d9d",
+        "sourceSummary": "Orchestrates enrichment by collecting candidates, validating current source coverage, propagating effective parent context, invoking per-directory AI enrichment with input-hash caching, and handling plan/draft/accept flows.",
+        "provenance": "ai"
+      },
+      "types.ts": {
+        "hash": "6e9db8552a4406a38eedd78c1ae4640fcd536aa9ad174e21c72c765bc332ab19",
+        "sourceSummary": "Defines Zod schemas and types for EnrichAiResponse, resolved options, candidates, plans, draft state, and written/plan/draft result variants.",
+        "provenance": "ai"
+      }
+    }
+  },
+  "children": {
+    "renderers": {
+      "path": "commands/bottomup-enrich/renderers",
+      "status": "current",
+      "sourceInputHash": "6a3dd07608e9e05a02cbe043dd1a3a4857b38431ce0e0d96a99648bf51f3e786"
+    }
+  },
+  "coverage": {
+    "complete": true,
+    "missing": [],
+    "stale": []
+  },
+  "summary": {
+    "version": 1,
+    "inputHash": "bde96ea535c266b872ff9bb18391e5bee9ef0bdfa3d2aead829f6cec56cae4d8",
+    "value": "Implements the `bottomup.enrich` pipeline to enrich stored source-grounded directory/file summaries with AI-generated architectural roles — validating coverage/compact-summary, propagating parent context, invoking per-directory prompts with input-hash caching, and orchestrating plan/draft/revise/accept via CLI and web adapters. Child `renderers` renders enrichment drafts as a modal web UI presenting the diff patch with revise and accept/decline actions.",
+    "provenance": "ai"
+  },
+  "context": {
+    "value": "plugins/file — workspace file-manager plugin in AppWeaver system: tree browsing, view/edit/create/delete/rename/restore, git diff/history/commit/restore/init, NIP-44/Blossom encrypted upload/download, and bottom-up docs via centralized dispatcher + plugin registration + AI tooling + fuzzy-file-search; ai complete (Zod-validated bottomup.generate/enrich/summarize/summary contracts, runtime dispatch via workspace root, in-memory DB); commands complete container (20 CLI/web subcommands: bottomup workflows with coverage validation/effective context/hash-cache/recursive/one-level/plan-draft-accept and index validation/projections, filesystem ops with size/binary/IGNORE/.gitignore filtering via ripgrep, git ops, secure transfer with naddr/NIP-44/integrity handling, shared workspace-root validation/filter/renderer/help under containment); types complete (adapter param contracts); no missing/stale coverage.",
+    "origin": "ai",
+    "hash": "1013c03173064158d092fc7d827b7b691052515a54c36344eb769cde6426f8a1"
+  },
+  "enrichment": {
+    "inputHash": "73006d7a9400e9d8dae753bc856263b934325f778400209fac24f056d9962bd0",
+    "summaryHash": "76eeeffe77953c9a1e3ec52e7d8aec2bc127b21761c8ac0d79c8642db3ffdc9c",
+    "directorySummary": "Human-in-the-loop augmentation stage of the bottom-up knowledge pipeline under the file plugin's commands aggregation. Unlike sibling file/git commands that validate containment and execute filesystem operations directly, this directory operates purely on already-persisted source-grounded summaries produced upstream — adding parent-context-aware architectural interpretation for downstream summary/index consumers. It depends on the parent's effective-context propagation and pairs its handler-orchestrated hash-cache/plan-draft lifecycle with the renderers child to provide modal review, sharing CLI/web adapter and filtering conventions with generate/summarize/summary but owning no filesystem or git logic itself.",
+    "files": {
+      "adapter.ts": "Transport boundary for the enrich pipeline — translates CLI args and web form options (via stringOrNull/boolToOverride) into typed handler calls for execute/revise/accept and delegates draft rendering to renderers. Mirrors the CLI/web dual-adapter pattern of sibling bottomup commands but is the only adapter to expose three lifecycle entry points.",
+      "ai.ts": "Prompt-construction and response-validation seam — assembles the JSON-only enrichment prompt from handler-supplied source/compact/file/child/effective-context and parses fenced JSON via EnrichAiResponseSchema through the shared GeneratePrompt utility. Isolates AI contract concerns from handler orchestration and caching.",
+      "definition.ts": "Declarative command contract — registers the user-visible bottomup.enrich subcommand and hidden bottomup.enrich.revise/accept companions that together realize the plan/draft/accept lifecycle. Shares filtering, prompt/model, and workspace-root flags with sibling bottomup definitions.",
+      "handler.test.ts": "Invariant verification for summary-only enrichment — guards that prompts use stored summaries not raw source, and that coverage validation, allow-partial, draft creation/acceptance, planning, and input-hash skip behave correctly. No production logic; ensures handler/renderers contract stability.",
+      "handler.ts": "Orchestration core — owns candidate collection, current source-coverage and compact-summary validation, effective parent-context propagation, per-directory input-hash-cached AI invocation via ai.ts, and plan/draft/accept state persistence. Coordinator that adapter and renderers delegate to.",
+      "types.ts": "Shared contract definitions — Zod schemas and types for EnrichAiResponse, resolved options, candidates, plans, draft state, and written/plan/draft result variants that type-check the adapter → handler → ai → renderers flow."
+    },
+    "provenance": "ai"
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "path": "plugins/file/commands/bottomup-summarize",
+  "scope": {
+    "root": false
+  },
+  "source": {
+    "version": 1,
+    "inputHash": "644b78bac7bd77f5a966c2bd8ee780f6e227531ee0bde912cab3d69163fe00db",
+    "directorySummary": "Implements bottomup.summarize subcommands that define CLI options, adapt parsed options to orchestration, and handle candidate collection, coverage validation, hash-based summary reuse, AI-synthesized hierarchical summaries, and draft/plan lifecycle for .BOTTOMUP.json updates with typed schemas and hashing.",
+    "files": {
+      "adapter.ts": {
+        "hash": "e518174f4182045595e7934928dae725200837df06a365b343bbbe7d3823eaeb",
+        "sourceSummary": "Adapts parsed CLI/web options into BottomupSummarize calls and delegates to executeBottomupSummarize, reviseBottomupSummarizeDraft, and acceptBottomupSummarizeDraft with workspace-root resolution and draft rendering.",
+        "provenance": "ai"
+      },
+      "ai.ts": {
+        "hash": "31b82d23ecb99f6af2896187d93bb0edce47d436a719f3cbd8c45893ba909e52",
+        "sourceSummary": "Builds a constrained prompt from directorySourceSummary, child summaries, and incomplete coverage and invokes the generate prompt agent to return a validated {summary} JSON response.",
+        "provenance": "ai"
+      },
+      "definition.ts": {
+        "hash": "6dbfff17462d5e0f63a6d03e91c5a437c65a549457f79f9cee6dbbde691566cf",
+        "sourceSummary": "Declares SubcommandDefinitions for bottomup.summarize and hidden bottomup.summarize.revise/accept with path, root, prompt, model, ignore, gitignore/hidden, draft, plan and state options.",
+        "provenance": "ai"
+      },
+      "handler.test.ts": {
+        "hash": "61d28e052102962af39338bc928b66f3e5b02ee7884d6d4388e1cc1776588dc1",
+        "sourceSummary": "Exercises bottom-up summarization including child aggregation without source reads, hash-current skipping, partial/strict coverage handling, agent-supplied summaries, planning, and draft lifecycle validation.",
+        "provenance": "ai"
+      },
+      "handler.ts": {
+        "hash": "956517ec89ef1d99b51c4805eb7ce552c2ffce3988f4ba238715699b72b16cce",
+        "sourceSummary": "Orchestrates candidate collection, coverage validation, hash-based summary and coverage reuse, AI/agent-derived synthesis, plan calculation, and draft state encoding/decoding and acceptance for hierarchical .BOTTOMUP.json updates.",
+        "provenance": "ai"
+      },
+      "hash.ts": {
+        "hash": "c3707d309b12c178eb07f287ab6531bde11b1caf068300ea149b9eba1bfeb0a0",
+        "sourceSummary": "Computes deterministic summary input and summary hashes via hashValue from BOTTOMUP_SUMMARY_VERSION, source inputHash/directorySummary, child path/inputHash/value, and coverage.",
+        "provenance": "ai"
+      },
+      "types.ts": {
+        "hash": "68fc3951add641683b644d45e290f299f6374a3e16f88cac438f63d4759dc6f3",
+        "sourceSummary": "Defines Zod schemas and TypeScript types for the summarize AI response, resolved options, candidates, plans, draft state, and written/plan/draft results.",
+        "provenance": "ai"
+      }
+    }
+  },
+  "children": {
+    "renderers": {
+      "path": "commands/bottomup-summarize/renderers",
+      "status": "current",
+      "sourceInputHash": "705fafd0921641f397f76c1e38beb70f1ef8647bc262f30bfdf8e9785201ce75"
+    }
+  },
+  "coverage": {
+    "complete": true,
+    "missing": [],
+    "stale": []
+  },
+  "summary": {
+    "version": 1,
+    "inputHash": "4d5207732746f088b277b75e51fccf7dde9036395b58624c3352cda0adb5bf85",
+    "value": "CLI layer for `bottomup.summarize` that defines options, adapts parsed options to orchestration, and manages candidate collection, coverage validation, hash-based summary reuse, AI-synthesized hierarchical summaries, and .BOTTOMUP.json draft/plan lifecycle with typed schemas and hashing; delegates draft modal presentation to `renderers` child which displays change counts/diffs with revise/accept/decline actions.",
+    "provenance": "ai"
+  },
+  "context": {
+    "value": "plugins/file — workspace file-manager plugin in AppWeaver system: tree browsing, view/edit/create/delete/rename/restore, git diff/history/commit/restore/init, NIP-44/Blossom encrypted upload/download, and bottom-up docs via centralized dispatcher + plugin registration + AI tooling + fuzzy-file-search; ai complete (Zod-validated bottomup.generate/enrich/summarize/summary contracts, runtime dispatch via workspace root, in-memory DB); commands complete container (20 CLI/web subcommands: bottomup workflows with coverage validation/effective context/hash-cache/recursive/one-level/plan-draft-accept and index validation/projections, filesystem ops with size/binary/IGNORE/.gitignore filtering via ripgrep, git ops, secure transfer with naddr/NIP-44/integrity handling, shared workspace-root validation/filter/renderer/help under containment); types complete (adapter param contracts); no missing/stale coverage.",
+    "origin": "ai",
+    "hash": "1013c03173064158d092fc7d827b7b691052515a54c36344eb769cde6426f8a1"
+  },
+  "enrichment": {
+    "inputHash": "28426333f19e55aed4ee38fa8082e9ace660a3dc79d3ec4c82cb581bec4dc19d",
+    "summaryHash": "74a3af40fddc1cc2f48c67455adc1b47a5b0cd8acfede3953ffb50282499734e",
+    "directorySummary": "Hierarchical synthesis tier of the bottom-up knowledge pipeline beneath plugins/file/commands — aggregates leaf and child directory summaries produced by bottomup.generate into parent-level .BOTTOMUP.json entries. Relies on the shared bottomup infrastructure (inherited effective context, SHA-256 inputHash/summary hashing, coverage validation, and plan/draft/revise/accept lifecycle) defined at the commands container level, and complements bottomup.enrich/summary consumers; owns prompt-driven AI synthesis and deterministic reuse locally while delegating interactive draft review to the renderers child.",
+    "files": {
+      "adapter.ts": "Boundary translation layer between the centralized file dispatcher (adapter.ts/handleFile) and the summarize orchestration core; normalizes CLI/web option shapes, resolves workspace root, and fans out to execute/revise/accept handler calls with renderer-backed draft modal presentation.",
+      "ai.ts": "Isolated prompt-construction and validation adapter for hierarchical synthesis; composes constrained prompt from directorySourceSummary, child summaries and incomplete coverage signals and enforces the Zod-validated {summary} contract via the generate prompt agent before returning to handler.",
+      "definition.ts": "Declarative CLI contract for this subcommand family; registers the visible bottomup.summarize command and hidden revise/accept lifecycle companions and defines the shared path/root/prompt/model/ignore/gitignore/draft/plan option schema consumed by adapter and handler.",
+      "handler.test.ts": "Out-of-band verification harness not on the runtime dispatch path; guards orchestration invariants for child aggregation without source reads, hash-current skipping, strict/partial coverage handling, agent-supplied summaries and draft lifecycle without touching live AI or filesystem.",
+      "handler.ts": "Core orchestration authority owning the end-to-end summarize pipeline — candidate collection → coverage validation → hash-based reuse → AI/agent synthesis → plan calculation → draft state encode/decode/accept — and the hierarchical .BOTTOMUP.json mutation and caching decisions.",
+      "hash.ts": "Deterministic content-addressing primitive for reuse optimization; computes versioned summary input and summary hashes from BOTTOMUP_SUMMARY_VERSION, directorySourceSummary/inputHash, child hashes and coverage, mirroring the strategy used by bottomup.generate at directory scope.",
+      "types.ts": "Shared contract hub for the synthesize lifecycle; centralizes Zod schemas and TypeScript types for AI response, resolved options, candidates, plans and draft/written results that bind adapter, handler, AI, hash and renderers."
+    },
+    "provenance": "ai"
+  }
+}

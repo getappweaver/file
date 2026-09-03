@@ -1,11 +1,11 @@
 {
   "name": "appweaver-file-plugin",
-  "version": "3.6.0",
+  "version": "4.0.0",
   "appweaver": {
     "title": "File manager",
     "icon": "./commands/tree/renderers/tree.svg",
     "website": "https://github.com/getappweaver/file",
-    "coreApiVersion": "^12.3.0",
+    "coreApiVersion": "^12.4.0",
     "capabilities": {
       "provides": [
         {

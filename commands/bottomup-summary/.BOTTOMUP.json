@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "path": "plugins/file/commands/bottomup-summary",
+  "scope": {
+    "root": false
+  },
+  "source": {
+    "version": 1,
+    "inputHash": "4d0f0142e7bb93221cc95fca8d42e6e4a9ff964bbc7241e4018b076bd09306e4",
+    "directorySummary": "Projects bottom-up indexes under a resolved root into validated parent/current/child projections, verifying source/summary/enrichment validity and coverage and formatting markdown/JSON with safe export and web preview support.",
+    "files": {
+      "adapter.ts": {
+        "hash": "8997128495702374abfc95563fcd90ae8de21e7a019548c90e1e6a3407a0c619",
+        "sourceSummary": "Adapts parsed CLI/web params into BottomupSummary calls, validates --path/--draft/--location constraints, encodes preview state, and routes to execute, format, or render web preview and save handlers.",
+        "provenance": "ai"
+      },
+      "definition.ts": {
+        "hash": "42cbe5c6be6d270917a0759011e38e92d51078c6b6d67cdfb270258d0afe6068",
+        "sourceSummary": "Defines bottomup.summary and bottomup.summary.save subcommand schemas with options for path, root, format, parent/child depth, location, draft, and hidden web save state.",
+        "provenance": "ai"
+      },
+      "handler.test.ts": {
+        "hash": "ac671d84e765b3ac2cde2a99b333d60f2708f7b5ddbe8b92e525fbca145f04a7",
+        "sourceSummary": "Exercises bottom-up summary via temp workspaces to verify CLI/AI registration, parent/current/child rendering, staleness suppression, single-file filtering, JSON and draft hierarchical preview, safe export with workspace boundary checks, and web preview including legacy index compatibility.",
+        "provenance": "ai"
+      },
+      "handler.ts": {
+        "hash": "fff895828505a6f87f4845015306c84a11e2db91e3ad17712036c2cc8719af3a",
+        "sourceSummary": "Reads .BOTTOMUP.json indexes under a resolved root, computes source/summary/enrichment validity and coverage, builds selected parent/current/child projection, and formats markdown/json or saves exports with workspace boundary checks.",
+        "provenance": "ai"
+      },
+      "types.ts": {
+        "hash": "3454c47dfd1825cc9e7395af232195cb9efd48d378864c5470b41e29cd106bee",
+        "sourceSummary": "Declares SummaryResolvedOptions, SummaryNodeView with relation/status/coverage/files, and SummaryProjection types for bottom-up summary views.",
+        "provenance": "ai"
+      }
+    }
+  },
+  "children": {
+    "renderers": {
+      "path": "commands/bottomup-summary/renderers",
+      "status": "current",
+      "sourceInputHash": "86f2c9b946253726c53d39ecc4668150fb5a4fc1fcc7d5326610076491e3dd7f"
+    }
+  },
+  "coverage": {
+    "complete": true,
+    "missing": [],
+    "stale": []
+  },
+  "summary": {
+    "version": 1,
+    "inputHash": "1f3efefd2873703a77837e36e0a0c56d4635cf025aa66daef2b077c3835a8181",
+    "value": "Bottom-up summary command that projects indexes under a resolved root into validated parent/current/child projections, verifying source/summary/enrichment validity and coverage and formatting output as markdown/JSON with safe export and web preview support. Child renderers (complete) provides the web renderer for the preview modal, handling formatted content preview and save interaction; no missing or stale coverage indicated for this scope.",
+    "provenance": "ai"
+  },
+  "context": {
+    "value": "plugins/file — workspace file-manager plugin in AppWeaver system: tree browsing, view/edit/create/delete/rename/restore, git diff/history/commit/restore/init, NIP-44/Blossom encrypted upload/download, and bottom-up docs via centralized dispatcher + plugin registration + AI tooling + fuzzy-file-search; ai complete (Zod-validated bottomup.generate/enrich/summarize/summary contracts, runtime dispatch via workspace root, in-memory DB); commands complete container (20 CLI/web subcommands: bottomup workflows with coverage validation/effective context/hash-cache/recursive/one-level/plan-draft-accept and index validation/projections, filesystem ops with size/binary/IGNORE/.gitignore filtering via ripgrep, git ops, secure transfer with naddr/NIP-44/integrity handling, shared workspace-root validation/filter/renderer/help under containment); types complete (adapter param contracts); no missing/stale coverage.",
+    "origin": "ai",
+    "hash": "1013c03173064158d092fc7d827b7b691052515a54c36344eb769cde6426f8a1"
+  },
+  "enrichment": {
+    "inputHash": "c5b68e8aebebf1c274b4a0fa17c4266dabb639ceaeac8830695d2a3115d4dffb",
+    "summaryHash": "888db5d3626699270e39bb0633a6fd0c74ebdc9337b0e66a092458e30307b073",
+    "directorySummary": "Read-side consumption surface for the bottom-up knowledge pipeline within plugins/file/commands — complements bottomup.generate/enrich (write/compute with hash-cache and draft lifecycle) by providing stateless projection and export of already-persisted .BOTTOMUP.json indexes. Operates as a dispatched leaf under the file plugin's centralized dispatcher (adapter.ts/handleFile) and init registration, reusing the commands container's workspace-root resolution and boundary validation but specializing in validated read-only views; delegates interactive web preview and save to its renderers child, isolating markdown/JSON formatting and modal presentation from index validity and coverage computation.",
+    "files": {
+      "adapter.ts": "Dispatch-facing adapter leaf in the file plugin's CLI/web fan-out — translates the container-wide validate-containment → execute → adapt pattern to summary-specific preview routing, enforcing --path/--draft/--location constraints and preview-state encoding before delegating to the pure projection handler.",
+      "definition.ts": "Contract declaration for the bottomup.summary subcommand family within the 20-command registration — exposes projection controls (path/root/depth/format/location/draft) that define the slice boundary consumed by adapter and handler without owning execution logic.",
+      "handler.test.ts": "Regression harness for the read/projection path — uses isolated temp workspaces to lock CLI/AI registration, parent/current/child projection, staleness filtering, single-file and JSON/draft rendering, safe export boundaries, and legacy index compatibility.",
+      "handler.ts": "Pure projection engine for this directory — implements root resolution, index reading, validity/coverage computation, and markdown/json formatting/export independently of CLI/web transport, enabling reuse by both adapter execution and web preview handlers.",
+      "types.ts": "Shared view-model contract for the projection layer — defines SummaryResolvedOptions/SummaryNodeView/SummaryProjection to decouple adapter, handler, and renderers from raw .BOTTOMUP.json shapes and to anchor relation/status/coverage semantics across parent/current/child views."
+    },
+    "provenance": "ai"
+  }
+}

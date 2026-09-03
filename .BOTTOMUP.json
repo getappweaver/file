@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "path": "plugins/file",
+  "scope": {
+    "root": true
+  },
+  "source": {
+    "version": 1,
+    "inputHash": "c083352e243b23e72a01f5142f61ecd65508fdedd57142fe27c7921db437a0dd",
+    "directorySummary": "File manager plugin providing workspace tree browsing, file view/edit/create/delete/rename/restore, git history/diff/commit inspection, encrypted upload/download, and bottomup documentation workflows via a centralized command dispatcher, plugin registration, AI tooling, and fuzzy-file-search capability.",
+    "files": {
+      ".gitignore": {
+        "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sourceSummary": "Empty .gitignore file with no ignore patterns.",
+        "provenance": "ai"
+      },
+      "adapter.test.ts": {
+        "hash": "5d067efe98a6c91c8f2f6d2ed1a64dc83d9fff2880b2e655020ff5eb5cfe393c",
+        "sourceSummary": "Tests parseFileInvocationFromJsonPayload preserves options when a file command has no positional arguments.",
+        "provenance": "ai"
+      },
+      "adapter.ts": {
+        "hash": "5d635e2f2a47a3242f214912c3be74575e79fd6a5e165637b498e143308ac9be",
+        "sourceSummary": "Routes file subcommands via handleFile and parses JSON and CLI invocations into adapter dispatch for help/upload/download/tree/commit and bottomup.* commands.",
+        "provenance": "ai"
+      },
+      "ai.ts": {
+        "hash": "ff70320b7b0fdef7d38867ea9473ff0050fdd07e812dce5202e111d50eaeee34",
+        "sourceSummary": "Re-exports and wires the File plugin AiDefinition with ToolCallSchema, skill metadata, and tool execution helpers.",
+        "provenance": "ai"
+      },
+      "CHANGELOG.md": {
+        "hash": "588ba7ffc128bb37d733bd61c9b7bc757a68520064b1f970c5941533fbd4f89d",
+        "sourceSummary": "Records versioned changelog entries for file plugin releases derived from git tags.",
+        "provenance": "ai"
+      },
+      "definition.ts": {
+        "hash": "143242645747bb009f8b8727d9998e58c601aaf80073da0f9750b21b0883c99b",
+        "sourceSummary": "Aggregates the file CommandDefinition combining help and all subcommand definitions into a single command spec.",
+        "provenance": "ai"
+      },
+      "fuzzy-file-search-provider.ts": {
+        "hash": "02519e86a3e1b0cd2ed231c11c54d0995a6418ca38ebb067a613f6c3edb83d3f",
+        "sourceSummary": "Implements the fuzzy-file-search capability provider that collects, filters by ignore/gitignore rules, and scores workspace files for substring/subsequence queries.",
+        "provenance": "ai"
+      },
+      "init.ts": {
+        "hash": "b359f756822f1a62b2fd63b2412e4f8503179a8c7c6604e5c4a64d0ff014ecb8",
+        "sourceSummary": "Registers FilePlugin BotPlugin wiring handler delegation to handleFile, help text, AI definition, command definition, stories, and capability providers.",
+        "provenance": "ai"
+      },
+      "LICENSE": {
+        "hash": "6b0382b16279f26ff69014300541967a356a666eb0b91b422f6862f6b7dad17e",
+        "sourceSummary": "Provides the Unlicense public-domain dedication and warranty disclaimer.",
+        "provenance": "ai"
+      },
+      "package.json": {
+        "hash": "54504a3b1e053342f20418adb5f4a38f4764fc5ae3c65d7b291788f3553813eb",
+        "sourceSummary": "Declares appweaver-file-plugin package metadata, version 3.6.0, and provides fuzzy-file-search capability.",
+        "provenance": "ai"
+      },
+      "README.md": {
+        "hash": "3a9ab22780eab208a68be53ff501389a610adfc676b4db196c494b55f8913678",
+        "sourceSummary": "Documents file plugin commands and the plugins/file/tree CLI usage rooted at process.cwd().",
+        "provenance": "ai"
+      },
+      "stories.ts": {
+        "hash": "8bcf2fa09ec41b2db460367d70780ea9e2cf9c2d970e54738edede06cfbb0528",
+        "sourceSummary": "Defines guided story demos for browsing the file tree, viewing/editing markdown, and reviewing diffs.",
+        "provenance": "ai"
+      },
+      "tree": {
+        "hash": "01a411c3d1b2a3a0852b87bd6003dbd7e4556faa87998135b50f8bc8e683c06b",
+        "sourceSummary": "Thin Bun executable delegating to tree-cli main for workspace tree display.",
+        "provenance": "ai"
+      }
+    }
+  },
+  "children": {
+    "ai": {
+      "path": "ai",
+      "status": "current",
+      "sourceInputHash": "1f8e59e9c5165ee0ab9850e1d772a0fbfd15cbc425d36e828700f447e1a0ef45"
+    },
+    "commands": {
+      "path": "commands",
+      "status": "current",
+      "sourceInputHash": "2c456ac66a6d5d46dcee43ad4cda7ffc3cf3852e925005ce17afbc8cbe1c6432"
+    },
+    "types": {
+      "path": "types",
+      "status": "current",
+      "sourceInputHash": "cb940638bdfd843b164c27e4afbc84987f5618c0e65e9b68b5e1ed2ffd3a199a"
+    }
+  },
+  "coverage": {
+    "complete": true,
+    "missing": [],
+    "stale": []
+  },
+  "summary": {
+    "version": 1,
+    "inputHash": "2d37ce9a802f6bbc1a304b3be3a8c669c4cacd4c1ff6ef059dfe85ed8c2b4846",
+    "value": "File manager plugin for workspace tree browsing, file view/edit/create/delete/rename/restore/search, git history/diff/commit inspection, encrypted Nostr/Blossom NIP-44/naddr upload/download, and bottom-up documentation workflows via centralized command dispatcher, plugin registration, AI tooling and fuzzy-file-search. commands/ is a container aggregating 20 subcommands split across file operations, git operations, bottomup pipeline (generate/summarize/enrich/summary), encrypted sharing and help — file/git commands follow validate workspace containment -> filesystem/git/ripgrep -> CLI text/web tree adaptation, bottomup commands share CLI/web adaptation, inherited context, SHA-256 hash caching, coverage/compact-summary validation and plan/draft/revise/accept lifecycle with modal diff/preview, supported by shared workspace-root resolution, path validation, git/IGNORE filtering, unified diff, Blossom transfer and breadcrumbs. ai/ provides Zod-validated bottomup schemas and runtime dispatch glue via workspace root with in-memory DB; types/ defines the adapter parameter contract. Coverage is complete for this directory and all children.",
+    "provenance": "ai"
+  },
+  "context": {
+    "value": "plugins/file — workspace file-manager plugin in AppWeaver system: tree browsing, view/edit/create/delete/rename/restore, git diff/history/commit/restore/init, NIP-44/Blossom encrypted upload/download, and bottom-up docs via centralized dispatcher + plugin registration + AI tooling + fuzzy-file-search; ai complete (Zod-validated bottomup.generate/enrich/summarize/summary contracts, runtime dispatch via workspace root, in-memory DB); commands complete container (20 CLI/web subcommands: bottomup workflows with coverage validation/effective context/hash-cache/recursive/one-level/plan-draft-accept and index validation/projections, filesystem ops with size/binary/IGNORE/.gitignore filtering via ripgrep, git ops, secure transfer with naddr/NIP-44/integrity handling, shared workspace-root validation/filter/renderer/help under containment); types complete (adapter param contracts); no missing/stale coverage.",
+    "origin": "ai",
+    "hash": "1013c03173064158d092fc7d827b7b691052515a54c36344eb769cde6426f8a1"
+  },
+  "enrichment": {
+    "inputHash": "d786237f3c2ba4df5c93363d92b63ebafe2f2afe3cd3b9046623f56d16c456f5",
+    "summaryHash": "a26879730fe977e5e916ce293f53a1bac9876f4f0cd930b3ee6d52513e642881",
+    "directorySummary": "Architectural facade for all workspace persistence and inspection in the AppWeaver BotPlugin system. Sits between host runtime and filesystem/git/Blossom/bottomup subsystems behind a centralized dispatcher (adapter.ts/handleFile) and plugin registration (init.ts), delegating implementation to commands/ while exposing AI tooling contracts via ai/ + types/ and workspace discovery via the fuzzy-file-search capability. Enforces workspace-root containment and provides dual CLI-text/web-tree adaptation shared across subcommands.",
+    "files": {
+      "adapter.test.ts": "Regression guard for adapter dispatch edge case — verifies options are preserved when no positional args are present, ensuring JSON and CLI invocation parsing remains consistent for the centralized dispatcher.",
+      "adapter.ts": "Invocation translation layer that normalizes both JSON and CLI forms into unified adapter dispatch routed through handleFile; entry point for help/upload/download/tree/commit and bottomup.* families.",
+      "ai.ts": "Wiring re-export that binds the File plugin's AiDefinition, ToolCallSchema and skill metadata to executable tool helpers consumed by the agent framework.",
+      "CHANGELOG.md": "Non-runtime release history artifact generated from git tags; provides version traceability for the plugin without participating in dispatch or registration.",
+      "definition.ts": "Composition root merging help and the 20 subcommand definitions from commands/ into a single CommandDefinition consumed by dispatcher and BotPlugin registration.",
+      "fuzzy-file-search-provider.ts": "Capability provider implementing the declared fuzzy-file-search — supplies filtered, scored workspace file listings with ripgrep/.gitignore/IGNORE filtering for AI tool and UI consumption.",
+      "init.ts": "Plugin bootstrap registering FilePlugin with the AppWeaver lifecycle; wires handler delegation, command definition, AI definition, stories and capability providers into a single BotPlugin.",
+      "package.json": "Package manifest establishing plugin identity as appweaver-file-plugin@3.6.0 and declaring the fuzzy-file-search capability for host discovery.",
+      "README.md": "User-facing documentation surface describing file plugin commands and tree CLI usage rooted at process.cwd() for direct developer invocation.",
+      "stories.ts": "Guided demo narratives that exercise the tree browsing, markdown view/edit and diff-review flows for story-driven documentation and onboarding.",
+      "tree": "Executable shim delegating to tree-cli main; enables direct `plugins/file/tree` Bun invocation for workspace tree display outside the dispatcher path."
+    },
+    "provenance": "ai"
+  }
+}

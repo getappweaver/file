@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "path": "plugins/file/commands/bottomup-summarize/renderers",
+  "scope": {
+    "root": false
+  },
+  "source": {
+    "version": 1,
+    "inputHash": "705fafd0921641f397f76c1e38beb70f1ef8647bc262f30bfdf8e9785201ce75",
+    "directorySummary": "Renders the bottom-up summarize draft modal UI, displaying proposed change counts and diffs with revise, accept, and decline actions.",
+    "files": {
+      "web.ts": {
+        "hash": "8ef58eab89cc44426963696b894888a6af5e47618c67ffcc162661106f0cd061",
+        "sourceSummary": "Exports renderBottomupSummarizeDraft that builds a modal WebNodeRoot with change count, diffPatch, prompt revision form, and Accept/Decline actions.",
+        "provenance": "ai"
+      }
+    }
+  },
+  "children": {},
+  "coverage": {
+    "complete": true,
+    "missing": [],
+    "stale": []
+  },
+  "summary": {
+    "version": 1,
+    "inputHash": "e9b783faae6b71de66ff6544afa90c04a32e1bc014bf54c4b5a9ffdcfa02e0a4",
+    "value": "Renders the bottom-up summarize draft modal UI, displaying proposed change counts and diffs with revise, accept, and decline actions.",
+    "provenance": "derived"
+  },
+  "context": {
+    "value": "plugins/file — workspace file-manager plugin in AppWeaver system: tree browsing, view/edit/create/delete/rename/restore, git diff/history/commit/restore/init, NIP-44/Blossom encrypted upload/download, and bottom-up docs via centralized dispatcher + plugin registration + AI tooling + fuzzy-file-search; ai complete (Zod-validated bottomup.generate/enrich/summarize/summary contracts, runtime dispatch via workspace root, in-memory DB); commands complete container (20 CLI/web subcommands: bottomup workflows with coverage validation/effective context/hash-cache/recursive/one-level/plan-draft-accept and index validation/projections, filesystem ops with size/binary/IGNORE/.gitignore filtering via ripgrep, git ops, secure transfer with naddr/NIP-44/integrity handling, shared workspace-root validation/filter/renderer/help under containment); types complete (adapter param contracts); no missing/stale coverage.",
+    "origin": "ai",
+    "hash": "1013c03173064158d092fc7d827b7b691052515a54c36344eb769cde6426f8a1"
+  },
+  "enrichment": {
+    "inputHash": "d31d78960a62dafc426bb8d31ee5743e74b12de0b93debb9e8e78bbebfbb4bc8",
+    "summaryHash": "efab7166c8f816821d730ddaae3f80067c9b4ed27e9270b03f03dd9d98af499c",
+    "directorySummary": "Terminal presentation leaf beneath bottomup.summarize — decoupled from candidate collection, coverage validation, hash-cache reuse, and AI synthesis owned by the parent. Provides the human-in-the-loop gate for the .BOTTOMUP.json plan/draft/accept lifecycle via the shared WebNodeRoot modal pattern, invoked solely by the parent orchestration with no independent CLI or state ownership and no further children.",
+    "files": {
+      "web.ts": "Sole web adapter for the parent's draft-review gate — stateless builder invoked by bottomup.summarize orchestration to translate synthesized diff and revision state into the interactive modal; has no standalone command entrypoint and isolates rendering concerns from synthesis and persistence logic."
+    },
+    "provenance": "ai"
+  }
+}

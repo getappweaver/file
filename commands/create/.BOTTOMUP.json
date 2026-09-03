@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "path": "plugins/file/commands/create",
+  "scope": {
+    "root": false
+  },
+  "source": {
+    "version": 1,
+    "inputHash": "ea2091683c51cfecea872bf96b4c623b8cbc3e042c108fdbcaa34887364ed621",
+    "directorySummary": "Implements the 'create' file/folder command — defining its dir/name arguments and folder/tree UI options, validating names and workspace containment, and adapting handler results to CLI or web tree responses.",
+    "files": {
+      "adapter.ts": {
+        "hash": "56b7c56063253cbc72e66bba6fad67f6b3e6c0a38bdba58518f86c4641d19d57",
+        "sourceSummary": "Adapter trims and validates dir/name args, resolves workspace root, calls handleCreateCommand, and returns error text, 'Created <path>' for non-web, or renderTreeForWeb with alias/treeDir/ext/expanded/revealPath for web.",
+        "provenance": "ai"
+      },
+      "definition.ts": {
+        "hash": "3485097ca1541f7e09f7589dca43ff8faa72ec5834b207201c9da055cf24a24e",
+        "sourceSummary": "Factory returns the 'create' SubcommandDefinition with required string args dir and name and options --folder, --tree-dir, --ext, and --expanded.",
+        "provenance": "ai"
+      },
+      "handler.ts": {
+        "hash": "dbe937245668fd722d7203cda3d466506a2363db4aa4cdce297b37812e6416d9",
+        "sourceSummary": "Validates single-segment name, checks workspace containment and that the target directory exists and is a directory, then creates an empty file or folder or returns typed errors for escapes/exists.",
+        "provenance": "ai"
+      }
+    }
+  },
+  "children": {},
+  "coverage": {
+    "complete": true,
+    "missing": [],
+    "stale": []
+  },
+  "summary": {
+    "version": 1,
+    "inputHash": "d40c73f3a308b4d525f45eadf5cc6126854df6381610743e545a5ce1d34d1175",
+    "value": "Implements the 'create' file/folder command — defining its dir/name arguments and folder/tree UI options, validating names and workspace containment, and adapting handler results to CLI or web tree responses.",
+    "provenance": "derived"
+  },
+  "context": {
+    "value": "plugins/file — workspace file-manager plugin in AppWeaver system: tree browsing, view/edit/create/delete/rename/restore, git diff/history/commit/restore/init, NIP-44/Blossom encrypted upload/download, and bottom-up docs via centralized dispatcher + plugin registration + AI tooling + fuzzy-file-search; ai complete (Zod-validated bottomup.generate/enrich/summarize/summary contracts, runtime dispatch via workspace root, in-memory DB); commands complete container (20 CLI/web subcommands: bottomup workflows with coverage validation/effective context/hash-cache/recursive/one-level/plan-draft-accept and index validation/projections, filesystem ops with size/binary/IGNORE/.gitignore filtering via ripgrep, git ops, secure transfer with naddr/NIP-44/integrity handling, shared workspace-root validation/filter/renderer/help under containment); types complete (adapter param contracts); no missing/stale coverage.",
+    "origin": "ai",
+    "hash": "1013c03173064158d092fc7d827b7b691052515a54c36344eb769cde6426f8a1"
+  },
+  "enrichment": {
+    "inputHash": "8145efaf7149c80e81b661a3af60def3ce781674d6113936a7a2e2cd9cf94f2f",
+    "summaryHash": "4ff2a06689deb438f1b5f4cc7b95b6263e69a375ecddf249f2824d7cf457e2d3",
+    "directorySummary": "Leaf creation endpoint within the commands file-operations family (create/delete/edit/rename/view/tree/search). Sits beneath the file plugin's centralized dispatcher (plugins/file/adapter.ts/handleFile) and registration (init.ts) aggregation at plugins/file/commands — invoked via dispatch fan-out, not directly. Completes the file lifecycle as the write-origin that sibling view/edit/delete/rename/tree commands subsequently operate on, sharing the validate-workspace-containment → execute filesystem → adapt to CLI/web pattern via shared workspace-root/path-validation and web tree rendering.",
+    "files": {
+      "adapter.ts": "Channel-adaptation boundary between dispatcher and domain logic — sanitizes dir/name args, resolves workspace root, delegates to handler, then maps typed success/error to CLI text ('Created <path>') or web tree UI (renderTreeForWeb with alias/treeDir/ext/expanded/revealPath). Implements the adapt phase of the file-command pattern shared with sibling file/git commands.",
+      "definition.ts": "Declarative contract for discovery and dispatch — registers the create subcommand shape (required dir/name, --folder/--tree-dir/--ext/--expanded) for CLI and web tooling via the file plugin's SubcommandDefinition system. Pure schema with no validation or I/O, consumed by the parent container and dispatcher/help.",
+      "handler.ts": "Isolated domain executor owning containment and filesystem invariants — validates single-segment name, verifies target directory exists/is-directory within workspace, and creates empty file or folder or returns typed escape/exists errors for the adapter to render. No CLI/web awareness; relies on shared validation."
+    },
+    "provenance": "ai"
+  }
+}

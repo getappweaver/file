@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "path": "plugins/file/commands/commit",
+  "scope": {
+    "root": false
+  },
+  "source": {
+    "version": 1,
+    "inputHash": "bc00090174b2ce9b373de05303a293792fe106699c28e9def4198398a7d32bdb",
+    "directorySummary": "Implements the file `commit` command that validates the selected changed files and index state, stages/unstages to match the selection, and creates a git commit with the provided message.",
+    "files": {
+      "adapter.ts": {
+        "hash": "3a4b3e2ce52d994446f0b8d301af5fb360707b4e9230e93248f1d60eeebdfe4d",
+        "sourceSummary": "Adapts FileCommandAdapterParams into a commitSelectedFiles call by extracting message and file selections from JSON payload or arguments, resolving the repository root, and formatting the result as text.",
+        "provenance": "ai"
+      },
+      "definition.ts": {
+        "hash": "e10b55d0b9a369b28a9bda3ce1b9fb8205265a640975348c6aa399cebd3f6c1c",
+        "sourceSummary": "Exports the `commit` subcommand definition with a required variadic string `message` argument for committing selected git diff files.",
+        "provenance": "ai"
+      },
+      "handler.ts": {
+        "hash": "d67f0f03b4faf7d69b7ce4885f9677995797271f399108b266ae2e40ec18a371",
+        "sourceSummary": "Implements commitSelectedFiles to validate message and selection, verify the staged index matches expected state, sync staging via git add and restore --staged to the selected changed files, and create the commit returning hash, summary, and committed files.",
+        "provenance": "ai"
+      }
+    }
+  },
+  "children": {},
+  "coverage": {
+    "complete": true,
+    "missing": [],
+    "stale": []
+  },
+  "summary": {
+    "version": 1,
+    "inputHash": "48ff896632cf9215e3d9d8823db112239cf621adad6df7fb8752e2d2142a3288",
+    "value": "Implements the file `commit` command that validates the selected changed files and index state, stages/unstages to match the selection, and creates a git commit with the provided message.",
+    "provenance": "derived"
+  },
+  "context": {
+    "value": "plugins/file — workspace file-manager plugin in AppWeaver system: tree browsing, view/edit/create/delete/rename/restore, git diff/history/commit/restore/init, NIP-44/Blossom encrypted upload/download, and bottom-up docs via centralized dispatcher + plugin registration + AI tooling + fuzzy-file-search; ai complete (Zod-validated bottomup.generate/enrich/summarize/summary contracts, runtime dispatch via workspace root, in-memory DB); commands complete container (20 CLI/web subcommands: bottomup workflows with coverage validation/effective context/hash-cache/recursive/one-level/plan-draft-accept and index validation/projections, filesystem ops with size/binary/IGNORE/.gitignore filtering via ripgrep, git ops, secure transfer with naddr/NIP-44/integrity handling, shared workspace-root validation/filter/renderer/help under containment); types complete (adapter param contracts); no missing/stale coverage.",
+    "origin": "ai",
+    "hash": "1013c03173064158d092fc7d827b7b691052515a54c36344eb769cde6426f8a1"
+  },
+  "enrichment": {
+    "inputHash": "c68f34af391c211d83c77962b5f7ca2f962658565c6816c815dbb0411631e3d2",
+    "summaryHash": "28b4d3d9a6690a22673f8a8bfd3c50e2d58b869cce789bf6867f5a7e6906fc0f",
+    "directorySummary": "Leaf git-write subcommand within the plugins/file/commands 20-command aggregation — the sole index/history-mutating member of the git-operation family (commit/diff/history/restore/init). Invoked via the centralized handleFile dispatcher fan-out in adapter.ts/init.ts, it closes the inspect-via-diff/history → persist loop. Delegates workspace-root resolution and containment validation to shared/ and CLI/web formatting to adapter.ts, isolating transactional git logic to its handler core with no child directories.",
+    "files": {
+      "adapter.ts": "CLI/web adaptation edge for this leaf — translates FileCommandAdapterParams (JSON payload or variadic args) into handler's commitSelectedFiles domain call, resolves repository root, and formats result as text. Implements the shared validate-containment → execute → adapt pattern, keeping transport/parsing separate from git mutation in handler.ts.",
+      "definition.ts": "Declarative registration contract for the file plugin's command container — exports the variadic string `message` argument definition that defines the external CLI shape. Enables discovery/routing by init.ts and the central dispatcher without owning execution, bridging user invocation to adapter.ts/handler.ts.",
+      "handler.ts": "Transactional core and only state-mutating file in this directory — owns message/selection/index-state validation, reconciles staging via git add / restore --staged to match selected changed files, and creates the commit returning hash/summary/committed files. Depends on adapter-provided inputs and complements read-only siblings diff/history and inverse operation restore."
+    },
+    "provenance": "ai"
+  }
+}

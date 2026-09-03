@@ -174,6 +174,70 @@ function searchFormAction(props: {
   };
 }
 
+function bottomupGenerateFormAction(props: {
+  commandAlias: string;
+  path: string;
+}): WebAction {
+  return {
+    type: 'command',
+    command: props.commandAlias,
+    subcommand: 'bottomup.generate',
+    arguments: {},
+    options: { path: props.path, draft: true },
+    presentation: 'form',
+    surface: 'modal',
+    modalTitle: 'Generate bottom-up knowledge',
+    recordInTimeline: false,
+  };
+}
+
+function bottomupSummaryAction(props: {
+  commandAlias: string;
+  path: string;
+}): WebAction {
+  return {
+    type: 'command',
+    command: props.commandAlias,
+    subcommand: 'bottomup.summary',
+    arguments: {},
+    options: { path: props.path, draft: true },
+  };
+}
+
+function bottomupEnrichFormAction(props: {
+  commandAlias: string;
+  path: string;
+}): WebAction {
+  return {
+    type: 'command',
+    command: props.commandAlias,
+    subcommand: 'bottomup.enrich',
+    arguments: {},
+    options: { path: props.path, draft: true },
+    presentation: 'form',
+    surface: 'modal',
+    modalTitle: 'Enrich bottom-up knowledge',
+    recordInTimeline: false,
+  };
+}
+
+function bottomupSummarizeFormAction(props: {
+  commandAlias: string;
+  path: string;
+}): WebAction {
+  return {
+    type: 'command',
+    command: props.commandAlias,
+    subcommand: 'bottomup.summarize',
+    arguments: {},
+    options: { path: props.path, draft: true },
+    presentation: 'form',
+    surface: 'modal',
+    modalTitle: 'Summarize bottom-up knowledge',
+    recordInTimeline: false,
+  };
+}
+
 function searchFormButton(action: WebAction): WebNode {
   return {
     type: 'element',
@@ -719,6 +783,50 @@ function fileTreeRowActionsMenu(props: {
                   commandAlias,
                   displayPath: row.relativePosix,
                   extOption,
+                }),
+              },
+            },
+            {
+              type: 'element' as const,
+              tag: 'menuItem' as const,
+              props: {
+                label: 'View bottom-up summary…',
+                action: bottomupSummaryAction({
+                  commandAlias,
+                  path: row.relativePosix,
+                }),
+              },
+            },
+            {
+              type: 'element' as const,
+              tag: 'menuItem' as const,
+              props: {
+                label: 'Generate bottom-up knowledge…',
+                action: bottomupGenerateFormAction({
+                  commandAlias,
+                  path: row.relativePosix,
+                }),
+              },
+            },
+            {
+              type: 'element' as const,
+              tag: 'menuItem' as const,
+              props: {
+                label: 'Summarize bottom-up knowledge…',
+                action: bottomupSummarizeFormAction({
+                  commandAlias,
+                  path: row.relativePosix,
+                }),
+              },
+            },
+            {
+              type: 'element' as const,
+              tag: 'menuItem' as const,
+              props: {
+                label: 'Enrich bottom-up knowledge…',
+                action: bottomupEnrichFormAction({
+                  commandAlias,
+                  path: row.relativePosix,
                 }),
               },
             },

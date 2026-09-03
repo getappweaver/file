@@ -1,8 +1,25 @@
 import { createHelpSubcommandDefinition } from '@src/commands/help/command';
 import type { CommandDefinition } from '@src/system/command-definition';
 
-import { bottomupDefinition } from './commands/bottomup/definition';
-import { bottomupContextDefinition } from './commands/bottomup_context/definition';
+import {
+  bottomupEnrichAcceptDefinition,
+  bottomupEnrichDefinition,
+  bottomupEnrichReviseDefinition,
+} from './commands/bottomup-enrich/definition';
+import {
+  bottomupGenerateAcceptDefinition,
+  bottomupGenerateDefinition,
+  bottomupGenerateReviseDefinition,
+} from './commands/bottomup-generate/definition';
+import {
+  bottomupSummarizeAcceptDefinition,
+  bottomupSummarizeDefinition,
+  bottomupSummarizeReviseDefinition,
+} from './commands/bottomup-summarize/definition';
+import {
+  bottomupSummaryDefinition,
+  bottomupSummarySaveDefinition,
+} from './commands/bottomup-summary/definition';
 import { commitDefinition } from './commands/commit/definition';
 import { createDefinition } from './commands/create/definition';
 import { deleteDefinition } from './commands/delete/definition';
@@ -14,8 +31,6 @@ import { initDefinition } from './commands/init/definition';
 import { renameDefinition } from './commands/rename/definition';
 import { restoreDefinition } from './commands/restore/definition';
 import { searchDefinition } from './commands/search/definition';
-import { summarizeDefinition } from './commands/summarize/definition';
-import { topdownDefinition } from './commands/topdown/definition';
 import { treeDefinition } from './commands/tree/definition';
 import { uploadDefinition } from './commands/upload/definition';
 import { viewDefinition } from './commands/view/definition';
@@ -31,7 +46,7 @@ export const commandDefinition = (
   subcommands: [
     createHelpSubcommandDefinition(prefix, alias, {
       topicArgSummary:
-        'Optional subcommand name: upload, download, tree, commit, create, delete, init, search, view, edit, rename, restore, diff, history, bottomup, bottomup_context, summarize, or topdown.',
+        'Optional subcommand name: upload, download, tree, commit, create, delete, init, search, view, edit, rename, restore, diff, history, bottomup.generate, bottomup.summarize, bottomup.enrich, or bottomup.summary.',
       exampleTopics: [
         'upload',
         'download',
@@ -47,10 +62,10 @@ export const commandDefinition = (
         'restore',
         'diff',
         'history',
-        'bottomup',
-        'bottomup_context',
-        'summarize',
-        'topdown',
+        'bottomup.generate',
+        'bottomup.summarize',
+        'bottomup.summary',
+        'bottomup.enrich',
       ],
     }),
     uploadDefinition(prefix, alias),
@@ -67,9 +82,16 @@ export const commandDefinition = (
     restoreDefinition(prefix, alias),
     diffDefinition(prefix, alias),
     historyDefinition(prefix, alias),
-    bottomupDefinition(prefix, alias),
-    bottomupContextDefinition(prefix, alias),
-    summarizeDefinition(prefix, alias),
-    topdownDefinition(prefix, alias),
+    bottomupGenerateDefinition(prefix, alias),
+    bottomupGenerateReviseDefinition(prefix, alias),
+    bottomupGenerateAcceptDefinition(prefix, alias),
+    bottomupSummarizeDefinition(prefix, alias),
+    bottomupSummarizeReviseDefinition(),
+    bottomupSummarizeAcceptDefinition(),
+    bottomupSummaryDefinition(prefix, alias),
+    bottomupSummarySaveDefinition(),
+    bottomupEnrichDefinition(prefix, alias),
+    bottomupEnrichReviseDefinition(),
+    bottomupEnrichAcceptDefinition(),
   ],
 });

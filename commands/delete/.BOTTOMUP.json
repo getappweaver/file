@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "path": "plugins/file/commands/delete",
+  "scope": {
+    "root": false
+  },
+  "source": {
+    "version": 1,
+    "inputHash": "46e14c1df3765b8a1b7287b3468ded9e02089ba74bd203f9b5dfd1e30f3e7a53",
+    "directorySummary": "Implements the delete/remove workspace file command via a CLI definition, a workspace-scoped filesystem handler that validates and removes targets, and an adapter that bridges CLI/web inputs to handler execution and web tree rendering.",
+    "files": {
+      "adapter.ts": {
+        "hash": "fd44895f4164e3fd81e84a53edb2ca557d0eb06fff782fd12c45298b27cea709",
+        "sourceSummary": "Adapts the delete command by validating the path argument, resolving the workspace root, delegating to handleDeleteCommand, and returning either an error/confirmation string or a refreshed web tree via renderTreeForWeb.",
+        "provenance": "ai"
+      },
+      "definition.ts": {
+        "hash": "3357b3e9a38a22975e51305ef55b2ef3ecff1603e433b14a0e09bbc0286545c2",
+        "sourceSummary": "Defines the delete subcommand (alias remove) with required path argument and optional --tree-dir, --ext, and --expanded web UI options.",
+        "provenance": "ai"
+      },
+      "handler.ts": {
+        "hash": "9e870a79af2358c01307eb9669bb94846d9ed84ccf4a3e528714884ba6e8d4c6",
+        "sourceSummary": "Implements handleDeleteCommand to validate and normalize workspace-relative paths, reject root/escape/missing targets, and delete the target with rmSync returning normalized relativePath and parentDir.",
+        "provenance": "ai"
+      }
+    }
+  },
+  "children": {},
+  "coverage": {
+    "complete": true,
+    "missing": [],
+    "stale": []
+  },
+  "summary": {
+    "version": 1,
+    "inputHash": "665d81e5a498c049ed634733b5d0779e48d39dad824bb97ff1aaa9f970482054",
+    "value": "Implements the delete/remove workspace file command via a CLI definition, a workspace-scoped filesystem handler that validates and removes targets, and an adapter that bridges CLI/web inputs to handler execution and web tree rendering.",
+    "provenance": "derived"
+  },
+  "context": {
+    "value": "plugins/file — workspace file-manager plugin in AppWeaver system: tree browsing, view/edit/create/delete/rename/restore, git diff/history/commit/restore/init, NIP-44/Blossom encrypted upload/download, and bottom-up docs via centralized dispatcher + plugin registration + AI tooling + fuzzy-file-search; ai complete (Zod-validated bottomup.generate/enrich/summarize/summary contracts, runtime dispatch via workspace root, in-memory DB); commands complete container (20 CLI/web subcommands: bottomup workflows with coverage validation/effective context/hash-cache/recursive/one-level/plan-draft-accept and index validation/projections, filesystem ops with size/binary/IGNORE/.gitignore filtering via ripgrep, git ops, secure transfer with naddr/NIP-44/integrity handling, shared workspace-root validation/filter/renderer/help under containment); types complete (adapter param contracts); no missing/stale coverage.",
+    "origin": "ai",
+    "hash": "1013c03173064158d092fc7d827b7b691052515a54c36344eb769cde6426f8a1"
+  },
+  "enrichment": {
+    "inputHash": "5923c27935a11dc2487675a614c1b53f55a1c4ba686d82c4da5a0e6dfd3f4775",
+    "summaryHash": "e6e16ba187877d8db1a72a1d64dc17b79caf8ae084b4672a3416345d3bc37f75",
+    "directorySummary": "Destructive-mutation leaf in the filesystem-operations family under the plugins/file/commands aggregation. Invoked via the centralized handleFile dispatcher fan-out, it follows the shared validate-containment → execute → adapt lifecycle of sibling create/edit/rename/view commands; its irreversible rmSync effect is gated by shared workspace-root containment, and it closes the loop via parentDir-driven web tree reconciliation rather than participating in bottom-up, git, or transfer workflows.",
+    "files": {
+      "adapter.ts": "CLI/web boundary adapter for delete; implements the standard file-command adapter contract — validates path presence, resolves workspace root via shared helpers, delegates to handler, and branches to CLI confirmation/error strings versus renderTreeForWeb refresh to keep web UI in sync after mutation.",
+      "definition.ts": "Commander declaration that registers the delete/remove alias and required path plus shared web projection options (--tree-dir/--ext/--expanded); defines the invocation contract consumed by the central dispatcher and adapter to scope post-delete tree rendering consistently with other file commands.",
+      "handler.ts": "Containment-enforced filesystem primitive for the folder; centralizes workspace-relative normalization and hard rejects for root/escape/missing before rmSync, returning relativePath/parentDir to support adapter error handling and tree anchoring — the safety pattern shared with other mutating file operations."
+    },
+    "provenance": "ai"
+  }
+}

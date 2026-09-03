@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "path": "plugins/file/commands/view/renderers",
+  "scope": {
+    "root": false
+  },
+  "source": {
+    "version": 1,
+    "inputHash": "b3eb2838da8170f7f696f1b604461ad7298f02dc87a6764c8b65a2396b068d4c",
+    "directorySummary": "Provides web rendering for the file view command, combining code-view stylesheet and WebNodeRoot construction for displaying, highlighting, copying, and inline-editing file content with breadcrumb and timeline integration.",
+    "files": {
+      "stylesheet.ts": {
+        "hash": "19c0e223dfc71f3fc6df5e79343d88e3ad1b75530629a64567bef93ca5b65931",
+        "sourceSummary": "Defines and exports filePluginViewStylesheet WebStyleSheet with CSS for read-only and editable code views, line numbers, and injected breadcrumb/timeline styles.",
+        "provenance": "ai"
+      },
+      "web.ts": {
+        "hash": "2ee96ea259b3fade2e84b6a7691f5e9a1235dbb8b3c445512e0011aa5bb09a9a",
+        "sourceSummary": "Exports renderFileViewWeb to build the file view WebNodeRoot with breadcrumb, timeline button, highlighted code lines with clipboard/scroll handling, toggleable editableText, and edit/diff toolbar actions.",
+        "provenance": "ai"
+      }
+    }
+  },
+  "children": {},
+  "coverage": {
+    "complete": true,
+    "missing": [],
+    "stale": []
+  },
+  "summary": {
+    "version": 1,
+    "inputHash": "06259daf5a325925326f626614a1a24bcaf66c4cf3ea9148bd79de7fb538a718",
+    "value": "Provides web rendering for the file view command, combining code-view stylesheet and WebNodeRoot construction for displaying, highlighting, copying, and inline-editing file content with breadcrumb and timeline integration.",
+    "provenance": "derived"
+  },
+  "context": {
+    "value": "plugins/file — workspace file-manager plugin in AppWeaver system: tree browsing, view/edit/create/delete/rename/restore, git diff/history/commit/restore/init, NIP-44/Blossom encrypted upload/download, and bottom-up docs via centralized dispatcher + plugin registration + AI tooling + fuzzy-file-search; ai complete (Zod-validated bottomup.generate/enrich/summarize/summary contracts, runtime dispatch via workspace root, in-memory DB); commands complete container (20 CLI/web subcommands: bottomup workflows with coverage validation/effective context/hash-cache/recursive/one-level/plan-draft-accept and index validation/projections, filesystem ops with size/binary/IGNORE/.gitignore filtering via ripgrep, git ops, secure transfer with naddr/NIP-44/integrity handling, shared workspace-root validation/filter/renderer/help under containment); types complete (adapter param contracts); no missing/stale coverage.",
+    "origin": "ai",
+    "hash": "1013c03173064158d092fc7d827b7b691052515a54c36344eb769cde6426f8a1"
+  },
+  "enrichment": {
+    "inputHash": "54ac3f5add738d568f4ababfa32eebcf5f959de7f056fe70db86602983156a77",
+    "summaryHash": "065f91104ee0527dbb54ed220bb85aa275a7a4dd51a11edf77437dbfee244d33",
+    "directorySummary": "Leaf web-presentation sublayer of the view command, decoupled from handler.ts validation and bounded-read execution. Completes the shared validate-containment → execute → CLI/web-adapt lifecycle by owning all style and WebNodeRoot generation for previews, allowing handler.ts to remain transport-agnostic and adapter.ts/handleFile routing to stay centralized. Bridges filesystem-ops read results to appweaver-web primitives (code-view, breadcrumb, timeline) without leaking rendering concerns into the broader 20-command container.",
+    "files": {
+      "stylesheet.ts": "Static style dependency for its sibling web.ts — not imported outside this directory except transitively via renderFileViewWeb. Isolates all visual concerns for the view's web adaptation so markup generation stays style-agnostic, supporting the read-only/editable code-view split and injected breadcrumb/timeline overrides.",
+      "web.ts": "Web-branch renderer invoked exclusively by parent view/handler.ts; builds the WebNodeRoot response that handler returns to adapter.ts for dispatch. Composes filePluginViewStylesheet with highlighted line rendering, clipboard/scroll handling, and toggleable editableText plus edit/diff toolbar actions to connect read-only preview output to workspace editing and history affordances."
+    },
+    "provenance": "ai"
+  }
+}

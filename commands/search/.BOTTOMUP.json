@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "path": "plugins/file/commands/search",
+  "scope": {
+    "root": false
+  },
+  "source": {
+    "version": 1,
+    "inputHash": "8fa30bf95c4195b9756c7ecac18e40ca2b42ce3b4dc3663206f1d25f8763a5aa",
+    "directorySummary": "Implements the `file search` command for workspace content search, defining its CLI contract, executing ripgrep with path/extension/regex filtering and limit/truncation handling, and adapting results for CLI text and web UI.",
+    "files": {
+      "adapter.ts": {
+        "hash": "fb0502930e3759d4a773d92276ed8657080419adb72c1b864b2264f0a4183e53",
+        "sourceSummary": "Adapts parsed search params (keyword/ext/path/regex) to handleSearchCommand with workspace root resolution and limit 100, rendering CLI text via searchResultToCliText or Web nodes via renderFileSearchWeb based on params.source.",
+        "provenance": "ai"
+      },
+      "definition.ts": {
+        "hash": "b1afcd16d7ec90a8390664c754a28e8ea15619aab88c37015c40c797c9ebe18a",
+        "sourceSummary": "Defines the `search` subcommand schema with variadic required keyword argument, --ext/--path/--regex options, and example invocations under the given prefix/alias.",
+        "provenance": "ai"
+      },
+      "handler.ts": {
+        "hash": "c738366e2a429b43c6e75db57d3566ab3a61cc8a23fc84eba44de5a711af4b07",
+        "sourceSummary": "Executes ripgrep (--json, --line-number, --column, --smart-case, fixed-strings/regex, ext globs, exclusions) against a validated workspace-relative target and parses JSON lines into normalized FileSearchResult with limit/truncation.",
+        "provenance": "ai"
+      }
+    }
+  },
+  "children": {
+    "renderers": {
+      "path": "commands/search/renderers",
+      "status": "current",
+      "sourceInputHash": "60c89cdd93de5b0e6e153006b73fa289852992f729546a20a1c2bbda591f80c3"
+    }
+  },
+  "coverage": {
+    "complete": true,
+    "missing": [],
+    "stale": []
+  },
+  "summary": {
+    "version": 1,
+    "inputHash": "016b75b259c441bd5d8fd1b280da256c0c259306947f7fab87af2fa461354724",
+    "value": "Implements the `file search` command for workspace content search — defines CLI contract, executes ripgrep with path/extension/regex filtering and limit/truncation handling, and adapts results for CLI text and web UI. Child `renderers/` (complete) provides web rendering and styling with grouped match display, breadcrumb navigation, and timeline integration.",
+    "provenance": "ai"
+  },
+  "context": {
+    "value": "plugins/file — workspace file-manager plugin in AppWeaver system: tree browsing, view/edit/create/delete/rename/restore, git diff/history/commit/restore/init, NIP-44/Blossom encrypted upload/download, and bottom-up docs via centralized dispatcher + plugin registration + AI tooling + fuzzy-file-search; ai complete (Zod-validated bottomup.generate/enrich/summarize/summary contracts, runtime dispatch via workspace root, in-memory DB); commands complete container (20 CLI/web subcommands: bottomup workflows with coverage validation/effective context/hash-cache/recursive/one-level/plan-draft-accept and index validation/projections, filesystem ops with size/binary/IGNORE/.gitignore filtering via ripgrep, git ops, secure transfer with naddr/NIP-44/integrity handling, shared workspace-root validation/filter/renderer/help under containment); types complete (adapter param contracts); no missing/stale coverage.",
+    "origin": "ai",
+    "hash": "1013c03173064158d092fc7d827b7b691052515a54c36344eb769cde6426f8a1"
+  },
+  "enrichment": {
+    "inputHash": "5d5b0ed4ad3e06a162e6646d99fda7ffc4a9ace7c10e78f37862b359f5e0bc6e",
+    "summaryHash": "6712418125e54c789e5ae2d4784bb2c8c4a2e850f3ade1d51a48a8f9262da9ab",
+    "directorySummary": "Read-only content-discovery leaf within the workspace file-operations family of the commands aggregation (sibling to tree/view/edit/create/delete/rename, distinct from git/bottom-up/transfer families). Invoked via the centralized file dispatcher fan-out (adapter.ts/handleFile) and relies on shared workspace-root validation and IGNORE/.gitignore filtering; delegates web presentation to child renderers/ for grouped results, breadcrumbs and timeline integration while remaining stateless with no bottom-up lifecycle.",
+    "files": {
+      "adapter.ts": "Dispatch-adaptation bridge for the search vertical — resolves workspace root, applies the fixed limit 100, and forks to CLI text (searchResultToCliText) versus web nodes (renderFileSearchWeb in child renderers/) based on params.source, keeping execution in handler.ts presentation-agnostic.",
+      "definition.ts": "Schema/contract entry point for registration through the commands container into the central dispatcher — declares the variadic keyword and --ext/--path/--regex surface and examples, consumed by adapter/handler without owning validation or execution.",
+      "handler.ts": "Pure execution engine for the vertical — owns ripgrep --json invocation with smart-case/fixed-strings vs regex, ext globs and exclusions against a validated workspace-relative target, plus JSON-lines parsing into normalized FileSearchResult with limit/truncation, intentionally decoupled from adapter rendering and renderers/ UI."
+    },
+    "provenance": "ai"
+  }
+}

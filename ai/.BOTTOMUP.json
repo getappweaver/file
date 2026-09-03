@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "path": "plugins/file/ai",
+  "scope": {
+    "root": false
+  },
+  "source": {
+    "version": 1,
+    "inputHash": "1f8e59e9c5165ee0ab9850e1d772a0fbfd15cbc425d36e828700f447e1a0ef45",
+    "directorySummary": "Provides the file AI plugin contract for bottom-up documentation — Zod-validated schemas for bottomup.generate, bottomup.enrich, bottomup.summarize and bottomup.summary calls plus runtime glue that documents tool usage, dispatches calls to handlers via workspace root, and supplies an in-memory database.",
+    "files": {
+      "schema.ts": {
+        "hash": "c490ab755517a25490f39e82f702193806cd92dce727fe993e00bd69d2bc663f",
+        "sourceSummary": "Defines nullable Zod helpers and BottomupAgentKnowledgeSchema plus FileToolCallSchema/ToolCallSchema discriminated union of bottomup.generate, bottomup.enrich, bottomup.summarize and bottomup.summary with inferred types and skillDescription/skillRules constants.",
+        "provenance": "ai"
+      },
+      "tooling.ts": {
+        "hash": "160c0196101a04ede72dc8bcd183e9d7868816a8972ffa845299dfa83fb03ddf",
+        "sourceSummary": "Exports agentInstructions documenting bottomup workflow, executeTool dispatching FileToolCall by type to bottomup handlers via resolved workspace root, and openDb returning an in-memory SQLite Database.",
+        "provenance": "ai"
+      }
+    }
+  },
+  "children": {},
+  "coverage": {
+    "complete": true,
+    "missing": [],
+    "stale": []
+  },
+  "summary": {
+    "version": 1,
+    "inputHash": "5f6febc9771a817e13c527e8c09f7fc5db62ee5c9952f0089487f04c74d3d874",
+    "value": "Provides the file AI plugin contract for bottom-up documentation — Zod-validated schemas for bottomup.generate, bottomup.enrich, bottomup.summarize and bottomup.summary calls plus runtime glue that documents tool usage, dispatches calls to handlers via workspace root, and supplies an in-memory database.",
+    "provenance": "derived"
+  },
+  "context": {
+    "value": "plugins/file — workspace file-manager plugin in AppWeaver system: tree browsing, view/edit/create/delete/rename/restore, git diff/history/commit/restore/init, NIP-44/Blossom encrypted upload/download, and bottom-up docs via centralized dispatcher + plugin registration + AI tooling + fuzzy-file-search; ai complete (Zod-validated bottomup.generate/enrich/summarize/summary contracts, runtime dispatch via workspace root, in-memory DB); commands complete container (20 CLI/web subcommands: bottomup workflows with coverage validation/effective context/hash-cache/recursive/one-level/plan-draft-accept and index validation/projections, filesystem ops with size/binary/IGNORE/.gitignore filtering via ripgrep, git ops, secure transfer with naddr/NIP-44/integrity handling, shared workspace-root validation/filter/renderer/help under containment); types complete (adapter param contracts); no missing/stale coverage.",
+    "origin": "ai",
+    "hash": "1013c03173064158d092fc7d827b7b691052515a54c36344eb769cde6426f8a1"
+  },
+  "enrichment": {
+    "inputHash": "a2a171a2b71e621bd7fe4fea5bca5630308a0014ec7e3475e8ec9fdbbcd58b08",
+    "summaryHash": "f2811b2ee94806f3bc0a65814dace576552ab74935f4bfec4dd48353479295df",
+    "directorySummary": "AI contract and dispatch boundary inside the file-manager facade. Decouples the host BotPlugin/AI runtime from the bottomup implementation in commands/: exposes a validated tool-calling surface for LLM-driven documentation workflows and handles workspace-root resolution and routing to handlers, while commands/ owns execution logic and types/ owns the generic adapter contract. Provides ephemeral in-memory persistence to keep AI invocations stateless and testable.",
+    "files": {
+      "schema.ts": "Validation boundary and single source of truth for the AI surface; defines the discriminated union consumed by tooling.ts/executeTool and the BotPlugin registration. Centralizes BottomupAgentKnowledgeSchema and skillDescription/skillRules so prompting, validation, and dispatch share one contract.",
+      "tooling.ts": "Runtime glue that operationalizes schema.ts contracts. Bridges validated FileToolCall dispatch to commands/bottomup handlers via resolved workspace root, publishes agentInstructions for workflow documentation, and provides openDb in-memory SQLite for stateless execution - depends on schema.ts for type safety."
+    },
+    "provenance": "ai"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "path": "plugins/file/commands/bottomup-summary/renderers",
+  "scope": {
+    "root": false
+  },
+  "source": {
+    "version": 1,
+    "inputHash": "86f2c9b946253726c53d39ecc4668150fb5a4fc1fcc7d5326610076491e3dd7f",
+    "directorySummary": "Provides web renderer for the bottom-up summary preview modal, including formatted content preview and save interaction.",
+    "files": {
+      "web.ts": {
+        "hash": "c8a518d7c145a6ab8d910b41499bb46d10285e18e8e7b7ca193cd27e92635050",
+        "sourceSummary": "Exports renderBottomupSummaryPreview that returns a WebNodeRoot modal with hljs-formatted preview, location textField form wired via saveAction to bottomup.summary.save, Close web.closeModal button, and scoped styles.",
+        "provenance": "ai"
+      }
+    }
+  },
+  "children": {},
+  "coverage": {
+    "complete": true,
+    "missing": [],
+    "stale": []
+  },
+  "summary": {
+    "version": 1,
+    "inputHash": "8d4093f8434af6874ec37168b76f0cad96019c6779403e1aa8ecbf41458594b9",
+    "value": "Provides web renderer for the bottom-up summary preview modal, including formatted content preview and save interaction.",
+    "provenance": "derived"
+  },
+  "context": {
+    "value": "plugins/file — workspace file-manager plugin in AppWeaver system: tree browsing, view/edit/create/delete/rename/restore, git diff/history/commit/restore/init, NIP-44/Blossom encrypted upload/download, and bottom-up docs via centralized dispatcher + plugin registration + AI tooling + fuzzy-file-search; ai complete (Zod-validated bottomup.generate/enrich/summarize/summary contracts, runtime dispatch via workspace root, in-memory DB); commands complete container (20 CLI/web subcommands: bottomup workflows with coverage validation/effective context/hash-cache/recursive/one-level/plan-draft-accept and index validation/projections, filesystem ops with size/binary/IGNORE/.gitignore filtering via ripgrep, git ops, secure transfer with naddr/NIP-44/integrity handling, shared workspace-root validation/filter/renderer/help under containment); types complete (adapter param contracts); no missing/stale coverage.",
+    "origin": "ai",
+    "hash": "1013c03173064158d092fc7d827b7b691052515a54c36344eb769cde6426f8a1"
+  },
+  "enrichment": {
+    "inputHash": "e678375acad14eddbe3ea9e52af16ef633ba135541790d93a39d0e3dec573c69",
+    "summaryHash": "3a2f0f552c527e2402ccae043f38c87c4722684c8682b0bb94e64de4b0e356af",
+    "directorySummary": "Leaf presentation isolate delegated by bottomup-summary within plugins/file/commands — owns web preview/save UX so parent can remain stateless projection/validation. Consumes pre-validated, pre-formatted markdown/JSON from parent's index pipeline via file plugin centralized web dispatch and forwards user-confirmed save to bottomup.summary.save, without computing coverage, resolving roots, or persisting .BOTTOMUP.json itself.",
+    "files": {
+      "web.ts": "Web-preview adapter invoked by bottomup-summary's modal flow; translates parent-formatted projection into interactive WebNodeRoot modal and wires location form submission to bottomup.summary.save. Isolates hljs rendering, form/close lifecycle, and scoped styles from parent's validation/coverage logic, acting as pure view layer with no independent index access."
+    },
+    "provenance": "ai"
+  }
+}

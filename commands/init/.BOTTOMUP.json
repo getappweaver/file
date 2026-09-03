@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "path": "plugins/file/commands/init",
+  "scope": {
+    "root": false
+  },
+  "source": {
+    "version": 1,
+    "inputHash": "863943919834065158f7019b6bfae46b8059066ba38166c2c308111eb6bb202a",
+    "directorySummary": "Implements the `init` file subcommand for initializing a Git repository in the resolved workspace, providing command definition, workspace-root adaptation, and git execution with existing-repository checks.",
+    "files": {
+      "adapter.ts": {
+        "hash": "447add7ef6be78b3da71303a43c639323ffc4eb200b5a534888e1306f85023a9",
+        "sourceSummary": "Adapts FileCommandAdapterParams to handleInitCommand by resolving the workspace root via resolveFileWorkspaceRoot and returning the handler's text or the resolution error string.",
+        "provenance": "ai"
+      },
+      "definition.ts": {
+        "hash": "b1f8624b4badf943e8865e7dc3d7fa8114368297940fcf60b9f55bc588aff140",
+        "sourceSummary": "Exports initDefinition factory that defines the `init` (alias `git-init`) subcommand metadata to initialize a Git repository in the workspace.",
+        "provenance": "ai"
+      },
+      "handler.ts": {
+        "hash": "52b4715b99d5d308d8e75390a757b20588ae4f98e3cbfcd71ce6efbac9aa06f2",
+        "sourceSummary": "Implements handleInitCommand that checks `git rev-parse --is-inside-work-tree`, validates an existing `.git` path, and runs `git init` via Bun spawnSync returning ok/error text results.",
+        "provenance": "ai"
+      }
+    }
+  },
+  "children": {},
+  "coverage": {
+    "complete": true,
+    "missing": [],
+    "stale": []
+  },
+  "summary": {
+    "version": 1,
+    "inputHash": "88f19ae626ea7bb0586f73cea94aa18e291f9be782ea918b2f276c4508c99a22",
+    "value": "Implements the `init` file subcommand for initializing a Git repository in the resolved workspace, providing command definition, workspace-root adaptation, and git execution with existing-repository checks.",
+    "provenance": "derived"
+  },
+  "context": {
+    "value": "plugins/file — workspace file-manager plugin in AppWeaver system: tree browsing, view/edit/create/delete/rename/restore, git diff/history/commit/restore/init, NIP-44/Blossom encrypted upload/download, and bottom-up docs via centralized dispatcher + plugin registration + AI tooling + fuzzy-file-search; ai complete (Zod-validated bottomup.generate/enrich/summarize/summary contracts, runtime dispatch via workspace root, in-memory DB); commands complete container (20 CLI/web subcommands: bottomup workflows with coverage validation/effective context/hash-cache/recursive/one-level/plan-draft-accept and index validation/projections, filesystem ops with size/binary/IGNORE/.gitignore filtering via ripgrep, git ops, secure transfer with naddr/NIP-44/integrity handling, shared workspace-root validation/filter/renderer/help under containment); types complete (adapter param contracts); no missing/stale coverage.",
+    "origin": "ai",
+    "hash": "1013c03173064158d092fc7d827b7b691052515a54c36344eb769cde6426f8a1"
+  },
+  "enrichment": {
+    "inputHash": "3042aea595c1b41855e5aba533307320029ca2f02a258fb4ad1caead51fedc3a",
+    "summaryHash": "b49c2d414119595dde5656767b7a293ed3c40d596ea6eba67e1f0aa0dee9f40f",
+    "directorySummary": "Leaf git-bootstrap subcommand at the file plugin's aggregation boundary — fanned out from the centralized dispatcher (adapter.ts/handleFile) and registration (plugins/file/init.ts) alongside the other 19 file/git/bottom-up/transfer commands. Completes the git-operations family (commit/diff/history/restore/init) as the repository-creation entry point, reusing shared/resolveFileWorkspaceRoot for containment and isolating idempotency and Bun spawnSync execution in the handler so initialization remains decoupled from downstream git workflows.",
+    "files": {
+      "adapter.ts": "Workspace-boundary adapter for the init pipeline — translates FileCommandAdapterParams via shared/resolveFileWorkspaceRoot and delegates to handleInitCommand, surfacing handler text or resolution error string back to the central adapter dispatch without owning git logic.",
+      "definition.ts": "Plugin-registration contract that publishes the `init` (alias `git-init`) metadata via initDefinition factory into the file plugin's 20-command registry; pure definition layer that enables adapter dispatch to route to this directory.",
+      "handler.ts": "Idempotent execution core for repository bootstrap — pre-checks `git rev-parse --is-inside-work-tree` and existing `.git` path before running `git init` via Bun spawnSync, returning normalized ok/error text and keeping git-process concerns separate from workspace resolution in the adapter."
+    },
+    "provenance": "ai"
+  }
+}

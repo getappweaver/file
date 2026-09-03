@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "path": "plugins/file/commands/history/renderers",
+  "scope": {
+    "root": false
+  },
+  "source": {
+    "version": 1,
+    "inputHash": "8619e817ef13f4e558ded85ab48c1e0217765f3c57ac5a863a44631a80f1c7ef",
+    "directorySummary": "Provides web rendering for the file history command, converting FileHistoryResult into a styled UI tree with file breadcrumb, clickable commit subjects that dispatch diff actions, and per-commit metrics for file count, additions, and deletions.",
+    "files": {
+      "web.ts": {
+        "hash": "9dd95cf80d9b5e864ee157cc13fd4ff555aea83ba93426bc1fc396ae3d33cc5d",
+        "sourceSummary": "Exports renderFileHistoryWeb to render FileHistoryResult as a WebNodeRoot with error/empty handling, breadcrumb, commit rows with diff command links and addition/deletion stats, and a scoped stylesheet.",
+        "provenance": "ai"
+      }
+    }
+  },
+  "children": {},
+  "coverage": {
+    "complete": true,
+    "missing": [],
+    "stale": []
+  },
+  "summary": {
+    "version": 1,
+    "inputHash": "6a4cac2c728ac3d01576aabced93615e4672403095c240ac738da916446ce05f",
+    "value": "Provides web rendering for the file history command, converting FileHistoryResult into a styled UI tree with file breadcrumb, clickable commit subjects that dispatch diff actions, and per-commit metrics for file count, additions, and deletions.",
+    "provenance": "derived"
+  },
+  "context": {
+    "value": "plugins/file — workspace file-manager plugin in AppWeaver system: tree browsing, view/edit/create/delete/rename/restore, git diff/history/commit/restore/init, NIP-44/Blossom encrypted upload/download, and bottom-up docs via centralized dispatcher + plugin registration + AI tooling + fuzzy-file-search; ai complete (Zod-validated bottomup.generate/enrich/summarize/summary contracts, runtime dispatch via workspace root, in-memory DB); commands complete container (20 CLI/web subcommands: bottomup workflows with coverage validation/effective context/hash-cache/recursive/one-level/plan-draft-accept and index validation/projections, filesystem ops with size/binary/IGNORE/.gitignore filtering via ripgrep, git ops, secure transfer with naddr/NIP-44/integrity handling, shared workspace-root validation/filter/renderer/help under containment); types complete (adapter param contracts); no missing/stale coverage.",
+    "origin": "ai",
+    "hash": "1013c03173064158d092fc7d827b7b691052515a54c36344eb769cde6426f8a1"
+  },
+  "enrichment": {
+    "inputHash": "e10fe0ba41518c67240cb250f1bd7958ed1562b419da68bf01e708284a7c0ecb",
+    "summaryHash": "45032dbda17cc7c0f7e172c5ff4e4a7d1ead0503f3addc40393c4c6003ea7297",
+    "directorySummary": "Leaf web-presentation boundary for the history command that enforces handler/renderer separation within the file plugin's git-operations family. Sits downstream of handler.ts git-log execution and the centralized adapter dispatcher, owning only AppWeaver WebNode translation and scoped styling with no git or containment logic. Provides the navigational bridge that links the read-only audit-trail surface to diff inspection via dispatched diff actions, realizing the plugin's CLI/web duality at leaf granularity without participating in bottomup lifecycle.",
+    "files": {
+      "web.ts": "Sole web adapter for the history feature; encapsulates all WebNodeRoot construction so handler remains focused on path resolution and git execution. Owns the history-to-diff navigation affordance by wiring commit subjects to diff command dispatches, enabling traversal from log overview to single-commit inspection entirely within the web surface."
+    },
+    "provenance": "ai"
+  }
+}

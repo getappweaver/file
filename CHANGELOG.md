@@ -4,9 +4,13 @@ All notable changes for each version are listed under the corresponding `v*.*.*`
 Tags and this file are updated by the post-commit hook when you commit with `--patch`, `--minor`, or `--major` (see CONTRIBUTING.md).
 You can also run `bun run release:changelog` to rewrite this file from tags.
 
+## [v4.0.0] - 2026-09-03
+
+- feat: replace legacy bottom-up documentation pipeline (a1981bf)
+
 ## [v3.6.0] - 2026-08-30
 
-- feat: new fuzzy file name search provider (0cfa901)
+- feat: new fuzzy file name search provider (1e409c6)
 
 ## [v3.5.1] - 2026-08-30
 

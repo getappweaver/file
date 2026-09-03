@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "path": "plugins/file/commands/upload",
+  "scope": {
+    "root": false
+  },
+  "source": {
+    "version": 1,
+    "inputHash": "7cb90a0021fe040e1b756c8557b14d5bb089606067483e86e5a5be656ed499e6",
+    "directorySummary": "Implements the `upload` subcommand for the file plugin, defining its CLI metadata and handling the full pipeline of validating arguments, resolving workspace-relative paths, and encrypting files for Blossom upload with NIP-44 key sharing and publishing a replaceable Nostr file event.",
+    "files": {
+      "adapter.ts": {
+        "hash": "55d720150f0ae006c0ad5d107eccc440f8ae4eea9e96b558ee24a9c38dc70da6",
+        "sourceSummary": "Adapter extracts string filePath and recipientNpub from params.parsed.arguments and delegates to handleUploadCommand with prefix/alias, returning result.text for usage/error/success cases.",
+        "provenance": "ai"
+      },
+      "definition.ts": {
+        "hash": "d05534507d88624373da6fb53b39d0d047c29ae62951f7529dcdad50f6a79a8c",
+        "sourceSummary": "Defines uploadDefinition factory returning SubcommandDefinition named 'upload' with summary about Blossom + NIP-17 encryption, optional filePath and recipientNpub string arguments, and example invocations.",
+        "provenance": "ai"
+      },
+      "handler.ts": {
+        "hash": "a6f15431cc8d317b76f90ba2663b587dc7028f653d5f6570cde28740c50ebf9f",
+        "sourceSummary": "Handler validates filePathArg and recipientNpub presence, resolves absolute path via resolveFileWorkspaceRoot, loads Nostr config, invokes fileUpload, and formats usage, skipped-hash, success, or error text with filename and naddr.",
+        "provenance": "ai"
+      },
+      "sync.ts": {
+        "hash": "0c7ae80bad212b06a25e45222abe53c6ffa6f2989d6d837b87e1a8ea7938b5e8",
+        "sourceSummary": "Implements fileUpload that decodes recipient npub, reads file and SHA-256 hashes plaintext, checks existing FILE_KIND event for hash-match skip or prev divergence, AES-GCM encrypts with random key/nonce, uploads ciphertext blob to Blossom, NIP-44 encrypts the AES key for the recipient, and publishes the tagged Nostr event returning filename, naddr, and skipped.",
+        "provenance": "ai"
+      }
+    }
+  },
+  "children": {},
+  "coverage": {
+    "complete": true,
+    "missing": [],
+    "stale": []
+  },
+  "summary": {
+    "version": 1,
+    "inputHash": "edabc472fbbe448b3e4487c22e5ea018d54f8c19844863c6455cf55e5e5763d0",
+    "value": "Implements the `upload` subcommand for the file plugin, defining its CLI metadata and handling the full pipeline of validating arguments, resolving workspace-relative paths, and encrypting files for Blossom upload with NIP-44 key sharing and publishing a replaceable Nostr file event.",
+    "provenance": "derived"
+  },
+  "context": {
+    "value": "plugins/file — workspace file-manager plugin in AppWeaver system: tree browsing, view/edit/create/delete/rename/restore, git diff/history/commit/restore/init, NIP-44/Blossom encrypted upload/download, and bottom-up docs via centralized dispatcher + plugin registration + AI tooling + fuzzy-file-search; ai complete (Zod-validated bottomup.generate/enrich/summarize/summary contracts, runtime dispatch via workspace root, in-memory DB); commands complete container (20 CLI/web subcommands: bottomup workflows with coverage validation/effective context/hash-cache/recursive/one-level/plan-draft-accept and index validation/projections, filesystem ops with size/binary/IGNORE/.gitignore filtering via ripgrep, git ops, secure transfer with naddr/NIP-44/integrity handling, shared workspace-root validation/filter/renderer/help under containment); types complete (adapter param contracts); no missing/stale coverage.",
+    "origin": "ai",
+    "hash": "1013c03173064158d092fc7d827b7b691052515a54c36344eb769cde6426f8a1"
+  },
+  "enrichment": {
+    "inputHash": "a062a616d48c3f36f8a899c5d30a036f31178f5fabff1b422ce3059d11a3a8ee",
+    "summaryHash": "3e37ad56aaf189dd8e96df1a5afc4733602fa222fce70048a32e650bf26d705a",
+    "directorySummary": "Outbound leaf of the secure-transfer pair (complement to download) within the file plugin's command aggregation. Operates as a dispatched leaf beneath adapter.ts/handleFile and init.ts registration, reusing the shared workspace-containment validation before executing the encrypt-upload-publish chain. Provides the workspace-to-recipient direction of the Nostr/Blossom NIP-44 flow with hash-based deduplication via replaceable FILE_KIND events, which download reverses.",
+    "files": {
+      "adapter.ts": "CLI/web adaptation shim for the centralized dispatcher pattern — extracts typed arguments and threads prefix/alias through to the handler, isolating transport formatting (result.text) from validation and transfer logic consistent with all 20 file commands.",
+      "definition.ts": "Declarative registration artifact consumed by the file plugin's command aggregation and help system — defines the subcommand contract (name, summary, arguments, examples) without owning execution, enabling discovery and routing via the parent container.",
+      "handler.ts": "Orchestration and boundary-validation layer between adapter and core logic — enforces argument presence, resolves workspace containment via resolveFileWorkspaceRoot, loads Nostr config, delegates to fileUpload, and maps skipped/success/error outcomes to user-facing text with filename and naddr.",
+      "sync.ts": "Core domain engine for the outbound encrypted transfer — owns the hash-check deduplication against existing replaceable Nostr events, AES-GCM file encryption, Blossom ciphertext upload, NIP-44 key wrapping for the recipient, and tagged event publication."
+    },
+    "provenance": "ai"
+  }
+}
