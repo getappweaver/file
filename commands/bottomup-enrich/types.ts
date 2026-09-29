@@ -20,7 +20,6 @@ export type EnrichResolvedOptions = {
   respectGitignore: boolean;
   includeHidden: boolean;
   extraIgnore: string[];
-  model: string | null;
   prompt: string | null;
   context: string | null;
   allowPartial: boolean;

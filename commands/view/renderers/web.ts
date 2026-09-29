@@ -89,7 +89,7 @@ function codeLineNode(params: CodeLineNodeProps): WebNode {
     props: {
       gap: 'xs',
       itemAlign: 'baseline',
-      className: 'web-file-view-code-line',
+      className: `web-file-view-code-line${params.scrollIntoView ? ' web-file-view-code-line--target' : ''}`,
       ...(params.scrollIntoView ? { scrollIntoViewOnMount: true } : {}),
       ...(params.scrollOnceKey === null
         ? {}

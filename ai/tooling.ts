@@ -45,6 +45,10 @@ Bottom-up documentation rules:
 - Summaries do not inline child directory content.
 - Prefer stable responsibilities, public/exported entrypoints, important side effects, and local conventions over helper-by-helper narration.
 - Agents should read \`bottomup.summary\` first, then inspect source only when stored knowledge is missing, stale, or insufficient.
+- For maintenance, run \`plan: true\` first, then use one-level generation only for directories with semantic changes. Reserve \`recursive: true\` for initial indexing or broad subtree replacement.
+- Supply \`agent_context\` for source and architectural knowledge already learned during the task instead of paying another worker to rediscover it.
+- Keep \`prompt\` null for routine freshness updates so operation-specific instructions do not invalidate reusable knowledge.
+- After targeted generation, summarize once from the relevant root. Enrich only when architectural context changed, and leave \`force\` false unless regeneration is explicitly required.
 - After semantic edits, ask the user whether to refresh bottom-up knowledge for the affected directory and its ancestors.
 `;
 }

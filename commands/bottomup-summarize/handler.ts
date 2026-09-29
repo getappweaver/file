@@ -50,7 +50,6 @@ function normalizeOptions(
     respectGitignore: call.respect_gitignore ?? true,
     includeHidden: call.include_hidden ?? false,
     extraIgnore: call.extra_ignore ?? [],
-    model: call.model,
     prompt: call.prompt,
     noPartial: call.no_partial ?? false,
     draft: call.draft ?? false,
@@ -308,7 +307,6 @@ async function processSummaries(params: {
       const execution = await runSummarizeAgent({
         runPrompt: params.runPrompt,
         cwd: params.workspaceRoot,
-        model: params.options.model,
         sessionId: params.sessionIds?.[candidate.path] ?? null,
         directoryPath: candidate.path,
         prompt: params.options.prompt,

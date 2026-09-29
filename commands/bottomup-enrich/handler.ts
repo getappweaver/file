@@ -49,7 +49,6 @@ function normalizeOptions(call: BottomupEnrichCall): EnrichResolvedOptions {
     respectGitignore: call.respect_gitignore ?? true,
     includeHidden: call.include_hidden ?? false,
     extraIgnore: call.extra_ignore ?? [],
-    model: call.model,
     prompt: call.prompt,
     context: call.context,
     allowPartial: call.allow_partial ?? false,
@@ -462,7 +461,6 @@ async function processEnrichment(params: {
       const execution = await runEnrichAgent({
         runPrompt: params.runPrompt,
         cwd: params.workspaceRoot,
-        model: params.options.model,
         sessionId: params.sessionIds?.[candidate.path] ?? null,
         directoryPath: candidate.path,
         prompt: params.options.prompt,

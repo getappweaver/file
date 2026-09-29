@@ -54,7 +54,6 @@ function enrichCall(
     respect_gitignore: false,
     include_hidden: false,
     extra_ignore: null,
-    model: null,
     prompt: null,
     agent_context: null,
     draft: null,
@@ -76,7 +75,6 @@ function generateCall(
     respect_gitignore: false,
     include_hidden: false,
     extra_ignore: null,
-    model: null,
     prompt: null,
     agent_context: agentContext,
     draft: false,
@@ -138,7 +136,6 @@ async function generateFixture(
     respect_gitignore: false,
     include_hidden: false,
     extra_ignore: null,
-    model: null,
     prompt: null,
     agent_context: {
       context: null,

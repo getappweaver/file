@@ -17,7 +17,6 @@ export const BottomupGenerateCallSchema = z.object({
   respect_gitignore: NullableBoolean,
   include_hidden: NullableBoolean,
   extra_ignore: NullableStringArray,
-  model: NullableString,
   prompt: NullableString,
   agent_context: z.union([
     z.object({
@@ -41,7 +40,6 @@ export const BottomupEnrichCallSchema = z.object({
   respect_gitignore: NullableBoolean,
   include_hidden: NullableBoolean,
   extra_ignore: NullableStringArray,
-  model: NullableString,
   prompt: NullableString,
   agent_context: z.union([
     z.object({
@@ -65,7 +63,6 @@ export const BottomupSummarizeCallSchema = z.object({
   respect_gitignore: NullableBoolean,
   include_hidden: NullableBoolean,
   extra_ignore: NullableStringArray,
-  model: NullableString,
   prompt: NullableString,
   agent_context: z.union([
     z.object({

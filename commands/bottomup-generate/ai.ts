@@ -26,7 +26,6 @@ function extractJson(raw: string): unknown {
 export const defaultGeneratePrompt: GeneratePrompt = async ({
   cwd,
   prompt,
-  model,
   sessionId,
 }) => {
   const db = openCoreDb();
@@ -42,10 +41,6 @@ export const defaultGeneratePrompt: GeneratePrompt = async ({
     const result = await agent.run({
       prompt,
       sessionId,
-      backend: null,
-      provider: null,
-      model,
-      mode: null,
       workspaceTarget: null,
       cwd,
       onAgentStreamChunk: null,
@@ -65,7 +60,6 @@ export const defaultGeneratePrompt: GeneratePrompt = async ({
 export async function runGenerateAgent(params: {
   runPrompt: GeneratePrompt;
   cwd: string;
-  model: string | null;
   sessionId: string | null;
   directoryPath: string;
   prompt: string | null;
@@ -173,7 +167,6 @@ export async function runGenerateAgent(params: {
   const result = await params.runPrompt({
     cwd: params.cwd,
     prompt,
-    model: params.model,
     sessionId: params.sessionId,
   });
 

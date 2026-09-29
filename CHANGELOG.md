@@ -4,9 +4,13 @@ All notable changes for each version are listed under the corresponding `v*.*.*`
 Tags and this file are updated by the post-commit hook when you commit with `--patch`, `--minor`, or `--major` (see CONTRIBUTING.md).
 You can also run `bun run release:changelog` to rewrite this file from tags.
 
+## [v4.1.0] - 2026-09-29
+
+- feat: provides workspace-file-view capability (899b55a)
+
 ## [v4.0.0] - 2026-09-03
 
-- feat: replace legacy bottom-up documentation pipeline (a1981bf)
+- feat: replace legacy bottom-up documentation pipeline (03bf9f6)
 
 ## [v3.6.0] - 2026-08-30
 

@@ -60,7 +60,6 @@ function normalizeOptions(call: BottomupGenerateCall): GenerateResolvedOptions {
     respectGitignore: call.respect_gitignore ?? true,
     includeHidden: call.include_hidden ?? false,
     extraIgnore: call.extra_ignore ?? [],
-    model: call.model,
     prompt: call.prompt,
     recursive: call.recursive ?? false,
     enrich: call.enrich ?? false,
@@ -389,7 +388,6 @@ async function generateOneLevel(params: {
     : await runGenerateAgent({
         runPrompt: params.runPrompt,
         cwd: params.workspaceRoot,
-        model: params.options.model,
         sessionId: params.sessionId,
         directoryPath: targetRelativeToWorkspace,
         prompt: params.options.prompt,

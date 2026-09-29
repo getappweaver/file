@@ -51,7 +51,6 @@ function call(
     respect_gitignore: false,
     include_hidden: false,
     extra_ignore: null,
-    model: null,
     prompt: null,
     agent_context: null,
     draft: null,

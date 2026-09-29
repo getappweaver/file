@@ -20,7 +20,6 @@ function extractJson(raw: string): unknown {
 export async function runEnrichAgent(params: {
   runPrompt?: GeneratePrompt;
   cwd: string;
-  model: string | null;
   sessionId: string | null;
   directoryPath: string;
   prompt: string | null;
@@ -100,7 +99,6 @@ export async function runEnrichAgent(params: {
   const result = await (params.runPrompt ?? defaultGeneratePrompt)({
     cwd: params.cwd,
     prompt,
-    model: params.model,
     sessionId: params.sessionId,
   });
 

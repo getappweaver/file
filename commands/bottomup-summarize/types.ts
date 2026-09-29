@@ -12,7 +12,6 @@ export type SummarizeResolvedOptions = {
   respectGitignore: boolean;
   includeHidden: boolean;
   extraIgnore: string[];
-  model: string | null;
   prompt: string | null;
   noPartial: boolean;
   draft: boolean;

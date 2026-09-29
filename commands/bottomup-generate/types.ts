@@ -83,7 +83,6 @@ export type GenerateResolvedOptions = {
   respectGitignore: boolean;
   includeHidden: boolean;
   extraIgnore: string[];
-  model: string | null;
   prompt: string | null;
   recursive: boolean;
   enrich: boolean;
@@ -103,7 +102,6 @@ export type GenerateResolvedOptions = {
 export type GeneratePrompt = (params: {
   cwd: string;
   prompt: string;
-  model: string | null;
   sessionId: string | null;
 }) => Promise<{ output: string; sessionId: string }>;
 

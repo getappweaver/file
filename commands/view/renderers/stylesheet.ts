@@ -46,6 +46,14 @@ export const filePluginViewStylesheet: WebStyleSheet = {
   outline: none;
 }
 
+.web-file-view-code-line--target > * {
+  background: color-mix(in srgb, var(--color-warning) 20%, transparent);
+}
+
+.web-file-view-code-line--target .web-file-view-line-number {
+  color: var(--color-warning);
+}
+
 .web-file-view-line-number {
   display: table-cell;
   width: 1%;
@@ -82,6 +90,10 @@ a.web-file-view-line-number:focus-visible {
   background: transparent;
   overflow-wrap: anywhere;
   vertical-align: top;
+}
+
+.web-file-view-code-line--target .web-file-view-code-text.hljs {
+  background: color-mix(in srgb, var(--color-warning) 20%, transparent);
 }
 
 .web-file-view-code--edit .web-editable-text__grid {

@@ -31,7 +31,6 @@ function callFromParams(params: FileCommandAdapterParams) {
     respect_gitignore: boolToOverride(params.parsed.options.noGitignore, false),
     include_hidden: boolToOverride(params.parsed.options.includeHidden, true),
     extra_ignore: csvToArrayOrNull(params.parsed.options.ignore),
-    model: stringOrNull(params.parsed.options.model),
     prompt: stringOrNull(params.parsed.options.prompt),
     agent_context: null,
     draft: boolToOverride(params.parsed.options.draft, true),

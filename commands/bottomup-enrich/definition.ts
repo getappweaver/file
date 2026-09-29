@@ -66,15 +66,6 @@ export const bottomupEnrichDefinition = (
       choices: null,
     },
     {
-      name: 'model',
-      summary: 'Override the model used for enrichment.',
-      flag: '--model',
-      shortFlag: null,
-      kind: 'string',
-      required: false,
-      choices: null,
-    },
-    {
       name: 'ignore',
       summary: 'Comma-separated extra ignore patterns.',
       flag: '--ignore',
