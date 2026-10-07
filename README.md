@@ -1,14 +1,14 @@
 # File plugin
 
-File plugin for dm-bot (nostr://_@dhalsim.github.io/nostr-dm-agent)
+Workspace file and Git tools for AppWeaver, with encrypted transfer.
 
 ## Demo
 
 [Interactive Demo](https://getappweaver.com/apps/file-manager)
 
-![Edit a file and inspect the diff](https://getappweaver.com/gifs/file-edit-diff.gif)
+![Edit a file and inspect the diff](landing/assets/file-edit-diff.gif)
 
-![Edit a file and inspect the diff on mobile](https://getappweaver.com/gifs/file-edit-diff-mobile.gif)
+![Edit a file and inspect the diff on mobile](landing/assets/file-edit-diff-mobile.gif)
 
 - **Commands** — `/file [help]` to see available commands.
 - `/file upload <file_path> <npub_bot_b>` to upload a file to a bot's workspace.
@@ -26,3 +26,12 @@ tree --dm-bot-workspace 2      # dm-bot workspace root from this install
 ```
 
 If the binary name `tree` clashes with `tree(1)`, symlink it to e.g. `dm-bot-file-tree`.
+
+## Architecture
+
+See [local architecture and source map](docs/architecture.md).
+
+## Local modules
+
+- [types](types/README.md)
+- [commands](commands/README.md)

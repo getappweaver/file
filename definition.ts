@@ -1,25 +1,6 @@
 import { createHelpSubcommandDefinition } from '@src/commands/help/command';
 import type { CommandDefinition } from '@src/system/command-definition';
 
-import {
-  bottomupEnrichAcceptDefinition,
-  bottomupEnrichDefinition,
-  bottomupEnrichReviseDefinition,
-} from './commands/bottomup-enrich/definition';
-import {
-  bottomupGenerateAcceptDefinition,
-  bottomupGenerateDefinition,
-  bottomupGenerateReviseDefinition,
-} from './commands/bottomup-generate/definition';
-import {
-  bottomupSummarizeAcceptDefinition,
-  bottomupSummarizeDefinition,
-  bottomupSummarizeReviseDefinition,
-} from './commands/bottomup-summarize/definition';
-import {
-  bottomupSummaryDefinition,
-  bottomupSummarySaveDefinition,
-} from './commands/bottomup-summary/definition';
 import { commitDefinition } from './commands/commit/definition';
 import { createDefinition } from './commands/create/definition';
 import { deleteDefinition } from './commands/delete/definition';
@@ -46,7 +27,7 @@ export const commandDefinition = (
   subcommands: [
     createHelpSubcommandDefinition(prefix, alias, {
       topicArgSummary:
-        'Optional subcommand name: upload, download, tree, commit, create, delete, init, search, view, edit, rename, restore, diff, history, bottomup.generate, bottomup.summarize, bottomup.enrich, or bottomup.summary.',
+        'Optional subcommand name: upload, download, tree, commit, create, delete, init, search, view, edit, rename, restore, diff, or history.',
       exampleTopics: [
         'upload',
         'download',
@@ -62,10 +43,6 @@ export const commandDefinition = (
         'restore',
         'diff',
         'history',
-        'bottomup.generate',
-        'bottomup.summarize',
-        'bottomup.summary',
-        'bottomup.enrich',
       ],
     }),
     uploadDefinition(prefix, alias),
@@ -82,16 +59,5 @@ export const commandDefinition = (
     restoreDefinition(prefix, alias),
     diffDefinition(prefix, alias),
     historyDefinition(prefix, alias),
-    bottomupGenerateDefinition(prefix, alias),
-    bottomupGenerateReviseDefinition(prefix, alias),
-    bottomupGenerateAcceptDefinition(prefix, alias),
-    bottomupSummarizeDefinition(prefix, alias),
-    bottomupSummarizeReviseDefinition(),
-    bottomupSummarizeAcceptDefinition(),
-    bottomupSummaryDefinition(prefix, alias),
-    bottomupSummarySaveDefinition(),
-    bottomupEnrichDefinition(prefix, alias),
-    bottomupEnrichReviseDefinition(),
-    bottomupEnrichAcceptDefinition(),
   ],
 });

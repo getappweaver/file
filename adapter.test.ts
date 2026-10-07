@@ -7,15 +7,13 @@ describe('file structured command payloads', () => {
     const parsed = parseFileInvocationFromJsonPayload({
       alias: 'file',
       prefix: '/',
-      subcommand: 'bottomup.generate',
+      subcommand: 'tree',
       jsonPayload: {
         arguments: {},
         options: {
-          path: 'plugins/file/commands/commit',
-          prompt:
-            'Check plugins/file/.BOTTOMUP.json for the general idea of the app.',
-          enrich: true,
-          draft: true,
+          ext: 'ts,md',
+          expanded: 'plugins/file',
+          reveal: 'plugins/file/README.md',
         },
       },
     });
@@ -24,11 +22,9 @@ describe('file structured command payloads', () => {
     expect(parsed?.arguments).toEqual({});
 
     expect(parsed?.options).toEqual({
-      path: 'plugins/file/commands/commit',
-      prompt:
-        'Check plugins/file/.BOTTOMUP.json for the general idea of the app.',
-      enrich: true,
-      draft: true,
+      ext: 'ts,md',
+      expanded: 'plugins/file',
+      reveal: 'plugins/file/README.md',
     });
   });
 });

@@ -7,7 +7,6 @@ import { basename } from 'path';
 import { parsePluginPackageJson, type BotPlugin } from '@src/core/plugin';
 
 import { handleFile } from './adapter';
-import { aiDefinition } from './ai';
 import {
   getFileCommandDefinition,
   getFileHelpLines,
@@ -44,12 +43,11 @@ export const FilePlugin: BotPlugin = {
     }),
   onInit: () => {},
   helpText: (a: string, prefix: string) => [
-    `Files: browse the workspace tree, inspect git history, generate bottom-up documentation, upload files encrypted for another AppWeaver bot (NIP-17), and download/decrypt by naddr. Commands run immediately unless a web-only bottom-up draft is explicitly requested.`,
+    `Files: browse the workspace tree, inspect git history, view and edit files, upload files encrypted for another AppWeaver bot (NIP-17), and download/decrypt by naddr. Commands run immediately.`,
     '',
     `${prefix}${a} help [topic] — detailed help for a subcommand`,
     ...getFileHelpLines(prefix, a),
   ],
-  aiDefinition,
   commandDefinition: (prefix: string, pluginAlias: string) =>
     getFileCommandDefinition(prefix, pluginAlias),
   stories: fileStories,

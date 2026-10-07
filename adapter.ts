@@ -3,25 +3,6 @@ import type { ParsedCliInvocation } from '@src/system/parser-cli';
 import { parseCliInput } from '@src/system/parser-cli';
 import type { WebHandlerResult } from '@src/web/ui-schema';
 
-import {
-  adaptBottomupEnrichAcceptCommand,
-  adaptBottomupEnrichCommand,
-  adaptBottomupEnrichReviseCommand,
-} from './commands/bottomup-enrich/adapter';
-import { adaptBottomupGenerateCommand } from './commands/bottomup-generate/adapter';
-import {
-  adaptBottomupGenerateAcceptCommand,
-  adaptBottomupGenerateReviseCommand,
-} from './commands/bottomup-generate/draft-adapter';
-import {
-  adaptBottomupSummarizeAcceptCommand,
-  adaptBottomupSummarizeCommand,
-  adaptBottomupSummarizeReviseCommand,
-} from './commands/bottomup-summarize/adapter';
-import {
-  adaptBottomupSummaryCommand,
-  adaptBottomupSummarySaveCommand,
-} from './commands/bottomup-summary/adapter';
 import { adaptCommitCommand } from './commands/commit/adapter';
 import { adaptCreateCommand } from './commands/create/adapter';
 import { adaptDeleteCommand } from './commands/delete/adapter';
@@ -55,18 +36,7 @@ type FileSubcommand =
   | 'rename'
   | 'restore'
   | 'diff'
-  | 'history'
-  | 'bottomup.generate'
-  | 'bottomup.generate.revise'
-  | 'bottomup.generate.accept'
-  | 'bottomup.summarize'
-  | 'bottomup.summarize.revise'
-  | 'bottomup.summarize.accept'
-  | 'bottomup.summary'
-  | 'bottomup.summary.save'
-  | 'bottomup.enrich'
-  | 'bottomup.enrich.revise'
-  | 'bottomup.enrich.accept';
+  | 'history';
 
 type MaybePromise<T> = T | Promise<T>;
 
@@ -95,17 +65,6 @@ const subcommandAdapters: Record<FileSubcommand, FileCommandAdapter> = {
   restore: adaptRestoreCommand,
   diff: adaptDiffCommand,
   history: adaptHistoryCommand,
-  'bottomup.generate': adaptBottomupGenerateCommand,
-  'bottomup.generate.revise': adaptBottomupGenerateReviseCommand,
-  'bottomup.generate.accept': adaptBottomupGenerateAcceptCommand,
-  'bottomup.summarize': adaptBottomupSummarizeCommand,
-  'bottomup.summarize.revise': adaptBottomupSummarizeReviseCommand,
-  'bottomup.summarize.accept': adaptBottomupSummarizeAcceptCommand,
-  'bottomup.summary': adaptBottomupSummaryCommand,
-  'bottomup.summary.save': adaptBottomupSummarySaveCommand,
-  'bottomup.enrich': adaptBottomupEnrichCommand,
-  'bottomup.enrich.revise': adaptBottomupEnrichReviseCommand,
-  'bottomup.enrich.accept': adaptBottomupEnrichAcceptCommand,
 };
 
 function getDefinitionKey(prefix: string, alias: string): string {
@@ -143,18 +102,7 @@ function isFileSubcommand(value: string): value is FileSubcommand {
     value === 'rename' ||
     value === 'restore' ||
     value === 'diff' ||
-    value === 'history' ||
-    value === 'bottomup.generate' ||
-    value === 'bottomup.generate.revise' ||
-    value === 'bottomup.generate.accept' ||
-    value === 'bottomup.summarize' ||
-    value === 'bottomup.summarize.revise' ||
-    value === 'bottomup.summarize.accept' ||
-    value === 'bottomup.summary' ||
-    value === 'bottomup.summary.save' ||
-    value === 'bottomup.enrich' ||
-    value === 'bottomup.enrich.revise' ||
-    value === 'bottomup.enrich.accept'
+    value === 'history'
   );
 }
 
