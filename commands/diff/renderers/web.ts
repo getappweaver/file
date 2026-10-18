@@ -234,11 +234,29 @@ export function renderFileDiffWeb(props: RenderFileDiffWebProps): WebNodeRoot {
     ],
   });
 
+  const rootTree = stack(children, 'sm');
+
   return {
     kind: 'ui',
     version: 1,
-    meta: { command: props.commandAlias, subcommand: 'diff' },
-    tree: stack(children, 'sm'),
+    meta: {
+      command: props.commandAlias,
+      subcommand: 'diff',
+      arguments: { path: r.relativePath },
+      ...(props.previousDir === null
+        ? {}
+        : { options: { previousDir: props.previousDir } }),
+    },
+    tree:
+      rootTree.type === 'element'
+        ? {
+            ...rootTree,
+            props: {
+              ...rootTree.props,
+              refreshable: true,
+            },
+          }
+        : rootTree,
     stylesheets: [filePluginDiffStylesheet],
   };
 }

@@ -4,9 +4,13 @@ All notable changes for each version are listed under the corresponding `v*.*.*`
 Tags and this file are updated by the post-commit hook when you commit with `--patch`, `--minor`, or `--major` (see CONTRIBUTING.md).
 You can also run `bun run release:changelog` to rewrite this file from tags.
 
+## [v4.3.0] - 2026-10-18
+
+- feat: added refresh button to file and diff view (f844b0f)
+
 ## [v4.2.0] - 2026-10-07
 
-- chore: required changes for core v14 (b69dc70)
+- chore: required changes for core v14 (00af8dc)
 
 ## [v4.1.0] - 2026-09-29
 

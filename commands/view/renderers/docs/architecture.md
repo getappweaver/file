@@ -9,9 +9,9 @@ Owns view's preview styles and WebNodeRoot generation, separate from handler val
 ## Source map
 
 - `stylesheet.ts` — Defines and exports filePluginViewStylesheet WebStyleSheet with CSS for read-only and editable code views, line numbers, and injected breadcrumb/timeline styles.
-- `web.ts` — Exports renderFileViewWeb to build the file view WebNodeRoot with breadcrumb, timeline button, highlighted code lines with clipboard/scroll handling, toggleable editableText, and edit/diff toolbar actions.
+- `web.ts` — Exports renderFileViewWeb to build the file view WebNodeRoot with breadcrumb, timeline button, highlighted code lines with clipboard/scroll handling, toggleable editableText, refreshable root metadata, and edit/diff toolbar actions.
 
 ## Integration details
 
 - `stylesheet.ts` — Static style dependency for its sibling web.ts — not imported outside this directory except transitively via renderFileViewWeb. Isolates all visual concerns for the view's web adaptation so markup generation stays style-agnostic, supporting the read-only/editable code-view split and injected breadcrumb/timeline overrides.
-- `web.ts` — Web-branch renderer invoked exclusively by parent view/handler.ts; builds the WebNodeRoot response that handler returns to adapter.ts for dispatch. Composes filePluginViewStylesheet with highlighted line rendering, clipboard/scroll handling, and toggleable editableText plus edit/diff toolbar actions to connect read-only preview output to workspace editing and history affordances.
+- `web.ts` — Web-branch renderer invoked exclusively by parent view/handler.ts; builds the WebNodeRoot response that handler returns to adapter.ts for dispatch. Composes filePluginViewStylesheet with highlighted line rendering, clipboard/scroll handling, toggleable editableText, refreshable root metadata (`arguments`/`options`), and edit/diff toolbar actions to connect read-only preview output to workspace editing, manual refresh, and history affordances.

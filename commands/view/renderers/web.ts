@@ -229,11 +229,23 @@ export function renderFileViewWeb(props: RenderFileViewWebProps): WebNodeRoot {
   const canEdit = !r.binary && !r.truncated;
   const rootTree = stack(rows, 'sm');
 
+  const viewOptions: Record<string, unknown> = {
+    ...(props.previousDir === null ? {} : { previousDir: props.previousDir }),
+    ...(props.highlightLine === null ? {} : { line: props.highlightLine }),
+  };
+
+  const viewMeta = {
+    command: props.commandAlias,
+    subcommand: 'view',
+    arguments: { path: r.relativePath },
+    ...(Object.keys(viewOptions).length > 0 ? { options: viewOptions } : {}),
+  };
+
   if (rootTree.type !== 'element') {
     return {
       kind: 'ui',
       version: 1,
-      meta: { command: props.commandAlias, subcommand: 'view' },
+      meta: viewMeta,
       tree: rootTree,
       stylesheets: [filePluginViewStylesheet],
     };
@@ -242,11 +254,12 @@ export function renderFileViewWeb(props: RenderFileViewWebProps): WebNodeRoot {
   return {
     kind: 'ui',
     version: 1,
-    meta: { command: props.commandAlias, subcommand: 'view' },
+    meta: viewMeta,
     tree: {
       ...rootTree,
       props: {
         ...rootTree.props,
+        refreshable: true,
         ...(canEdit
           ? {
               toolbarActions: [
