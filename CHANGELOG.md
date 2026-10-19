@@ -4,9 +4,13 @@ All notable changes for each version are listed under the corresponding `v*.*.*`
 Tags and this file are updated by the post-commit hook when you commit with `--patch`, `--minor`, or `--major` (see CONTRIBUTING.md).
 You can also run `bun run release:changelog` to rewrite this file from tags.
 
+## [v4.4.0] - 2026-10-19
+
+- feat: markdown table rendering via src/web/markdown-table (9fddf88)
+
 ## [v4.3.0] - 2026-10-18
 
-- feat: added refresh button to file and diff view (f844b0f)
+- feat: added refresh button to file and diff view (4931f25)
 
 ## [v4.2.0] - 2026-10-07
 

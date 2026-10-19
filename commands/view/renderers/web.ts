@@ -1,3 +1,9 @@
+import {
+  parseMarkdownTableSegments,
+  type MarkdownTableAlignment,
+  type MarkdownTableRow,
+  type MarkdownTableSegment,
+} from '@src/web/markdown-table';
 import type { WebAction, WebNode, WebNodeRoot } from '@src/web/ui-schema';
 import { row, stack, textBlock } from '@src/web/widgets';
 
@@ -71,11 +77,48 @@ type CodeLineNodeProps = {
   scrollOnceKey: string | null;
 };
 
+type MarkdownTableRowNodeProps = {
+  relativePath: string;
+  row: MarkdownTableRow;
+  alignments: MarkdownTableAlignment[];
+  isHeader: boolean;
+  scrollIntoView: boolean;
+  scrollOnceKey: string | null;
+};
+
+type MarkdownTableSegmentNodeProps = {
+  relativePath: string;
+  segment: MarkdownTableSegment;
+  highlightLine: number | null;
+  lineScrollToken: string | null;
+};
+
+type RenderFileCodeContentNodesProps = {
+  relativePath: string;
+  content: string;
+  language: string | null;
+  highlightLine: number | null;
+  lineScrollToken: string | null;
+};
+
 function lineClipboardAction(text: string): WebAction {
   return {
     type: 'clientAction',
     action: 'clipboard.writeText',
     payload: { text },
+  };
+}
+
+function lineNumberLinkNode(relativePath: string, lineNumber: number): WebNode {
+  return {
+    type: 'element',
+    tag: 'link',
+    props: {
+      className: 'web-file-view-line-number',
+      href: '#',
+      action: lineClipboardAction(`${relativePath}:${lineNumber}`),
+    },
+    children: [{ type: 'text', value: String(lineNumber) }],
   };
 }
 
@@ -96,18 +139,7 @@ function codeLineNode(params: CodeLineNodeProps): WebNode {
         : { scrollIntoViewOnceKey: params.scrollOnceKey }),
     },
     children: [
-      {
-        type: 'element',
-        tag: 'link',
-        props: {
-          className: 'web-file-view-line-number',
-          href: '#',
-          action: lineClipboardAction(
-            `${params.relativePath}:${params.lineNumber}`,
-          ),
-        },
-        children: [{ type: 'text', value: String(params.lineNumber) }],
-      },
+      lineNumberLinkNode(params.relativePath, params.lineNumber),
       {
         type: 'element',
         tag: 'text',
@@ -122,6 +154,150 @@ function codeLineNode(params: CodeLineNodeProps): WebNode {
       },
     ],
   };
+}
+
+function markdownTableRowNode(params: MarkdownTableRowNodeProps): WebNode {
+  const rowClasses = [
+    'web-file-view-code-line',
+    'web-file-view-md-table-row',
+    ...(params.isHeader ? ['web-file-view-md-table-row--header'] : []),
+    ...(params.scrollIntoView ? ['web-file-view-code-line--target'] : []),
+  ].join(' ');
+
+  return {
+    type: 'element',
+    tag: 'row',
+    props: {
+      gap: 'xs',
+      itemAlign: 'baseline',
+      className: rowClasses,
+      ...(params.scrollIntoView ? { scrollIntoViewOnMount: true } : {}),
+      ...(params.scrollOnceKey === null
+        ? {}
+        : { scrollIntoViewOnceKey: params.scrollOnceKey }),
+    },
+    children: [
+      lineNumberLinkNode(params.relativePath, params.row.lineNumber),
+      ...params.row.cells.map((cell, index): WebNode => {
+        const align = params.alignments[index] ?? 'left';
+
+        const cellClasses = [
+          'web-file-view-md-table-cell',
+          `web-file-view-md-table-cell--${align}`,
+          ...(params.isHeader ? ['web-file-view-md-table-cell--header'] : []),
+        ].join(' ');
+
+        return {
+          type: 'element',
+          tag: 'text',
+          props: {
+            className: cellClasses,
+            ui: 'hljs-code:markdown',
+            whiteSpace: 'pre-wrap',
+          },
+          children: [{ type: 'text', value: cell.length === 0 ? ' ' : cell }],
+        };
+      }),
+    ],
+  };
+}
+
+function markdownTableSegmentNode(
+  params: MarkdownTableSegmentNodeProps,
+): WebNode {
+  const headerScrollIntoView =
+    params.highlightLine === params.segment.header.lineNumber ||
+    params.highlightLine === params.segment.delimiterLineNumber;
+
+  return {
+    type: 'element',
+    tag: 'stack',
+    props: {
+      gap: 'xs',
+      className: 'web-file-view-md-table',
+    },
+    children: [
+      markdownTableRowNode({
+        relativePath: params.relativePath,
+        row: params.segment.header,
+        alignments: params.segment.alignments,
+        isHeader: true,
+        scrollIntoView: headerScrollIntoView,
+        scrollOnceKey: headerScrollIntoView ? params.lineScrollToken : null,
+      }),
+      ...params.segment.rows.map((tableRow) => {
+        const rowScrollIntoView = params.highlightLine === tableRow.lineNumber;
+
+        return markdownTableRowNode({
+          relativePath: params.relativePath,
+          row: tableRow,
+          alignments: params.segment.alignments,
+          isHeader: false,
+          scrollIntoView: rowScrollIntoView,
+          scrollOnceKey: rowScrollIntoView ? params.lineScrollToken : null,
+        });
+      }),
+    ],
+  };
+}
+
+function renderFileCodeContentNodes(
+  params: RenderFileCodeContentNodesProps,
+): WebNode[] {
+  if (params.language === 'markdown') {
+    const segments = parseMarkdownTableSegments(params.content);
+
+    return segments.map((segment): WebNode => {
+      if (segment.type === 'lines') {
+        return {
+          type: 'element',
+          tag: 'stack',
+          props: { gap: 'xs', className: 'web-file-view-code-lines' },
+          children: segment.lines.map((entry) =>
+            codeLineNode({
+              relativePath: params.relativePath,
+              line: entry.text,
+              lineNumber: entry.lineNumber,
+              language: params.language,
+              scrollIntoView: params.highlightLine === entry.lineNumber,
+              scrollOnceKey:
+                params.highlightLine === entry.lineNumber
+                  ? params.lineScrollToken
+                  : null,
+            }),
+          ),
+        };
+      }
+
+      return markdownTableSegmentNode({
+        relativePath: params.relativePath,
+        segment,
+        highlightLine: params.highlightLine,
+        lineScrollToken: params.lineScrollToken,
+      });
+    });
+  }
+
+  const lines = params.content.split(/\r?\n/);
+
+  return [
+    {
+      type: 'element',
+      tag: 'stack',
+      props: { gap: 'xs', className: 'web-file-view-code-lines' },
+      children: lines.map((line, index) =>
+        codeLineNode({
+          relativePath: params.relativePath,
+          line,
+          lineNumber: index + 1,
+          language: params.language,
+          scrollIntoView: params.highlightLine === index + 1,
+          scrollOnceKey:
+            params.highlightLine === index + 1 ? params.lineScrollToken : null,
+        }),
+      ),
+    },
+  ];
 }
 
 export function renderFileViewWeb(props: RenderFileViewWebProps): WebNodeRoot {
@@ -178,7 +354,6 @@ export function renderFileViewWeb(props: RenderFileViewWebProps): WebNodeRoot {
     rows.push(textBlock('Binary file — preview not shown.', 'muted'));
   } else {
     const lang = hljsLanguageFromPath(r.relativePath);
-    const lines = r.content.split(/\r?\n/);
     const editToggleKey = `file-edit:${r.relativePath}`;
     const editableTextId = `file-edit-text:${r.relativePath}`;
 
@@ -190,26 +365,13 @@ export function renderFileViewWeb(props: RenderFileViewWebProps): WebNodeRoot {
         hiddenWhenToggleKey: editToggleKey,
         ...(supportsTts(r.relativePath) ? { ttsText: r.content } : {}),
       },
-      children: [
-        {
-          type: 'element',
-          tag: 'stack',
-          props: { gap: 'xs', className: 'web-file-view-code-lines' },
-          children: lines.map((line, index) =>
-            codeLineNode({
-              relativePath: r.relativePath,
-              line,
-              lineNumber: index + 1,
-              language: lang,
-              scrollIntoView: props.highlightLine === index + 1,
-              scrollOnceKey:
-                props.highlightLine === index + 1
-                  ? props.lineScrollToken
-                  : null,
-            }),
-          ),
-        },
-      ],
+      children: renderFileCodeContentNodes({
+        relativePath: r.relativePath,
+        content: r.content,
+        language: lang,
+        highlightLine: props.highlightLine,
+        lineScrollToken: props.lineScrollToken,
+      }),
     });
 
     rows.push({
@@ -227,6 +389,84 @@ export function renderFileViewWeb(props: RenderFileViewWebProps): WebNodeRoot {
   }
 
   const canEdit = !r.binary && !r.truncated;
+
+  const toolbarActions = r.binary
+    ? []
+    : [
+        {
+          label: 'Copy file',
+          icon: 'copy' as const,
+          action: lineClipboardAction(r.content),
+        },
+        ...(canEdit
+          ? [
+              {
+                label: 'Edit file',
+                icon: 'edit' as const,
+                activeLabel: 'Save file',
+                activeIcon: 'save' as const,
+                toggleKey: `file-edit:${r.relativePath}`,
+                storyTargetId: `file-view-edit-${r.relativePath}`,
+                action: {
+                  type: 'clientAction' as const,
+                  action: 'web.toggle' as const,
+                  payload: { key: `file-edit:${r.relativePath}` },
+                },
+                activeAction: {
+                  type: 'clientAction' as const,
+                  action: 'editableText.runCommand' as const,
+                  payload: {
+                    editableTextId: `file-edit-text:${r.relativePath}`,
+                    contentArgument: 'content',
+                    activeLineRefreshOption: 'line',
+                    activeLineScrollTokenOption: 'lineScrollToken',
+                    toggleKey: `file-edit:${r.relativePath}`,
+                    command: {
+                      type: 'command' as const,
+                      command: props.commandAlias,
+                      subcommand: 'edit',
+                      arguments: { path: r.relativePath },
+                      options:
+                        props.previousDir === null
+                          ? {}
+                          : { previousDir: props.previousDir },
+                      recordInTimeline: true,
+                      refresh: {
+                        command: props.commandAlias,
+                        subcommand: 'view',
+                        arguments: { path: r.relativePath },
+                        recordInTimeline: false,
+                        options:
+                          props.previousDir === null
+                            ? {}
+                            : { previousDir: props.previousDir },
+                      },
+                    },
+                  },
+                },
+              },
+              {
+                label: 'Check diff',
+                icon: 'diff' as const,
+                className: 'web-file-timeline-diff-button',
+                storyTargetId: `file-view-diff-${r.relativePath}`,
+                action: {
+                  type: 'command' as const,
+                  command: props.commandAlias,
+                  subcommand: 'diff',
+                  arguments: { path: r.relativePath },
+                  options:
+                    props.previousDir === null
+                      ? {}
+                      : { previousDir: props.previousDir },
+                  recordInTimeline: true,
+                  surface: 'timeline' as const,
+                },
+              },
+            ]
+          : []),
+      ];
+
   const rootTree = stack(rows, 'sm');
 
   const viewOptions: Record<string, unknown> = {
@@ -260,75 +500,7 @@ export function renderFileViewWeb(props: RenderFileViewWebProps): WebNodeRoot {
       props: {
         ...rootTree.props,
         refreshable: true,
-        ...(canEdit
-          ? {
-              toolbarActions: [
-                {
-                  label: 'Edit file',
-                  icon: 'edit',
-                  activeLabel: 'Save file',
-                  activeIcon: 'save',
-                  toggleKey: `file-edit:${r.relativePath}`,
-                  storyTargetId: `file-view-edit-${r.relativePath}`,
-                  action: {
-                    type: 'clientAction',
-                    action: 'web.toggle',
-                    payload: { key: `file-edit:${r.relativePath}` },
-                  },
-                  activeAction: {
-                    type: 'clientAction',
-                    action: 'editableText.runCommand',
-                    payload: {
-                      editableTextId: `file-edit-text:${r.relativePath}`,
-                      contentArgument: 'content',
-                      activeLineRefreshOption: 'line',
-                      activeLineScrollTokenOption: 'lineScrollToken',
-                      toggleKey: `file-edit:${r.relativePath}`,
-                      command: {
-                        type: 'command',
-                        command: props.commandAlias,
-                        subcommand: 'edit',
-                        arguments: { path: r.relativePath },
-                        options:
-                          props.previousDir === null
-                            ? {}
-                            : { previousDir: props.previousDir },
-                        recordInTimeline: true,
-                        refresh: {
-                          command: props.commandAlias,
-                          subcommand: 'view',
-                          arguments: { path: r.relativePath },
-                          recordInTimeline: false,
-                          options:
-                            props.previousDir === null
-                              ? {}
-                              : { previousDir: props.previousDir },
-                        },
-                      },
-                    },
-                  },
-                },
-                {
-                  label: 'Check diff',
-                  icon: 'diff',
-                  className: 'web-file-timeline-diff-button',
-                  storyTargetId: `file-view-diff-${r.relativePath}`,
-                  action: {
-                    type: 'command',
-                    command: props.commandAlias,
-                    subcommand: 'diff',
-                    arguments: { path: r.relativePath },
-                    options:
-                      props.previousDir === null
-                        ? {}
-                        : { previousDir: props.previousDir },
-                    recordInTimeline: true,
-                    surface: 'timeline',
-                  },
-                },
-              ],
-            }
-          : {}),
+        ...(toolbarActions.length > 0 ? { toolbarActions } : {}),
       },
     },
     stylesheets: [filePluginViewStylesheet],

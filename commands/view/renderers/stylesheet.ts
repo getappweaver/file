@@ -41,7 +41,17 @@ export const filePluginViewStylesheet: WebStyleSheet = {
   gap: 0;
 }
 
-.web-file-view-code-line.web-row {
+.web-file-view-md-table.web-stack {
+  --web-file-view-line-gap: 0.5rem;
+  display: table;
+  width: auto;
+  border-collapse: collapse;
+  border-spacing: 0;
+  gap: 0;
+}
+
+.web-file-view-code-line.web-row,
+.web-file-view-md-table-row.web-row {
   display: table-row;
   outline: none;
 }
@@ -56,7 +66,10 @@ export const filePluginViewStylesheet: WebStyleSheet = {
 
 .web-file-view-line-number {
   display: table-cell;
-  width: 1%;
+  width: 3.5ch;
+  min-width: 3.5ch;
+  max-width: 3.5ch;
+  box-sizing: content-box;
   padding: 0 var(--web-file-view-line-gap) 0 0.55rem;
   border-right: 1px solid #999;
   color: #ccc;
@@ -92,7 +105,44 @@ a.web-file-view-line-number:focus-visible {
   vertical-align: top;
 }
 
-.web-file-view-code-line--target .web-file-view-code-text.hljs {
+.web-file-view-md-table-cell,
+.web-file-view-md-table-cell.hljs {
+  display: table-cell;
+  width: auto;
+  padding: 0.18rem 0.55rem;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: transparent;
+  overflow-wrap: normal;
+  word-break: normal;
+  vertical-align: top;
+}
+
+.web-file-view-md-table-row > .web-file-view-md-table-cell:first-of-type {
+  border-left-color: #999;
+}
+
+.web-file-view-md-table-cell--header,
+.web-file-view-md-table-cell--header.hljs {
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.35);
+}
+
+.web-file-view-md-table-cell--left {
+  text-align: left;
+}
+
+.web-file-view-md-table-cell--center {
+  text-align: center;
+}
+
+.web-file-view-md-table-cell--right {
+  text-align: right;
+}
+
+.web-file-view-code-line--target .web-file-view-code-text.hljs,
+.web-file-view-code-line--target .web-file-view-md-table-cell,
+.web-file-view-code-line--target .web-file-view-md-table-cell.hljs {
   background: color-mix(in srgb, var(--color-warning) 20%, transparent);
 }
 
