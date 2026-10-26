@@ -4,9 +4,13 @@ All notable changes for each version are listed under the corresponding `v*.*.*`
 Tags and this file are updated by the post-commit hook when you commit with `--patch`, `--minor`, or `--major` (see CONTRIBUTING.md).
 You can also run `bun run release:changelog` to rewrite this file from tags.
 
+## [v4.5.0] - 2026-10-26
+
+- feat: implemented universal search via search.v1 capability (9d14e3e)
+
 ## [v4.4.0] - 2026-10-19
 
-- feat: markdown table rendering via src/web/markdown-table (9fddf88)
+- feat: markdown table rendering via src/web/markdown-table (093982a)
 
 ## [v4.3.0] - 2026-10-18
 

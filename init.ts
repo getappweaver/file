@@ -12,6 +12,10 @@ import {
   getFileHelpLines,
 } from './commands/help/module';
 import { fuzzyFileSearchProvider } from './fuzzy-file-search-provider';
+import {
+  fileResourceViewProvider,
+  fileSearchProvider,
+} from './search-provider';
 import { fileStories } from './stories';
 import { workspaceFileViewProvider } from './workspace-file-view-provider';
 
@@ -51,5 +55,10 @@ export const FilePlugin: BotPlugin = {
   commandDefinition: (prefix: string, pluginAlias: string) =>
     getFileCommandDefinition(prefix, pluginAlias),
   stories: fileStories,
-  capabilityProviders: [fuzzyFileSearchProvider, workspaceFileViewProvider],
+  capabilityProviders: [
+    fuzzyFileSearchProvider,
+    workspaceFileViewProvider,
+    fileSearchProvider,
+    fileResourceViewProvider,
+  ],
 };

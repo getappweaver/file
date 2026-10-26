@@ -276,6 +276,89 @@ function findScopedDir(props: { query: string; workspaceRoot: string }): {
   return { scopedDir: null, remainingQuery: trimmed };
 }
 
+export type SearchWorkspaceFilesSubstringProps = {
+  workspaceRoot: string;
+  query: string;
+};
+
+export function searchWorkspaceFilesSubstring(
+  props: SearchWorkspaceFilesSubstringProps,
+): string[] {
+  let effectiveQuery = props.query.trim();
+  let scopedDir: string | null = null;
+
+  if (effectiveQuery.length > 0) {
+    const scoped = findScopedDir({
+      query: effectiveQuery,
+      workspaceRoot: props.workspaceRoot,
+    });
+
+    if (scoped.scopedDir !== null) {
+      scopedDir = scoped.scopedDir;
+      effectiveQuery = scoped.remainingQuery;
+    }
+  }
+
+  const collectRoot =
+    scopedDir === null
+      ? props.workspaceRoot
+      : resolve(props.workspaceRoot, scopedDir);
+
+  if (scopedDir !== null) {
+    try {
+      if (!statSync(collectRoot).isDirectory()) {
+        return [];
+      }
+    } catch {
+      return [];
+    }
+  }
+
+  const out: string[] = [];
+
+  collectAllFiles({
+    workspaceRoot: props.workspaceRoot,
+    dirAbs: collectRoot,
+    gitignoreRules: [],
+    includeDirectories: false,
+    includeIgnored: false,
+    ignoreDotFiles: true,
+    out,
+  });
+
+  const queryForMatch = effectiveQuery.trim().toLowerCase();
+
+  if (queryForMatch.length === 0) {
+    return out.sort((a, b) => a.localeCompare(b));
+  }
+
+  const scored: Array<{ path: string; score: number }> = [];
+
+  for (const p of out) {
+    const pathLower = p.toLowerCase();
+
+    if (!pathLower.includes(queryForMatch)) {
+      continue;
+    }
+
+    const score = fuzzyScore(pathLower, queryForMatch);
+
+    if (score >= 0) {
+      scored.push({ path: p, score });
+    }
+  }
+
+  scored.sort((a, b) => {
+    if (b.score !== a.score) {
+      return b.score - a.score;
+    }
+
+    return a.path.localeCompare(b.path);
+  });
+
+  return scored.map((s) => s.path);
+}
+
 export const fuzzyFileSearchProvider = defineCapabilityProvider({
   contract: FuzzyFileSearchV1,
   operations: {

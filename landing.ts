@@ -27,12 +27,14 @@ export const landingPage: PluginLandingDefinition = {
         {
           view: 'desktop',
           src: 'landing/assets/file-edit-diff.gif',
+          poster: null,
           alt: 'File Manager opening a markdown file, editing it, and reviewing the diff',
           durationMs: 29760,
         },
         {
           view: 'mobile',
           src: 'landing/assets/file-edit-diff-mobile.gif',
+          poster: null,
           alt: 'File Manager mobile view editing a file and opening the diff',
           durationMs: 37260,
         },
@@ -45,12 +47,14 @@ export const landingPage: PluginLandingDefinition = {
         {
           view: 'desktop',
           src: 'landing/assets/file-diff-commit.gif',
+          poster: null,
           alt: 'Review your changes in one place, and commit',
           durationMs: 33260,
         },
         {
           view: 'mobile',
           src: 'landing/assets/file-diff-commit-mobile.gif',
+          poster: null,
           alt: 'Review your changes in mobile view in one place, and commit',
           durationMs: 50630,
         },
@@ -63,12 +67,14 @@ export const landingPage: PluginLandingDefinition = {
         {
           view: 'desktop',
           src: 'landing/assets/file-commit-history.gif',
+          poster: null,
           alt: 'See all your commit history in a folder',
           durationMs: 30380,
         },
         {
           view: 'mobile',
           src: 'landing/assets/file-commit-history-mobile.gif',
+          poster: null,
           alt: 'See all your commit history in a folder on mobile',
           durationMs: 39760,
         },

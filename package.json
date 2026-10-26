@@ -1,11 +1,11 @@
 {
   "name": "appweaver-file-plugin",
-  "version": "4.4.0",
+  "version": "4.5.0",
   "appweaver": {
     "title": "File manager",
     "icon": "./commands/tree/renderers/tree.svg",
     "website": "https://github.com/getappweaver/file",
-    "coreApiVersion": "^v14.9.0",
+    "coreApiVersion": "^14.13.0",
     "capabilities": {
       "provides": [
         {
@@ -14,6 +14,14 @@
         },
         {
           "name": "workspace-file-view",
+          "version": 1
+        },
+        {
+          "name": "search",
+          "version": 1
+        },
+        {
+          "name": "resource-view",
           "version": 1
         }
       ]
